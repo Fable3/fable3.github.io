@@ -23,7 +23,7 @@
         <obj_info name="bone_005" type="bone" w="68.8434" h="10"/>
         <obj_info name="bone_006" type="bone" w="113.393" h="10"/>
         <obj_info name="bone_007" type="bone" w="159.056" h="10"/>
-        <animation id="0" name="Idle" length="400" interval="100" l="-293" t="-447" r="366" b="32">
+        <animation id="0" name="idle" length="400" interval="100" l="-293" t="-447" r="366" b="32">
             <gline pos="0" v="1"/>
             <gline pos="-72"/>
             <mainline>
@@ -766,7 +766,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="3" name="Walking" length="600" interval="100" l="-293" t="-447" r="366" b="32">
+        <animation id="3" name="walk" length="600" interval="100" l="-293" t="-447" r="366" b="32">
             <gline pos="0" v="1"/>
             <gline pos="-72"/>
             <mainline>
@@ -1163,7 +1163,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="4" name="Attacking" length="400" interval="100" l="-293" t="-447" r="366" b="32">
+        <animation id="4" name="attack" length="400" interval="100" l="-293" t="-447" r="366" b="32">
             <gline pos="0" v="1"/>
             <gline pos="-72"/>
             <mainline>
@@ -1788,7 +1788,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="6" name="Jump Loop" length="200" interval="100" l="-293" t="-447" r="366" b="32">
+        <animation id="6" name="jump" length="200" interval="100" l="-293" t="-447" r="366" b="32">
             <gline pos="0" v="1"/>
             <gline pos="-72"/>
             <mainline>
@@ -1942,7 +1942,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="7" name="Hurt" length="400" interval="100" l="-293" t="-447" r="366" b="32">
+        <animation id="7" name="hurt" length="400" interval="100" l="-293" t="-447" r="366" b="32">
             <gline pos="0" v="1"/>
             <gline pos="-72"/>
             <gline pos="12" v="1"/>
@@ -2149,7 +2149,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="8" name="Dying" length="500" interval="100" l="-293" t="-447" r="366" b="32">
+        <animation id="8" name="die" length="500" interval="100" l="-293" t="-447" r="366" b="32">
             <gline pos="0" v="1"/>
             <gline pos="-72"/>
             <gline pos="12" v="1"/>

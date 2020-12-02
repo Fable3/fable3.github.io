@@ -6,8 +6,13 @@ goog.require('RenderCtx2D');
 goog.require('RenderWebGL');
 
 var enemy_id = -1;
+var enemy_anim_key = 'idle';
 set_enemy = function(id) {
 	enemy_id = id;
+}
+
+set_anim = function(key) {
+	enemy_anim_key = key;
 }
 
 main.start = function (div) {
@@ -142,7 +147,7 @@ main.start = function (div) {
   var anim_length = 0;
   var anim_length_next = 0;
   var anim_rate = 1;
-  var anim_repeat = 2;
+  var anim_repeat = 1;
 
   var anim_blend = 0.0;
 
@@ -420,6 +425,7 @@ main.start = function (div) {
   var loading = false;
 
   var file = files[file_index];
+  var anim_key = 'idle';
  // messages.innerHTML = "loading";
   loading = true;
   loadFile(file, function() {
@@ -427,21 +433,23 @@ main.start = function (div) {
     var entity_keys = spriter_data.getEntityKeys();
     var entity_key = entity_keys[entity_index = 0];
     spriter_pose.setEntity(entity_key);
-    spriter_pose_next.setEntity(entity_key);
     //var entity = spriter_pose.curEntity();
     //console.log(entity.character_map_keys);
     //spriter_pose.character_map_key_array = entity.character_map_keys;
     //spriter_pose.character_map_key_array = [ 'glasses', 'blue gloves', 'black gloves', 'look ma no hands' ];
     //spriter_pose.character_map_key_array = [ 'glasses', 'blue gloves' ];
     var anim_keys = spriter_data.getAnimKeys(entity_key);
-    var anim_key = anim_keys[anim_index = 0];
+    //var anim_key = 'attack';
     spriter_pose.setAnim(anim_key);
-    var anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
-    spriter_pose_next.setAnim(anim_key_next);
     spriter_pose.setTime(anim_time = 0);
-    spriter_pose_next.setTime(anim_time);
     anim_length = spriter_pose.curAnimLength() || 1000;
-    anim_length_next = spriter_pose_next.curAnimLength() || 1000;
+	
+	/*spriter_pose_next.setEntity(entity_key);
+	var anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
+	spriter_pose_next.setAnim(anim_key_next);
+	spriter_pose_next.setTime(anim_time);
+	anim_length_next = spriter_pose_next.curAnimLength() || 1000;*/
+    
   });
 
   var prev_time = 0;
@@ -456,8 +464,8 @@ main.start = function (div) {
     var entity_keys;
     var entity_key;
     var anim_keys;
-    var anim_key;
-    var anim_key_next;
+    
+    //var anim_key_next;
 	
 	var LoadNextFile = function() {
 	  if (files.length > 1) {
@@ -472,16 +480,18 @@ main.start = function (div) {
                 entity_keys = spriter_data.getEntityKeys();
                 entity_key = entity_keys[entity_index = 0];
                 spriter_pose.setEntity(entity_key);
-                spriter_pose_next.setEntity(entity_key);
                 anim_keys = spriter_data.getAnimKeys(entity_key);
                 anim_key = anim_keys[anim_index = 0];
                 spriter_pose.setAnim(anim_key);
-                anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
-                spriter_pose_next.setAnim(anim_key_next);
                 spriter_pose.setTime(anim_time = 0);
-                spriter_pose_next.setTime(anim_time);
                 anim_length = spriter_pose.curAnimLength() || 1000;
-                anim_length_next = spriter_pose_next.curAnimLength() || 1000;
+
+				/*
+				spriter_pose_next.setEntity(entity_key);
+				anim_key_next = anim_keys[0]; //[(anim_index + 1) % anim_keys.length];
+				spriter_pose_next.setAnim(anim_key_next);
+				spriter_pose_next.setTime(anim_time);
+                anim_length_next = spriter_pose_next.curAnimLength() || 1000;*/
               });
               return;
             }
@@ -518,29 +528,31 @@ main.start = function (div) {
 			entity_keys = spriter_data.getEntityKeys();
 			entity_key = entity_keys[entity_index = 0];
 			spriter_pose.setEntity(entity_key);
-			spriter_pose_next.setEntity(entity_key);
 			anim_keys = spriter_data.getAnimKeys(entity_key);
-			anim_key = anim_keys[anim_index = 0];
+			anim_key = 'idle';
 			spriter_pose.setAnim(anim_key);
+			spriter_pose.setTime(anim_time = 0);
+			anim_length = spriter_pose.curAnimLength() || 1000;
+			
+			/*spriter_pose_next.setEntity(entity_key);
 			anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
 			spriter_pose_next.setAnim(anim_key_next);
-			spriter_pose.setTime(anim_time = 0);
 			spriter_pose_next.setTime(anim_time);
-			anim_length = spriter_pose.curAnimLength() || 1000;
-			anim_length_next = spriter_pose_next.curAnimLength() || 1000;
+			anim_length_next = spriter_pose_next.curAnimLength() || 1000;*/
 		  });
 		  return;
 	}
 	
+	
     if (!loading) {
       spriter_pose.update(dt * anim_rate);
-      var anim_rate_next = anim_rate * anim_length_next / anim_length;
-      spriter_pose_next.update(dt * anim_rate_next);
+      /*var anim_rate_next = anim_rate * anim_length_next / anim_length;
+      spriter_pose_next.update(dt * anim_rate_next);*/
 
       anim_time += dt * anim_rate;
 
-      if (anim_time >= (anim_length * anim_repeat)) {
-        entity_keys = spriter_data.getEntityKeys();
+      if (anim_time >= (anim_length * anim_repeat) && anim_key!='idle') {
+        /*entity_keys = spriter_data.getEntityKeys();
         entity_key = entity_keys[entity_index];
         anim_keys = spriter_data.getAnimKeys(entity_key);
         if (++anim_index >= anim_keys.length) {
@@ -556,26 +568,49 @@ main.start = function (div) {
           entity_keys = spriter_data.getEntityKeys();
           entity_key = entity_keys[entity_index];
           spriter_pose.setEntity(entity_key);
-          spriter_pose_next.setEntity(entity_key);
-        }
-        entity_keys = spriter_data.getEntityKeys();
-        entity_key = entity_keys[entity_index];
-        anim_keys = spriter_data.getAnimKeys(entity_key);
-        anim_key = anim_keys[anim_index];
-        spriter_pose.setAnim(anim_key);
-        anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
-        spriter_pose_next.setAnim(anim_key_next);
-        spriter_pose.setTime(anim_time = 0);
-        spriter_pose_next.setTime(anim_time);
-        anim_length = spriter_pose.curAnimLength() || 1000;
-        anim_length_next = spriter_pose_next.curAnimLength() || 1000;
+          //spriter_pose_next.setEntity(entity_key);
+        }*/
+		if (anim_key=='die')
+		{
+			//anim_time = anim_length-1;
+			//console.log('die end '+anim_length);
+		}
+		else
+		{
+			console.log('anim ' + anim_key +' -> idle');
+			entity_keys = spriter_data.getEntityKeys();
+			entity_key = entity_keys[entity_index];
+			anim_keys = spriter_data.getAnimKeys(entity_key);
+			anim_key = 'idle';//anim_keys[anim_index];
+			spriter_pose.setAnim(anim_key);
+			spriter_pose.setTime(anim_time = 0);
+			anim_length = spriter_pose.curAnimLength() || 1000;
+			/*
+			anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
+			spriter_pose_next.setAnim(anim_key_next);
+			spriter_pose_next.setTime(anim_time);
+			anim_length_next = spriter_pose_next.curAnimLength() || 1000;*/
+		}
       }
-
+	  
+	  if (enemy_anim_key!='' && enemy_anim_key!=anim_key)
+	  {
+		entity_keys = spriter_data.getEntityKeys();
+		entity_key = entity_keys[entity_index = 0];
+		spriter_pose.setEntity(entity_key);
+		anim_keys = spriter_data.getAnimKeys(entity_key);
+		anim_key = enemy_anim_key;
+		enemy_anim_key='';
+		spriter_pose.setAnim(anim_key);
+		spriter_pose.setTime(anim_time = 0);
+	    anim_length = spriter_pose.curAnimLength() || 1000;
+	  }
+		/*
       entity_keys = spriter_data.getEntityKeys();
       entity_key = entity_keys[entity_index];
       anim_keys = spriter_data.getAnimKeys(entity_key);
       anim_key = anim_keys[anim_index];
-      anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
+      //anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
       //messages.innerHTML = "entity: " + entity_key + ", anim: " + anim_key + ", next anim: " + anim_key_next + "<br>" + file.path + file.spriter_url;
       if (spriter_pose.event_array.length > 0) {
         //messages.innerHTML += "<br>events: " + spriter_pose.event_array;
@@ -592,7 +627,7 @@ main.start = function (div) {
         var_map_keys.forEach(function(key) {
           //messages.innerHTML += "<br>" + key + " : " + spriter_pose.var_map[key];
         });
-      }
+      }*/
     }
 
     if (ctx) {
@@ -609,9 +644,12 @@ main.start = function (div) {
     if (loading) {
       return;
     }
-
-    spriter_pose.strike();
-    spriter_pose_next.strike();
+	
+	if (anim_key!='die' || anim_time<anim_length)
+	{
+		spriter_pose.strike();
+	}
+    //spriter_pose_next.strike();
 
     spriter_pose.sound_array.forEach(function(sound) {
       if (!player_web.mute) {
@@ -635,6 +673,7 @@ main.start = function (div) {
     var spin = 1;
 
     // blend next pose bone into pose bone
+	/*
     spriter_pose.bone_array.forEach(function(bone, bone_index) {
       var bone_next = spriter_pose_next.bone_array[bone_index];
       if (!bone_next) {
@@ -687,6 +726,7 @@ main.start = function (div) {
           throw new Error(object.type);
       }
     });
+	*/
 
     // compute bone world space
     spriter_pose.bone_array.forEach(function(bone) {
