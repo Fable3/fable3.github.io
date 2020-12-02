@@ -115,28 +115,13 @@ main.start = function (div) {
   var enable_render_webgl = !!gl;
   var enable_render_ctx2d = !!ctx && !enable_render_webgl;
 
-  //add_checkbox_control("GL", enable_render_webgl, function(checked) {
-  //  enable_render_webgl = checked;
-  //});
-  //add_checkbox_control("2D", enable_render_ctx2d, function(checked) {
-  //  enable_render_ctx2d = checked;
-  //});
-
   var enable_render_debug_pose = false;
-
-  //add_checkbox_control("2D Debug Pose", enable_render_debug_pose, function(checked) {
-  //  enable_render_debug_pose = checked;
-  //});
 
   // sound player (Web Audio Context)
   var player_web = {};
   player_web.ctx = AudioContext && new AudioContext();
   player_web.mute = true;
   player_web.sounds = {};
-
-  //add_checkbox_control("Mute", player_web.mute, function(checked) {
-  //  player_web.mute = checked;
-  //});
 
   var spriter_data = null;
   var spriter_pose = null;
@@ -145,25 +130,10 @@ main.start = function (div) {
 
   var anim_time = 0;
   var anim_length = 0;
-  var anim_length_next = 0;
   var anim_rate = 1;
   var anim_repeat = 1;
 
-  var anim_blend = 0.0;
-
-  //add_range_control("Anim Rate", anim_rate, -2.0, 2.0, 0.1, function(value) {
-  //  anim_rate = value;
-  //});
-
-  //add_range_control("Anim Blend", anim_blend, 0.0, 1.0, 0.01, function(value) {
-  //  anim_blend = value;
-  //});
-
   var alpha = 1.0;
-
-  //add_range_control("Alpha", alpha, 0.0, 1.0, 0.01, function(value) {
-  //  alpha = value;
-  //});
 
   var loadFile = function(file, callback) {
     render_ctx2d.dropData(spriter_data, atlas_data);
@@ -400,56 +370,21 @@ main.start = function (div) {
   add_file("SCML/1_troll/", "1_troll.scml", 0.8, 280);
   add_file("SCML/minotaur_1/", "Animations.scml", 1);
   
-
-  //add_file("SpriterExamples/BoxTagVariable/", "player.scon");
-  //add_file("SpriterExamples/GreyGuyCharMaps/", "player_001.scon");
-  //add_file("SpriterExamples/GreyGuyPlusSoundAndSubEntity/", "player_006.scon");
-  //add_file("SpriterExamples/PointsTriggers/", "gunner_player_smaller_head.scon");
-  //add_file("SpriterExamples/Variable/", "LetterBot.scon");
-
-  //add_file("https://raw.githubusercontent.com/treefortress/SpriterAS/master/demo/src/assets/spriter/brawler/", "brawler.scml");
-  //add_file("https://raw.githubusercontent.com/treefortress/SpriterAS/master/demo/src/assets/spriter/imp/", "imp.scml");
-  //add_file("https://raw.githubusercontent.com/treefortress/SpriterAS/master/demo/src/assets/spriter/mage/", "mage.scml");
-  //add_file("https://raw.githubusercontent.com/treefortress/SpriterAS/master/demo/src/assets/spriter/orc/", "orc.scml");
-
-  //add_file("https://raw.githubusercontent.com/Malhavok/Spriter2Unity/master/examples/Crabby/Spriter/", "Crabby.scml");
-
-  //add_file("https://raw.githubusercontent.com/loodakrawa/SpriterDotNet/master/SpriterDotNet.Unity/Assets/SpriterDotNetExamples/Scml/GreyGuy/", "player.scml");
-  //add_file("https://raw.githubusercontent.com/loodakrawa/SpriterDotNet/master/SpriterDotNet.Unity/Assets/SpriterDotNetExamples/Scml/GreyGuyPlus/", "player_006.scml");
-  //add_file("https://raw.githubusercontent.com/loodakrawa/SpriterDotNet/master/SpriterDotNet.Unity/Assets/SpriterDotNetExamples/Scml/TestSquares/", "squares.scml");
-
   var file_index = 0;
-  var entity_index = 0;
-  var anim_index = 0;
-
+  
   var loading = false;
 
   var file = files[file_index];
   var anim_key = 'idle';
- // messages.innerHTML = "loading";
+ 
   loading = true;
   loadFile(file, function() {
     loading = false;
-    var entity_keys = spriter_data.getEntityKeys();
-    var entity_key = entity_keys[entity_index = 0];
+    var entity_key = spriter_data.getEntityKeys()[0];
     spriter_pose.setEntity(entity_key);
-    //var entity = spriter_pose.curEntity();
-    //console.log(entity.character_map_keys);
-    //spriter_pose.character_map_key_array = entity.character_map_keys;
-    //spriter_pose.character_map_key_array = [ 'glasses', 'blue gloves', 'black gloves', 'look ma no hands' ];
-    //spriter_pose.character_map_key_array = [ 'glasses', 'blue gloves' ];
-    var anim_keys = spriter_data.getAnimKeys(entity_key);
-    //var anim_key = 'attack';
     spriter_pose.setAnim(anim_key);
     spriter_pose.setTime(anim_time = 0);
     anim_length = spriter_pose.curAnimLength() || 1000;
-	
-	/*spriter_pose_next.setEntity(entity_key);
-	var anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
-	spriter_pose_next.setAnim(anim_key_next);
-	spriter_pose_next.setTime(anim_time);
-	anim_length_next = spriter_pose_next.curAnimLength() || 1000;*/
-    
   });
 
   var prev_time = 0;
@@ -461,115 +396,29 @@ main.start = function (div) {
     var dt = time - (prev_time || time);
     prev_time = time; // ms
 
-    var entity_keys;
     var entity_key;
-    var anim_keys;
-    
-    //var anim_key_next;
-	
-	var LoadNextFile = function() {
-	  if (files.length > 1) {
-              if (++file_index >= files.length) {
-                file_index = 0;
-              }
-              file = files[file_index];
-              //messages.innerHTML = "loading";
-              loading = true;
-              loadFile(file, function() {
-                loading = false;
-                entity_keys = spriter_data.getEntityKeys();
-                entity_key = entity_keys[entity_index = 0];
-                spriter_pose.setEntity(entity_key);
-                anim_keys = spriter_data.getAnimKeys(entity_key);
-                anim_key = anim_keys[anim_index = 0];
-                spriter_pose.setAnim(anim_key);
-                spriter_pose.setTime(anim_time = 0);
-                anim_length = spriter_pose.curAnimLength() || 1000;
-
-				/*
-				spriter_pose_next.setEntity(entity_key);
-				anim_key_next = anim_keys[0]; //[(anim_index + 1) % anim_keys.length];
-				spriter_pose_next.setAnim(anim_key_next);
-				spriter_pose_next.setTime(anim_time);
-                anim_length_next = spriter_pose_next.curAnimLength() || 1000;*/
-              });
-              return;
-            }
-    }
-	// nem kéne minden loopban hozzáadni (?)
-	//document.body.addEventListener('keypress',function (event){
-	//  if (event.keyCode === 49){
-	//	    /*anim_index = 0;
-	//		entity_index = 0;
-	//		LoadNextFile();
-	//		entity_keys = spriter_data.getEntityKeys();
-	//		entity_key = entity_keys[entity_index];
-	//		anim_keys = spriter_data.getAnimKeys(entity_key);
-	//		anim_key = anim_keys[anim_index];
-	//		spriter_pose.setAnim(anim_key);
-	//		anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
-	//		spriter_pose_next.setAnim(anim_key_next);
-	//		spriter_pose.setTime(anim_time = 0);
-	//		spriter_pose_next.setTime(anim_time);
-	//		anim_length = spriter_pose.curAnimLength() || 1000;
-	//		anim_length_next = spriter_pose_next.curAnimLength() || 1000;*/
-	//		anim_index=anim_keys.length;
-	//		entity_index = entity_keys.length-1;
-	//	  }
-	//});
-	if (enemy_id!=-1 && enemy_id!=file_index)
+    if (enemy_id!=-1 && enemy_id!=file_index)
 	{
-		  file_index = enemy_id;
-		  file = files[file_index];
-		  //messages.innerHTML = "loading";
-		  loading = true;
-		  loadFile(file, function() {
-			loading = false;
-			entity_keys = spriter_data.getEntityKeys();
-			entity_key = entity_keys[entity_index = 0];
-			spriter_pose.setEntity(entity_key);
-			anim_keys = spriter_data.getAnimKeys(entity_key);
-			anim_key = 'idle';
-			spriter_pose.setAnim(anim_key);
-			spriter_pose.setTime(anim_time = 0);
-			anim_length = spriter_pose.curAnimLength() || 1000;
-			
-			/*spriter_pose_next.setEntity(entity_key);
-			anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
-			spriter_pose_next.setAnim(anim_key_next);
-			spriter_pose_next.setTime(anim_time);
-			anim_length_next = spriter_pose_next.curAnimLength() || 1000;*/
-		  });
-		  return;
-	}
-	
+	  file_index = enemy_id;
+	  file = files[file_index];
+	  loading = true;
+	  loadFile(file, function() {
+		loading = false;
+		var entity_key = spriter_data.getEntityKeys()[0];
+		spriter_pose.setEntity(entity_key);
+		anim_key = 'idle';
+		spriter_pose.setAnim(anim_key);
+		spriter_pose.setTime(anim_time = 0);
+		anim_length = spriter_pose.curAnimLength() || 1000;
+	  });
+	  return;
+	}	
 	
     if (!loading) {
       spriter_pose.update(dt * anim_rate);
-      /*var anim_rate_next = anim_rate * anim_length_next / anim_length;
-      spriter_pose_next.update(dt * anim_rate_next);*/
-
       anim_time += dt * anim_rate;
 
       if (anim_time >= (anim_length * anim_repeat) && anim_key!='idle') {
-        /*entity_keys = spriter_data.getEntityKeys();
-        entity_key = entity_keys[entity_index];
-        anim_keys = spriter_data.getAnimKeys(entity_key);
-        if (++anim_index >= anim_keys.length) {
-          anim_index = 0;
-          if (++entity_index >= entity_keys.length) {
-            entity_index = 0;
-			if (enemy_id==-1)
-			{
-				LoadNextFile();
-				return;
-			}
-          }
-          entity_keys = spriter_data.getEntityKeys();
-          entity_key = entity_keys[entity_index];
-          spriter_pose.setEntity(entity_key);
-          //spriter_pose_next.setEntity(entity_key);
-        }*/
 		if (anim_key=='die')
 		{
 			//anim_time = anim_length-1;
@@ -578,56 +427,24 @@ main.start = function (div) {
 		else
 		{
 			console.log('anim ' + anim_key +' -> idle');
-			entity_keys = spriter_data.getEntityKeys();
-			entity_key = entity_keys[entity_index];
-			anim_keys = spriter_data.getAnimKeys(entity_key);
-			anim_key = 'idle';//anim_keys[anim_index];
+			entity_key = spriter_data.getEntityKeys()[0];
+			anim_key = 'idle';
 			spriter_pose.setAnim(anim_key);
 			spriter_pose.setTime(anim_time = 0);
 			anim_length = spriter_pose.curAnimLength() || 1000;
-			/*
-			anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
-			spriter_pose_next.setAnim(anim_key_next);
-			spriter_pose_next.setTime(anim_time);
-			anim_length_next = spriter_pose_next.curAnimLength() || 1000;*/
 		}
       }
 	  
 	  if (enemy_anim_key!='' && enemy_anim_key!=anim_key)
 	  {
-		entity_keys = spriter_data.getEntityKeys();
-		entity_key = entity_keys[entity_index = 0];
+		entity_key = spriter_data.getEntityKeys()[0];
 		spriter_pose.setEntity(entity_key);
-		anim_keys = spriter_data.getAnimKeys(entity_key);
 		anim_key = enemy_anim_key;
 		enemy_anim_key='';
 		spriter_pose.setAnim(anim_key);
 		spriter_pose.setTime(anim_time = 0);
 	    anim_length = spriter_pose.curAnimLength() || 1000;
 	  }
-		/*
-      entity_keys = spriter_data.getEntityKeys();
-      entity_key = entity_keys[entity_index];
-      anim_keys = spriter_data.getAnimKeys(entity_key);
-      anim_key = anim_keys[anim_index];
-      //anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
-      //messages.innerHTML = "entity: " + entity_key + ", anim: " + anim_key + ", next anim: " + anim_key_next + "<br>" + file.path + file.spriter_url;
-      if (spriter_pose.event_array.length > 0) {
-        //messages.innerHTML += "<br>events: " + spriter_pose.event_array;
-      }
-      if (spriter_pose.sound_array.length > 0) {
-        //messages.innerHTML += "<br>sounds: " + spriter_pose.sound_array;
-      }
-      if (spriter_pose.tag_array.length > 0) {
-        //messages.innerHTML += "<br>tags: " + spriter_pose.tag_array;
-      }
-      var var_map_keys = Object.keys(spriter_pose.var_map);
-      if (var_map_keys.length > 0) {
-        //messages.innerHTML += "<br>vars: ";
-        var_map_keys.forEach(function(key) {
-          //messages.innerHTML += "<br>" + key + " : " + spriter_pose.var_map[key];
-        });
-      }*/
     }
 
     if (ctx) {
@@ -669,64 +486,6 @@ main.start = function (div) {
         }
       }
     });
-
-    var spin = 1;
-
-    // blend next pose bone into pose bone
-	/*
-    spriter_pose.bone_array.forEach(function(bone, bone_index) {
-      var bone_next = spriter_pose_next.bone_array[bone_index];
-      if (!bone_next) {
-        return;
-      }
-      spriter.Space.tween(bone.local_space, bone_next.local_space, anim_blend, spin, bone.local_space);
-    });
-
-    // blend next pose object into pose object
-    spriter_pose.object_array.forEach(function(object, object_index) {
-      var object_next = spriter_pose_next.object_array[object_index];
-      if (object_next) {
-        return;
-      }
-      switch (object.type) {
-        case 'sprite':
-          spriter.Space.tween(object.local_space, object_next.local_space, anim_blend, spin, object.local_space);
-          if (anim_blend >= 0.5) {
-            object.folder_index = object_next.folder_index;
-            object.file_index = object_next.file_index;
-            object.pivot.copy(object_next.pivot);
-          }
-          object.alpha = spriter.tween(object.alpha, object_next.alpha, anim_blend);
-          break;
-        case 'bone':
-          spriter.Space.tween(object.local_space, object_next.local_space, anim_blend, spin, object.local_space);
-          break;
-        case 'box':
-          spriter.Space.tween(object.local_space, object_next.local_space, anim_blend, spin, object.local_space);
-          if (anim_blend >= 0.5) {
-            object.pivot.copy(object_next.pivot);
-          }
-          break;
-        case 'point':
-          spriter.Space.tween(object.local_space, object_next.local_space, anim_blend, spin, object.local_space);
-          break;
-        case 'sound':
-          if (anim_blend >= 0.5) {
-            object.name = object_next.name;
-          }
-          object.volume = spriter.tween(object.volume, object_next.volume, anim_blend);
-          object.panning = spriter.tween(object.panning, object_next.panning, anim_blend);
-          break;
-        case 'entity':
-          spriter.Space.tween(object.local_space, object_next.local_space, anim_blend, spin, object.local_space);
-          break;
-        case 'variable':
-          break;
-        default:
-          throw new Error(object.type);
-      }
-    });
-	*/
 
     // compute bone world space
     spriter_pose.bone_array.forEach(function(bone) {
