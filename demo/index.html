@@ -11,8 +11,19 @@
 		<script type="text/javascript" src="render-ctx2d.js"></script>
 		<script type="text/javascript" src="render-webgl.js"></script>
 		<script type="text/javascript" src="main.js"></script>
-		<script type="text/javascript">window.addEventListener('load', function (event) { main.start(); }, false);</script>
+		<script type="text/javascript">window.addEventListener('load', function (event) { main.start('full'); }, false);</script>
+		<style>
+		html, body {
+		  height: 100%;
+		  margin: 0;
+		}
+
+		.full-height {
+		  height: 100%;
+		}
+		</style>
 	</head>
 	<body>
+	<div id="full" class="full-height"></div>
 	</body>
 </html>

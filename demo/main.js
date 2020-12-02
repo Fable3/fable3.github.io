@@ -5,75 +5,29 @@ goog.require('atlas');
 goog.require('RenderCtx2D');
 goog.require('RenderWebGL');
 
-main.start = function() {
-  document.body.style.margin = '0px';
-  document.body.style.border = '0px';
-  document.body.style.padding = '0px';
-  document.body.style.overflow = 'hidden';
-  document.body.style.fontFamily = '"PT Sans",Arial,"Helvetica Neue",Helvetica,Tahoma,sans-serif';
+var enemy_id = -1;
+set_enemy = function(id) {
+	enemy_id = id;
+}
 
-  var controls = document.createElement('div');
-  controls.style.position = 'absolute';
-  document.body.appendChild(controls);
+main.start = function (div) {
 
-  var add_checkbox_control = function(text, checked, callback) {
-    var control = document.createElement('div');
-    var input = document.createElement('input');
-    input.type = 'checkbox';
-    input.checked = checked;
-    input.addEventListener('click', function() {
-      callback(this.checked);
-    });
-    control.appendChild(input);
-    var label = document.createElement('label');
-    label.innerHTML = text;
-    control.appendChild(label);
-    controls.appendChild(control);
-  }
-
-  var add_range_control = function(text, init, min, max, step, callback) {
-    var control = document.createElement('div');
-    var input = document.createElement('input');
-    input.type = 'range';
-    input.value = init;
-    input.min = min;
-    input.max = max;
-    input.step = step;
-    input.addEventListener('input', function() {
-      callback(this.value);
-      label.innerHTML = text + " : " + this.value;
-    });
-    control.appendChild(input);
-    var label = document.createElement('label');
-    label.innerHTML = text + " : " + init;
-    control.appendChild(label);
-    controls.appendChild(control);
-  }
-
-  var messages = document.createElement('div');
-  messages.style.position = 'absolute';
-  messages.style.left = '0px';
-  messages.style.right = '0px';
-  messages.style.bottom = '0px';
-  messages.style.textAlign = 'center';
-  messages.style.zIndex = 0; // behind controls
-  document.body.appendChild(messages);
-  
+  var div_element = document.getElementById(div);
   var canvas = document.createElement('canvas');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = div_element.offsetWidth;
+  canvas.height = div_element.offsetHeight;
   canvas.style.position = 'absolute';
   canvas.style.width = canvas.width + 'px';
   canvas.style.height = canvas.height + 'px';
   canvas.style.zIndex = -1; // behind controls
 
-  document.body.appendChild(canvas);
+  div_element.appendChild(canvas);
 
   var ctx = canvas.getContext('2d');
 
   window.addEventListener('resize', function() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = div_element.offsetWidth;
+    canvas.height = div_element.offsetHeight;
     canvas.style.width = canvas.width + 'px';
     canvas.style.height = canvas.height + 'px';
   });
@@ -81,20 +35,20 @@ main.start = function() {
   var render_ctx2d = new RenderCtx2D(ctx);
 
   var canvas_gl = document.createElement('canvas');
-  canvas_gl.width = window.innerWidth;
-  canvas_gl.height = window.innerHeight;
+  canvas_gl.width = div_element.offsetWidth;
+  canvas_gl.height = div_element.offsetHeight;
   canvas_gl.style.position = 'absolute';
   canvas_gl.style.width = canvas_gl.width + 'px';
   canvas_gl.style.height = canvas_gl.height + 'px';
   canvas_gl.style.zIndex = -2; // behind 2D context canvas
 
-  document.body.appendChild(canvas_gl);
+  div_element.appendChild(canvas_gl);
 
   var gl = canvas_gl.getContext('webgl') || canvas_gl.getContext('experimental-webgl');
 
   window.addEventListener('resize', function() {
-    canvas_gl.width = window.innerWidth;
-    canvas_gl.height = window.innerHeight;
+    canvas_gl.width = div_element.offsetWidth;
+    canvas_gl.height = div_element.offsetHeight;
     canvas_gl.style.width = canvas_gl.width + 'px';
     canvas_gl.style.height = canvas_gl.height + 'px';
   });
@@ -102,14 +56,14 @@ main.start = function() {
   var render_webgl = new RenderWebGL(gl);
   
   var canvas_bg = document.createElement('canvas');
-  canvas_bg.width = window.innerWidth;
-  canvas_bg.height = window.innerHeight;
+  canvas_bg.width = div_element.offsetWidth;
+  canvas_bg.height = div_element.offsetHeight;
   canvas_bg.style.position = 'absolute';
   canvas_bg.style.width = canvas_bg.width + 'px';
   canvas_bg.style.height = canvas_bg.height + 'px';
   canvas_bg.style.zIndex = -3; // behind gl
 
-  document.body.appendChild(canvas_bg);
+  div_element.appendChild(canvas_bg);
 
   var ctx_bg = canvas_bg.getContext('2d');
   const img_bg = new Image();
@@ -117,14 +71,14 @@ main.start = function() {
   img_bg.onload = () => { ctx_bg.drawImage(img_bg, 0, 0, img_bg.width, img_bg.height, 0, 0, ctx_bg.canvas.width, ctx_bg.canvas.height); };
   
   var canvas_ground = document.createElement('canvas');
-  canvas_ground.width = window.innerWidth;
-  canvas_ground.height = window.innerHeight;
+  canvas_ground.width = div_element.offsetWidth;
+  canvas_ground.height = div_element.offsetHeight;
   canvas_ground.style.position = 'absolute';
   canvas_ground.style.width = canvas_ground.width + 'px';
   canvas_ground.style.height = canvas_ground.height + 'px';
   canvas_ground.style.zIndex = -1; // above
 
-  document.body.appendChild(canvas_ground);
+  div_element.appendChild(canvas_ground);
 
   var ctx_ground = canvas_ground.getContext('2d');
   const img_ground = new Image();
@@ -132,14 +86,14 @@ main.start = function() {
   img_ground.onload = () => { ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, 0, 0, ctx_ground.canvas.width, ctx_ground.canvas.height); };
   
   window.addEventListener('resize', function() {
-    canvas_bg.width = window.innerWidth;
-    canvas_bg.height = window.innerHeight;
+    canvas_bg.width = div_element.offsetWidth;
+    canvas_bg.height = div_element.offsetHeight;
     canvas_bg.style.width = canvas_bg.width + 'px';
     canvas_bg.style.height = canvas_bg.height + 'px';
 	ctx_bg.drawImage(img_bg, 0, 0, img_bg.width, img_bg.height, 0, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
 	
-	canvas_ground.width = window.innerWidth;
-    canvas_ground.height = window.innerHeight;
+	canvas_ground.width = div_element.offsetWidth;
+    canvas_ground.height = div_element.offsetHeight;
     canvas_ground.style.width = canvas_ground.width + 'px';
     canvas_ground.style.height = canvas_ground.height + 'px';
 	ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, 0, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
@@ -156,18 +110,18 @@ main.start = function() {
   var enable_render_webgl = !!gl;
   var enable_render_ctx2d = !!ctx && !enable_render_webgl;
 
-  add_checkbox_control("GL", enable_render_webgl, function(checked) {
-    enable_render_webgl = checked;
-  });
-  add_checkbox_control("2D", enable_render_ctx2d, function(checked) {
-    enable_render_ctx2d = checked;
-  });
+  //add_checkbox_control("GL", enable_render_webgl, function(checked) {
+  //  enable_render_webgl = checked;
+  //});
+  //add_checkbox_control("2D", enable_render_ctx2d, function(checked) {
+  //  enable_render_ctx2d = checked;
+  //});
 
   var enable_render_debug_pose = false;
 
-  add_checkbox_control("2D Debug Pose", enable_render_debug_pose, function(checked) {
-    enable_render_debug_pose = checked;
-  });
+  //add_checkbox_control("2D Debug Pose", enable_render_debug_pose, function(checked) {
+  //  enable_render_debug_pose = checked;
+  //});
 
   // sound player (Web Audio Context)
   var player_web = {};
@@ -175,9 +129,9 @@ main.start = function() {
   player_web.mute = true;
   player_web.sounds = {};
 
-  add_checkbox_control("Mute", player_web.mute, function(checked) {
-    player_web.mute = checked;
-  });
+  //add_checkbox_control("Mute", player_web.mute, function(checked) {
+  //  player_web.mute = checked;
+  //});
 
   var spriter_data = null;
   var spriter_pose = null;
@@ -192,19 +146,19 @@ main.start = function() {
 
   var anim_blend = 0.0;
 
-  add_range_control("Anim Rate", anim_rate, -2.0, 2.0, 0.1, function(value) {
-    anim_rate = value;
-  });
+  //add_range_control("Anim Rate", anim_rate, -2.0, 2.0, 0.1, function(value) {
+  //  anim_rate = value;
+  //});
 
-  add_range_control("Anim Blend", anim_blend, 0.0, 1.0, 0.01, function(value) {
-    anim_blend = value;
-  });
+  //add_range_control("Anim Blend", anim_blend, 0.0, 1.0, 0.01, function(value) {
+  //  anim_blend = value;
+  //});
 
   var alpha = 1.0;
 
-  add_range_control("Alpha", alpha, 0.0, 1.0, 0.01, function(value) {
-    alpha = value;
-  });
+  //add_range_control("Alpha", alpha, 0.0, 1.0, 0.01, function(value) {
+  //  alpha = value;
+  //});
 
   var loadFile = function(file, callback) {
     render_ctx2d.dropData(spriter_data, atlas_data);
@@ -351,8 +305,17 @@ main.start = function() {
 	file.shift_y=(shift_y||0)*scale;
     files.push(file);
   }
+
+  //add_file("GreyGuy/", "player.scon", "player.tps.json");
+  //add_file("GreyGuyPlus/", "player_006.scon", "player_006.tps.json");
+  //add_file("SCML/wizard_1/", "1.scml");
+  //add_file("SCML/wizard_2/", "2.scml");
+  //add_file("SCML/wizard_3/", "3.scml");
+  //add_file("SCML/pirate_1/", "1.scml");
+  //add_file("SCML/pirate_2/", "2.scml");
+  //add_file("SCML/pirate_3/", "3.scml");
   
-  /*add_file("SCML/b1/", "1.scml", 0.3, 200);
+ /* add_file("SCML/b1/", "1.scml", 0.3, 200);
   add_file("SCML/b2/", "2.scml", 0.3, 300);
   add_file("SCML/b3/", "3.scml", 0.3);
   add_file("SCML/b4/", "4.scml", 0.3);
@@ -373,7 +336,7 @@ main.start = function() {
   add_file("SCML/a9/", "9.scml", 0.3);
   add_file("SCML/a10/", "10.scml", 0.3);
   
-    add_file("SCML/1_ORK/", "1_ork.scml", 0.3, 150);
+  add_file("SCML/1_ORK/", "1_ork.scml", 0.3, 150);
   add_file("SCML/2_ORK/", "2_ork.scml", 0.3, 150);
   add_file("SCML/3_ORK/", "3_ork.scml", 0.3, 150);
   
@@ -384,23 +347,23 @@ main.start = function() {
   // kicsit fel
   add_file("SCML/elf_1/", "1.scml", 0.2, 150);
   add_file("SCML/elf_2/", "2.scml", 0.2, 250);
-  add_file("SCML/elf_3/", "3.scml", 0.2, 200);*/
+  add_file("SCML/elf_3/", "3.scml", 0.2, 200);
   
   
   add_file("SCML/1_troll/", "1_troll.scml", 0.8, 280);
-  //add_file("SCML/2_troll/", "2_troll.scml", 0.8, 280);
-  //add_file("SCML/3_troll/", "3_troll.scml", 0.8, 280);
+  add_file("SCML/2_troll/", "2_troll.scml", 0.8, 280);
+  add_file("SCML/3_troll/", "3_troll.scml", 0.8, 280);
   
   
   add_file("SCML/woman_warrior_1/", "1.scml", 0.2);
-  //add_file("SCML/woman_warrior_2/", "2.scml", 0.2);
-  //add_file("SCML/woman_warrior_3/", "3.scml", 0.2);
+  add_file("SCML/woman_warrior_2/", "2.scml", 0.2);
+  add_file("SCML/woman_warrior_3/", "3.scml", 0.2);
   
   add_file("SCML/minotaur_1/", "Animations.scml", 1);
-  //add_file("SCML/minotaur_2/", "Animations.scml", 1);
-  //add_file("SCML/minotaur_3/", "Animations.scml", 1);
+  add_file("SCML/minotaur_2/", "Animations.scml", 1);
+  add_file("SCML/minotaur_3/", "Animations.scml", 1);
   
-  /*add_file("SCML/Golem_1/", "Animations.scml", 1);
+  add_file("SCML/Golem_1/", "Animations.scml", 1);
   add_file("SCML/Golem_2/", "Animations.scml", 1);
   add_file("SCML/Golem_3/", "Animations.scml", 1);
   
@@ -416,15 +379,21 @@ main.start = function() {
   
   add_file("SCML/wraith_1/", "Animations.scml", 1);
   add_file("SCML/wraith_2/", "Animations.scml", 1);
-  add_file("SCML/wraith_3/", "Animations.scml", 1);*/
+  add_file("SCML/wraith_3/", "Animations.scml", 1);
   
   add_file("SCML/GolemB_1/", "Animations.scml", 1);
-  //add_file("SCML/GolemB_2/", "Animations.scml", 1);
-  //add_file("SCML/GolemB_3/", "Animations.scml", 1);
+  add_file("SCML/GolemB_2/", "Animations.scml", 1);
+  add_file("SCML/GolemB_3/", "Animations.scml", 1);
   
-  /*add_file("SCML/fairy_1/", "1.scml", 0.2);
+  add_file("SCML/fairy_1/", "1.scml", 0.2);
   add_file("SCML/fairy_2/", "2.scml", 0.2);
   add_file("SCML/fairy_3/", "3.scml", 0.2);*/
+  
+  
+  add_file("SCML/woman_warrior_1/", "1.scml", 0.2);
+  add_file("SCML/GolemB_1/", "Animations.scml", 1);
+  add_file("SCML/1_troll/", "1_troll.scml", 0.8, 280);
+  add_file("SCML/minotaur_1/", "Animations.scml", 1);
   
 
   //add_file("SpriterExamples/BoxTagVariable/", "player.scon");
@@ -451,7 +420,7 @@ main.start = function() {
   var loading = false;
 
   var file = files[file_index];
-  messages.innerHTML = "loading";
+ // messages.innerHTML = "loading";
   loading = true;
   loadFile(file, function() {
     loading = false;
@@ -496,7 +465,7 @@ main.start = function() {
                 file_index = 0;
               }
               file = files[file_index];
-              messages.innerHTML = "loading";
+              //messages.innerHTML = "loading";
               loading = true;
               loadFile(file, function() {
                 loading = false;
@@ -517,29 +486,52 @@ main.start = function() {
               return;
             }
     }
-	
-	document.body.addEventListener('keypress',function (event){
-	  if (event.keyCode === 49){
-		    /*anim_index = 0;
-			entity_index = 0;
-			LoadNextFile();
+	// nem kéne minden loopban hozzáadni (?)
+	//document.body.addEventListener('keypress',function (event){
+	//  if (event.keyCode === 49){
+	//	    /*anim_index = 0;
+	//		entity_index = 0;
+	//		LoadNextFile();
+	//		entity_keys = spriter_data.getEntityKeys();
+	//		entity_key = entity_keys[entity_index];
+	//		anim_keys = spriter_data.getAnimKeys(entity_key);
+	//		anim_key = anim_keys[anim_index];
+	//		spriter_pose.setAnim(anim_key);
+	//		anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
+	//		spriter_pose_next.setAnim(anim_key_next);
+	//		spriter_pose.setTime(anim_time = 0);
+	//		spriter_pose_next.setTime(anim_time);
+	//		anim_length = spriter_pose.curAnimLength() || 1000;
+	//		anim_length_next = spriter_pose_next.curAnimLength() || 1000;*/
+	//		anim_index=anim_keys.length;
+	//		entity_index = entity_keys.length-1;
+	//	  }
+	//});
+	if (enemy_id!=-1 && enemy_id!=file_index)
+	{
+		  file_index = enemy_id;
+		  file = files[file_index];
+		  //messages.innerHTML = "loading";
+		  loading = true;
+		  loadFile(file, function() {
+			loading = false;
 			entity_keys = spriter_data.getEntityKeys();
-			entity_key = entity_keys[entity_index];
+			entity_key = entity_keys[entity_index = 0];
+			spriter_pose.setEntity(entity_key);
+			spriter_pose_next.setEntity(entity_key);
 			anim_keys = spriter_data.getAnimKeys(entity_key);
-			anim_key = anim_keys[anim_index];
+			anim_key = anim_keys[anim_index = 0];
 			spriter_pose.setAnim(anim_key);
 			anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
 			spriter_pose_next.setAnim(anim_key_next);
 			spriter_pose.setTime(anim_time = 0);
 			spriter_pose_next.setTime(anim_time);
 			anim_length = spriter_pose.curAnimLength() || 1000;
-			anim_length_next = spriter_pose_next.curAnimLength() || 1000;*/
-			anim_index=anim_keys.length;
-			entity_index = entity_keys.length-1;
-		  }
-	});
+			anim_length_next = spriter_pose_next.curAnimLength() || 1000;
+		  });
+		  return;
+	}
 	
-
     if (!loading) {
       spriter_pose.update(dt * anim_rate);
       var anim_rate_next = anim_rate * anim_length_next / anim_length;
@@ -555,7 +547,11 @@ main.start = function() {
           anim_index = 0;
           if (++entity_index >= entity_keys.length) {
             entity_index = 0;
-			LoadNextFile();
+			if (enemy_id==-1)
+			{
+				LoadNextFile();
+				return;
+			}
           }
           entity_keys = spriter_data.getEntityKeys();
           entity_key = entity_keys[entity_index];
@@ -580,21 +576,21 @@ main.start = function() {
       anim_keys = spriter_data.getAnimKeys(entity_key);
       anim_key = anim_keys[anim_index];
       anim_key_next = anim_keys[(anim_index + 1) % anim_keys.length];
-      messages.innerHTML = "entity: " + entity_key + ", anim: " + anim_key + ", next anim: " + anim_key_next + "<br>" + file.path + file.spriter_url;
+      //messages.innerHTML = "entity: " + entity_key + ", anim: " + anim_key + ", next anim: " + anim_key_next + "<br>" + file.path + file.spriter_url;
       if (spriter_pose.event_array.length > 0) {
-        messages.innerHTML += "<br>events: " + spriter_pose.event_array;
+        //messages.innerHTML += "<br>events: " + spriter_pose.event_array;
       }
       if (spriter_pose.sound_array.length > 0) {
-        messages.innerHTML += "<br>sounds: " + spriter_pose.sound_array;
+        //messages.innerHTML += "<br>sounds: " + spriter_pose.sound_array;
       }
       if (spriter_pose.tag_array.length > 0) {
-        messages.innerHTML += "<br>tags: " + spriter_pose.tag_array;
+        //messages.innerHTML += "<br>tags: " + spriter_pose.tag_array;
       }
       var var_map_keys = Object.keys(spriter_pose.var_map);
       if (var_map_keys.length > 0) {
-        messages.innerHTML += "<br>vars: ";
+        //messages.innerHTML += "<br>vars: ";
         var_map_keys.forEach(function(key) {
-          messages.innerHTML += "<br>" + key + " : " + spriter_pose.var_map[key];
+          //messages.innerHTML += "<br>" + key + " : " + spriter_pose.var_map[key];
         });
       }
     }
