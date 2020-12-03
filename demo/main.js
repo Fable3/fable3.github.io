@@ -7,12 +7,20 @@ goog.require('RenderWebGL');
 
 var enemy_id = -1;
 var enemy_anim_key = 'idle';
+const img_bg = new Image();
+const img_ground = new Image();
+
 set_enemy = function(id) {
 	enemy_id = id;
 }
 
 set_anim = function(key) {
 	enemy_anim_key = key;
+}
+
+set_background = function(bg_index) {
+	img_bg.src = ['Cartoon_Forest_BG_01.png', 'Cartoon_Forest_BG_04.png', 'fairy_tale_bg.png', 'winter_bg.png', 'desert_bg.png'][bg_index];
+    img_ground.src = ['Cartoon_Forest_BG_01_ground.png', 'Cartoon_Forest_BG_04_ground.png', 'fairy_tale_ground.png', 'winter_ground.png','desert_ground.png'][bg_index];
 }
 
 main.start = function (div) {
@@ -71,9 +79,26 @@ main.start = function (div) {
   div_element.appendChild(canvas_bg);
 
   var ctx_bg = canvas_bg.getContext('2d');
-  const img_bg = new Image();
-  img_bg.src = 'Cartoon_Forest_BG_01.png';
-  img_bg.onload = () => { ctx_bg.drawImage(img_bg, 0, 0, img_bg.width, img_bg.height, 0, 0, ctx_bg.canvas.width, ctx_bg.canvas.height); };
+  
+  //img_bg.src = 'Cartoon_Forest_BG_01.png';
+  //img_bg.src = 'fairy_tale_bg.png';
+  //img_bg.src = 'winter_bg.png';
+  var bg_offset = 0;
+  var redraw_bg = function() {
+	  ctx_bg.clearRect(0, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
+	  var x = bg_offset%ctx_bg.canvas.width;
+	  ctx_bg.drawImage(img_bg, 0, 0, img_bg.width, img_bg.height, -x, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
+	  ctx_bg.drawImage(img_bg, 0, 0, img_bg.width, img_bg.height, ctx_bg.canvas.width-x, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
+  }
+  
+  var redraw_ground = function() {
+	  ctx_ground.clearRect(0, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
+	  var x = bg_offset%ctx_ground.canvas.width;
+	  ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, -x, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
+	  ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, ctx_ground.canvas.width-x, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
+  }
+  
+  img_bg.onload = () => { redraw_bg(); };
   
   var canvas_ground = document.createElement('canvas');
   canvas_ground.width = div_element.offsetWidth;
@@ -86,9 +111,12 @@ main.start = function (div) {
   div_element.appendChild(canvas_ground);
 
   var ctx_ground = canvas_ground.getContext('2d');
-  const img_ground = new Image();
-  img_ground.src = 'Cartoon_Forest_BG_01_ground.png';
-  img_ground.onload = () => { ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, 0, 0, ctx_ground.canvas.width, ctx_ground.canvas.height); };
+  
+  //img_ground.src = 'Cartoon_Forest_BG_01_ground.png';
+  //img_ground.src = 'fairy_tale_ground.png';
+  //img_ground.src = 'winter_ground.png';
+  img_ground.onload = () => { redraw_ground() };
+  set_background(0);
   
   window.addEventListener('resize', function() {
     canvas_bg.width = div_element.offsetWidth;
@@ -102,6 +130,7 @@ main.start = function (div) {
     canvas_ground.style.width = canvas_ground.width + 'px';
     canvas_ground.style.height = canvas_ground.height + 'px';
 	ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, 0, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
+	redraw_bg();
   });
 
   var camera_x = 0;
@@ -281,15 +310,6 @@ main.start = function (div) {
     files.push(file);
   }
 
-  //add_file("GreyGuy/", "player.scon", "player.tps.json");
-  //add_file("GreyGuyPlus/", "player_006.scon", "player_006.tps.json");
-  //add_file("SCML/wizard_1/", "1.scml");
-  //add_file("SCML/wizard_2/", "2.scml");
-  //add_file("SCML/wizard_3/", "3.scml");
-  //add_file("SCML/pirate_1/", "1.scml");
-  //add_file("SCML/pirate_2/", "2.scml");
-  //add_file("SCML/pirate_3/", "3.scml");
-  
  /* add_file("SCML/b1/", "1.scml", 0.3, 200);
   add_file("SCML/b2/", "2.scml", 0.3, 300);
   add_file("SCML/b3/", "3.scml", 0.3);
@@ -397,7 +417,7 @@ main.start = function (div) {
     prev_time = time; // ms
 
     var entity_key;
-    if (enemy_id!=-1 && enemy_id!=file_index)
+    if (enemy_id!=-1 && enemy_id!=file_index && !loading)
 	{
 	  file_index = enemy_id;
 	  file = files[file_index];
@@ -417,8 +437,23 @@ main.start = function (div) {
     if (!loading) {
       spriter_pose.update(dt * anim_rate);
       anim_time += dt * anim_rate;
+	  if (anim_key=='run')
+	  {
+		  //spriter_pose.x+=(dt * anim_rate)/1.0;
+		  //enemy_pos_x+=(dt * anim_rate)/10000.0;
+		  bg_offset+=(dt * anim_rate)/10.0;
+		  redraw_bg();
+		  redraw_ground();
+	  } else if (anim_key=='walk')
+	  {
+		  //enemy_pos_x+=(dt * anim_rate)/30000.0;
+		  bg_offset+=(dt * anim_rate)/30.0;
+		  redraw_bg();
+		  redraw_ground();
+	  }
+		  
 
-      if (anim_time >= (anim_length * anim_repeat) && anim_key!='idle') {
+      if (anim_time >= (anim_length * anim_repeat) && anim_key!='idle' && anim_key!='walk' && anim_key!='run') {
 		if (anim_key=='die')
 		{
 			//anim_time = anim_length-1;
