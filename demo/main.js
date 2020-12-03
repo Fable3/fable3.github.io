@@ -7,8 +7,7 @@ goog.require('RenderWebGL');
 
 var enemy_id = -1;
 var enemy_anim_key = 'idle';
-const img_bg = new Image();
-const img_ground = new Image();
+const background_layers = [new Image(), new Image(), new Image(), new Image(), new Image()];
 
 set_enemy = function(id) {
 	enemy_id = id;
@@ -19,8 +18,11 @@ set_anim = function(key) {
 }
 
 set_background = function(bg_index) {
-	img_bg.src = ['Cartoon_Forest_BG_01.png', 'Cartoon_Forest_BG_04.png', 'fairy_tale_bg.png', 'winter_bg.png', 'desert_bg.png'][bg_index];
-    img_ground.src = ['Cartoon_Forest_BG_01_ground.png', 'Cartoon_Forest_BG_04_ground.png', 'fairy_tale_ground.png', 'winter_ground.png','desert_ground.png'][bg_index];
+	var bg_names=['forest', 'night', 'fairy', 'desert', 'winter'];
+	for(i=0;i<5;i++)
+		background_layers[i].src = 'background/'+bg_names[bg_index%bg_names.length]+'/'+(i+1).toString()+'.png';
+	//img_bg.src = ['Cartoon_Forest_BG_01.png', 'Cartoon_Forest_BG_04.png', 'fairy_tale_bg.png', 'winter_bg.png', 'desert_bg.png'][bg_index];
+    //img_ground.src = ['Cartoon_Forest_BG_01_ground.png', 'Cartoon_Forest_BG_04_ground.png', 'fairy_tale_ground.png', 'winter_ground.png','desert_ground.png'][bg_index];
 }
 
 main.start = function (div) {
@@ -84,21 +86,17 @@ main.start = function (div) {
   //img_bg.src = 'fairy_tale_bg.png';
   //img_bg.src = 'winter_bg.png';
   var bg_offset = 0;
-  var redraw_bg = function() {
-	  ctx_bg.clearRect(0, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
-	  var x = bg_offset%ctx_bg.canvas.width;
-	  ctx_bg.drawImage(img_bg, 0, 0, img_bg.width, img_bg.height, -x, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
-	  ctx_bg.drawImage(img_bg, 0, 0, img_bg.width, img_bg.height, ctx_bg.canvas.width-x, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
-  }
   
-  var redraw_ground = function() {
+  
+  /*var redraw_ground = function() {
 	  ctx_ground.clearRect(0, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
 	  var x = bg_offset%ctx_ground.canvas.width;
 	  ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, -x, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
 	  ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, ctx_ground.canvas.width-x, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
-  }
+  }*/
   
-  img_bg.onload = () => { redraw_bg(); };
+  //img_bg.onload = () => { redraw_bg(); };
+  
   
   var canvas_ground = document.createElement('canvas');
   canvas_ground.width = div_element.offsetWidth;
@@ -111,11 +109,31 @@ main.start = function (div) {
   div_element.appendChild(canvas_ground);
 
   var ctx_ground = canvas_ground.getContext('2d');
+  var redraw_bg = function() {
+	  ctx_bg.clearRect(0, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
+	  var layer_mul=[0.1, 0.2, 0.5, 1, 1.2];
+	  for(i=0;i<4;i++)
+	  {
+		var img_bg = background_layers[i];
+		
+		var x = (bg_offset*layer_mul[i])%ctx_bg.canvas.width;
+		ctx_bg.drawImage(img_bg, 0, 0, img_bg.width, img_bg.height, -x, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
+		ctx_bg.drawImage(img_bg, 0, 0, img_bg.width, img_bg.height, ctx_bg.canvas.width-x, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
+	  }
+	  
+	  var img_ground = background_layers[4];
+	  ctx_ground.clearRect(0, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
+	  var x = (bg_offset*layer_mul[4])%ctx_ground.canvas.width;
+	  ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, -x, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
+	  ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, ctx_ground.canvas.width-x, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
+  }
+  for(i=0;i<5;i++)
+	background_layers[i].onload = () => { redraw_bg(); };
   
   //img_ground.src = 'Cartoon_Forest_BG_01_ground.png';
   //img_ground.src = 'fairy_tale_ground.png';
   //img_ground.src = 'winter_ground.png';
-  img_ground.onload = () => { redraw_ground() };
+  //img_ground.onload = () => { redraw_ground() };
   set_background(0);
   
   window.addEventListener('resize', function() {
@@ -123,13 +141,13 @@ main.start = function (div) {
     canvas_bg.height = div_element.offsetHeight;
     canvas_bg.style.width = canvas_bg.width + 'px';
     canvas_bg.style.height = canvas_bg.height + 'px';
-	ctx_bg.drawImage(img_bg, 0, 0, img_bg.width, img_bg.height, 0, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
+	//ctx_bg.drawImage(img_bg, 0, 0, img_bg.width, img_bg.height, 0, 0, ctx_bg.canvas.width, ctx_bg.canvas.height);
 	
 	canvas_ground.width = div_element.offsetWidth;
     canvas_ground.height = div_element.offsetHeight;
     canvas_ground.style.width = canvas_ground.width + 'px';
     canvas_ground.style.height = canvas_ground.height + 'px';
-	ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, 0, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
+	//ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, 0, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
 	redraw_bg();
   });
 
@@ -443,13 +461,11 @@ main.start = function (div) {
 		  //enemy_pos_x+=(dt * anim_rate)/10000.0;
 		  bg_offset+=(dt * anim_rate)/10.0;
 		  redraw_bg();
-		  redraw_ground();
 	  } else if (anim_key=='walk')
 	  {
 		  //enemy_pos_x+=(dt * anim_rate)/30000.0;
 		  bg_offset+=(dt * anim_rate)/30.0;
 		  redraw_bg();
-		  redraw_ground();
 	  }
 		  
 
