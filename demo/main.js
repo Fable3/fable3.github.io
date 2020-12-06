@@ -7,6 +7,8 @@ goog.require('RenderWebGL');
 
 var enemy_id = -1;
 var enemy_anim_key = 'idle';
+var selected_card_index = 2;
+
 const background_layers = [new Image(), new Image(), new Image(), new Image(), new Image()];
 
 set_enemy = function(id) {
@@ -81,6 +83,20 @@ var test_arg = {
     }
   ]
 };
+
+var card_pos=[];
+
+get_card_pos = function(id) {
+	var i;
+	for(i=0;i<card_pos.length;i++)
+	{
+		if (card_pos[i].id==id) return card_pos[i];
+	}
+	var cp={"id":id, "x":0, "y":0, "t":0, "rot":0, "target_x":0, "target_y":0, "target_rot":0, "init":0};
+	card_pos.push(cp);
+	return cp;
+}
+
 
 main.start = function (div) {
 
@@ -728,10 +744,61 @@ main.start = function (div) {
 		  for(i=0;i<test_arg.options.length;i++)
 		  {
 			ctx_cards.save();
-			rot=-i*max_rot*2/(test_arg.options.length-1)+max_rot;
-			card_x=-radi*Math.sin(rot)+ctx_cards.canvas.width/2;
-			card_y=-radi*Math.cos(rot)+radi+ctx_cards.canvas.height/2;
-			ctx_cards.transform(card_size*Math.cos(rot), -card_size*Math.sin(rot), card_size*Math.sin(rot), card_size*Math.cos(rot), card_x, card_y);
+			var rot;
+			var card_x;
+			var card_y;
+			if (selected_card_index==i)
+			{
+				rot = 0;
+				card_x = ctx_cards.canvas.width/2;
+				card_y = card_size*card_image.height*1.5;
+			} else
+			{
+				var card_count = test_arg.options.length;
+				var card_index = i;
+				if (selected_card_index!=-1)
+				{
+					card_count--;
+					if (selected_card_index<i) card_index--;
+				}
+				rot=-card_index*max_rot*2/(card_count-1)+max_rot;
+				card_x=-radi*Math.sin(rot)+ctx_cards.canvas.width/2;
+				card_y=-radi*Math.cos(rot)+radi+ctx_cards.canvas.height/2;
+				if (selected_card_index!=-1)
+				{
+					card_y+=card_size*card_image.height;
+				}
+			}
+			var cp = get_card_pos(i);
+			if (cp.target_rot!=rot || cp.target_x!=card_x || cp.target_y!=card_y)
+			{
+				if (!cp.init)
+				{
+					cp.init = 1;
+					cp.x=ctx_cards.canvas.width/2;
+					cp.y=ctx_cards.canvas.height/2;
+				}
+				cp.target_rot = rot;
+				cp.target_x = card_x;
+				cp.target_y = card_y;
+				cp.t = 300;
+			}
+			if (cp.t>dt)
+			{
+				var rot_diff = (cp.target_rot - cp.rot+Math.PI*3)%(Math.PI*2)-Math.PI;
+				cp.rot+=rot_diff*dt/cp.t;
+				cp.x+=(cp.target_x-cp.x)*dt/cp.t;
+				cp.y+=(cp.target_y-cp.y)*dt/cp.t;
+				cp.t-=dt;
+			} else
+			{
+				cp.x = cp.target_x;
+				cp.y = cp.target_y;
+				cp.rot=cp.target_rot;
+				cp.t = 0;
+			}
+			
+			ctx_cards.transform(card_size*Math.cos(cp.rot), -card_size*Math.sin(cp.rot), card_size*Math.sin(cp.rot), card_size*Math.cos(cp.rot), cp.x, cp.y);			
 			var img=card_image;
 			if (i==2) img=card_burnt_image;
 			ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
