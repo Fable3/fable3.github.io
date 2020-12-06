@@ -21,8 +21,6 @@ set_background = function(bg_index) {
 	var bg_names=['forest', 'night', 'fairy', 'desert', 'winter'];
 	for(i=0;i<5;i++)
 		background_layers[i].src = 'background/'+bg_names[bg_index%bg_names.length]+'/'+(i+1).toString()+'.png';
-	//img_bg.src = ['Cartoon_Forest_BG_01.png', 'Cartoon_Forest_BG_04.png', 'fairy_tale_bg.png', 'winter_bg.png', 'desert_bg.png'][bg_index];
-    //img_ground.src = ['Cartoon_Forest_BG_01_ground.png', 'Cartoon_Forest_BG_04_ground.png', 'fairy_tale_ground.png', 'winter_ground.png','desert_ground.png'][bg_index];
 }
 
 test_object_pass = function (example) {
@@ -141,9 +139,6 @@ main.start = function (div) {
 
   var ctx_bg = canvas_bg.getContext('2d');
   
-  //img_bg.src = 'Cartoon_Forest_BG_01.png';
-  //img_bg.src = 'fairy_tale_bg.png';
-  //img_bg.src = 'winter_bg.png';
   var bg_offset = 0;
   
   
@@ -164,7 +159,6 @@ main.start = function (div) {
   canvas_ground.style.width = canvas_ground.width + 'px';
   canvas_ground.style.height = canvas_ground.height + 'px';
   canvas_ground.style.zIndex = -1; // above
-
   div_element.appendChild(canvas_ground);
 
   var ctx_ground = canvas_ground.getContext('2d');
@@ -189,11 +183,18 @@ main.start = function (div) {
   for(i=0;i<5;i++)
 	background_layers[i].onload = () => { redraw_bg(); };
   
-  //img_ground.src = 'Cartoon_Forest_BG_01_ground.png';
-  //img_ground.src = 'fairy_tale_ground.png';
-  //img_ground.src = 'winter_ground.png';
-  //img_ground.onload = () => { redraw_ground() };
   set_background(0);
+  
+  var canvas_cards = document.createElement('canvas');
+  canvas_cards.width = div_element.offsetWidth;
+  canvas_cards.height = div_element.offsetHeight;
+  canvas_cards.style.position = 'absolute';
+  canvas_cards.style.width = canvas_cards.width + 'px';
+  canvas_cards.style.height = canvas_cards.height + 'px';
+  canvas_cards.style.zIndex = 0; // above ground
+  div_element.appendChild(canvas_cards);
+
+  var ctx_cards = canvas_cards.getContext('2d');
   
   window.addEventListener('resize', function() {
     canvas_bg.width = div_element.offsetWidth;
@@ -207,6 +208,11 @@ main.start = function (div) {
     canvas_ground.style.width = canvas_ground.width + 'px';
     canvas_ground.style.height = canvas_ground.height + 'px';
 	//ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, 0, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
+	
+	canvas_cards.width = div_element.offsetWidth;
+    canvas_cards.height = div_element.offsetHeight;
+    canvas_cards.style.width = canvas_cards.width + 'px';
+    canvas_cards.style.height = canvas_cards.height + 'px';
 	redraw_bg();
   });
 
@@ -475,7 +481,7 @@ main.start = function (div) {
   
   var flame_image = new Image();
   flame_image.src="flame.png";
-  var flame_idx=0;
+  var flame_anim_time=0;
   
   var file_index = 0;
   
@@ -711,34 +717,42 @@ main.start = function (div) {
         //ctx.translate(0, -10);
         //render_ctx2d.drawDebugPose(spriter_pose_next, atlas_data);
       }
-	  flame_idx+=dt;
+	  flame_anim_time+=dt;
 	  if (card_image.complete && card_burnt_image.complete)
 	  {
+		  ctx_cards.clearRect(0, 0, ctx_cards.canvas.width, ctx_cards.canvas.height);
+		  card_size=ctx_cards.canvas.width/10/card_image.width;
+		  var max_rot = 0.3;
+		  var radi = 3200*card_size;
+
 		  for(i=0;i<test_arg.options.length;i++)
 		  {
-			ctx.save();
-			max_rot = 0.5;
+			ctx_cards.save();
 			rot=-i*max_rot*2/(test_arg.options.length-1)+max_rot;
-			card_x=2000*Math.sin(-rot)-200;
-			card_y=2000*Math.cos(rot)-500;
-			ctx.transform(Math.cos(rot), Math.sin(rot), Math.sin(rot), -Math.cos(rot), card_x+card_image.width/2, card_y+card_image.height/2);
+			card_x=-radi*Math.sin(rot)+ctx_cards.canvas.width/2;
+			card_y=-radi*Math.cos(rot)+radi+ctx_cards.canvas.height/2;
+			ctx_cards.transform(card_size*Math.cos(rot), -card_size*Math.sin(rot), card_size*Math.sin(rot), card_size*Math.cos(rot), card_x, card_y);
 			var img=card_image;
 			if (i==2) img=card_burnt_image;
-			ctx.drawImage(img, -card_image.width/2, -card_image.height/2);
+			ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
 			if (flame_image.complete && i==0)
 			{
 				var frame_count = 18;
-				var frame_idx = Math.floor(flame_idx/100)%frame_count;
+				var frame_idx = Math.floor(flame_anim_time/100)%frame_count;
 				frame_height = flame_image.height/frame_count;
 				var marg = 70;
-				ctx.drawImage(flame_image, 0, frame_idx*frame_height, flame_image.width, frame_height, -card_image.width/2-marg, -card_image.height/2-marg, card_image.width+marg*2, card_image.height+marg*2+20);
+				ctx_cards.drawImage(flame_image, 0, frame_idx*frame_height, flame_image.width, frame_height, -card_image.width/2-marg, -card_image.height/2-marg, card_image.width+marg*2, card_image.height+marg*2+20);
 			}
-			//ctx.font = "200px FangSong";
-			ctx.font = "200px KaiTi";
-			ctx.fillStyle = "red";
-			ctx.textAlign = "center";
-			ctx.fillText(test_arg.options[i].chars, 0, 0);
-			ctx.restore();
+			//ctx_cards.font = "200px FangSong";
+			//ctx_cards.font = "200px KaiTi";
+			//font-family: 'Ma Shan Zheng', cursive;
+			//font-family: 'Noto Sans SC', sans-serif;
+			ctx_cards.font = "200px Ma Shan Zheng";
+			//ctx_cards.font = "200px Noto Sans SC";
+			ctx_cards.fillStyle = "red";
+			ctx_cards.textAlign = "center";
+			ctx_cards.fillText(test_arg.options[i].chars, 0, 0);
+			ctx_cards.restore();
 		  }
 	  }
     }
