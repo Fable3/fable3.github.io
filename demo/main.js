@@ -518,6 +518,36 @@ main.start = function (div) {
 
   var prev_time = 0;
   var rot=0;
+  
+  canvas_cards.addEventListener('click', function(e) {
+	  if (!card_image.complete) return;
+	  var rect = e.target.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+	  var i;
+	  var card_size=canvas_cards.width/10/card_image.width;
+	  for(i=0;i<card_pos.length;i++)
+	  {
+		  var cp=card_pos[i];
+		  var dx = x-cp.x;
+		  var dy = y-cp.y;
+		  var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/card_size;
+		  var ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/card_size;
+		  if (tx>-card_image.width/2 && tx<card_image.width/2 &&
+		      ty>-card_image.height/2 && ty<card_image.height/2)
+		  {
+			  if (selected_card_index == i)
+			  {
+				  selected_card_index = -1;
+			  } else
+			  {
+				  selected_card_index = i;
+			  }
+			  break;
+		  }
+	  }
+    }
+  );
  
 
   var loop = function(time) {
