@@ -25,6 +25,65 @@ set_background = function(bg_index) {
     //img_ground.src = ['Cartoon_Forest_BG_01_ground.png', 'Cartoon_Forest_BG_04_ground.png', 'fairy_tale_ground.png', 'winter_ground.png','desert_ground.png'][bg_index];
 }
 
+test_object_pass = function (example) {
+	console.log( 'example');
+	console.log( JSON.stringify(example, null, 2));
+	
+    var o = example.question
+    console.log(o.chars)
+    console.log(o.pinyin)
+    console.log(o.english)
+    console.log(o.unAccented)
+    console.log(example.options[2].chars)
+}
+
+var test_arg = {
+  "question": {
+    "chars": "你们",
+    "pinyin": "nǐmen",
+    "english": "you (pl.)",
+    "sound": "/mp3/你们.mp3",
+    "unAccented": "nimen"
+  },
+  "options": [
+    {
+      "chars": "人",
+      "pinyin": "rén",
+      "english": "person",
+      "sound": "/mp3/人.mp3",
+      "unAccented": "ren"
+    },
+    {
+      "chars": "一",
+      "pinyin": "yī",
+      "english": "one",
+      "sound": "/mp3/一.mp3",
+      "unAccented": "yi"
+    },
+    {
+      "chars": "你",
+      "pinyin": "nǐ",
+      "english": "you",
+      "sound": "/mp3/你.mp3",
+      "unAccented": "ni"
+    },
+    {
+      "chars": "五",
+      "pinyin": "wǔ",
+      "english": "five",
+      "sound": "/mp3/五.mp3",
+      "unAccented": "wu"
+    },
+    {
+      "chars": "你们",
+      "pinyin": "nǐmen",
+      "english": "you (pl.)",
+      "sound": "/mp3/你们.mp3",
+      "unAccented": "nimen"
+    }
+  ]
+};
+
 main.start = function (div) {
 
   var div_element = document.getElementById(div);
@@ -408,6 +467,16 @@ main.start = function (div) {
   add_file("SCML/1_troll/", "1_troll.scml", 0.8, 280);
   add_file("SCML/minotaur_1/", "Animations.scml", 1);
   
+  var card_image = new Image();
+  card_image.src = "card.png";
+  var card_burnt_image = new Image();
+  card_burnt_image.src = "card_burnt.png";
+  
+  
+  var flame_image = new Image();
+  flame_image.src="flame.png";
+  var flame_idx=0;
+  
   var file_index = 0;
   
   var loading = false;
@@ -426,6 +495,7 @@ main.start = function (div) {
   });
 
   var prev_time = 0;
+  var rot=0;
  
 
   var loop = function(time) {
@@ -641,6 +711,36 @@ main.start = function (div) {
         //ctx.translate(0, -10);
         //render_ctx2d.drawDebugPose(spriter_pose_next, atlas_data);
       }
+	  flame_idx+=dt;
+	  if (card_image.complete && card_burnt_image.complete)
+	  {
+		  for(i=0;i<test_arg.options.length;i++)
+		  {
+			ctx.save();
+			max_rot = 0.5;
+			rot=-i*max_rot*2/(test_arg.options.length-1)+max_rot;
+			card_x=2000*Math.sin(-rot)-200;
+			card_y=2000*Math.cos(rot)-500;
+			ctx.transform(Math.cos(rot), Math.sin(rot), Math.sin(rot), -Math.cos(rot), card_x+card_image.width/2, card_y+card_image.height/2);
+			var img=card_image;
+			if (i==2) img=card_burnt_image;
+			ctx.drawImage(img, -card_image.width/2, -card_image.height/2);
+			if (flame_image.complete && i==0)
+			{
+				var frame_count = 18;
+				var frame_idx = Math.floor(flame_idx/100)%frame_count;
+				frame_height = flame_image.height/frame_count;
+				var marg = 70;
+				ctx.drawImage(flame_image, 0, frame_idx*frame_height, flame_image.width, frame_height, -card_image.width/2-marg, -card_image.height/2-marg, card_image.width+marg*2, card_image.height+marg*2+20);
+			}
+			//ctx.font = "200px FangSong";
+			ctx.font = "200px KaiTi";
+			ctx.fillStyle = "red";
+			ctx.textAlign = "center";
+			ctx.fillText(test_arg.options[i].chars, 0, 0);
+			ctx.restore();
+		  }
+	  }
     }
 
     if (gl) {
