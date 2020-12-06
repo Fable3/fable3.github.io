@@ -39,6 +39,7 @@ test_object_pass = function (example) {
 
 var test_arg = {
   "question": {
+	"id":0,
     "chars": "你们",
     "pinyin": "nǐmen",
     "english": "you (pl.)",
@@ -47,6 +48,7 @@ var test_arg = {
   },
   "options": [
     {
+		"id":0,
       "chars": "人",
       "pinyin": "rén",
       "english": "person",
@@ -54,6 +56,7 @@ var test_arg = {
       "unAccented": "ren"
     },
     {
+		"id":1,
       "chars": "一",
       "pinyin": "yī",
       "english": "one",
@@ -61,6 +64,7 @@ var test_arg = {
       "unAccented": "yi"
     },
     {
+		"id":2,
       "chars": "你",
       "pinyin": "nǐ",
       "english": "you",
@@ -68,6 +72,7 @@ var test_arg = {
       "unAccented": "ni"
     },
     {
+		"id":3,
       "chars": "五",
       "pinyin": "wǔ",
       "english": "five",
@@ -75,6 +80,7 @@ var test_arg = {
       "unAccented": "wu"
     },
     {
+		"id":4,
       "chars": "你们",
       "pinyin": "nǐmen",
       "english": "you (pl.)",
@@ -86,17 +92,68 @@ var test_arg = {
 
 var card_pos=[];
 
-get_card_pos = function(id) {
+get_card_pos = function(id, x, y, rot) {
 	var i;
 	for(i=0;i<card_pos.length;i++)
 	{
 		if (card_pos[i].id==id) return card_pos[i];
 	}
-	var cp={"id":id, "x":0, "y":0, "t":0, "rot":0, "target_x":0, "target_y":0, "target_rot":0, "init":0};
+	var cp={"id":id, "x":x, "y":y, "t":0, "rot":rot, "target_x":0, "target_y":0, "target_rot":0};
 	card_pos.push(cp);
 	return cp;
 }
 
+anim_card_pos = function(cp, dt, rot, x, y, speed)
+{
+	if (cp.target_rot!=rot || cp.target_x!=x || cp.target_y!=y)
+	{
+		cp.target_rot = rot;
+		cp.target_x = x;
+		cp.target_y = y;
+		cp.t = speed;
+	}
+	if (cp.t>dt)
+	{
+		var rot_diff = (cp.target_rot - cp.rot+Math.PI*3)%(Math.PI*2)-Math.PI;
+		cp.rot+=rot_diff*dt/cp.t;
+		cp.x+=(cp.target_x-cp.x)*dt/cp.t;
+		cp.y+=(cp.target_y-cp.y)*dt/cp.t;
+		cp.t-=dt;
+	} else
+	{
+		cp.x = cp.target_x;
+		cp.y = cp.target_y;
+		cp.rot=cp.target_rot;
+		cp.t = 0;
+	}
+}
+
+
+select_card = function(id) {
+	selected_card_index = id;
+	if (id==-1)
+	{
+		var i;
+		for(i=0;i<card_pos.length;)
+		{
+			if (card_pos[i].id>=100)
+			{
+				card_pos.splice(i, 1);
+			} else
+			{
+				i++;
+			}
+		}
+	}
+}
+
+select_answer = function(id) {
+	if (selected_card_index!=-1)
+	{
+		test_arg.options.splice(selected_card_index, 1);
+		select_card(-1);
+	}
+}
 
 main.start = function (div) {
 
@@ -493,6 +550,8 @@ main.start = function (div) {
   card_image.src = "card.png";
   var card_burnt_image = new Image();
   card_burnt_image.src = "card_burnt.png";
+  var scroll_image = new Image();
+  scroll_image.src = "scroll.png";
   
   
   var flame_image = new Image();
@@ -526,9 +585,10 @@ main.start = function (div) {
       var y = e.clientY - rect.top;
 	  var i;
 	  var card_size=canvas_cards.width/10/card_image.width;
-	  for(i=0;i<card_pos.length;i++)
+	  var scroll_size=canvas_cards.width/6/scroll_image.width;
+	  for(i=0;i<test_arg.options.length;i++)
 	  {
-		  var cp=card_pos[i];
+		  var cp=get_card_pos(test_arg.options[i].id);
 		  var dx = x-cp.x;
 		  var dy = y-cp.y;
 		  var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/card_size;
@@ -538,12 +598,29 @@ main.start = function (div) {
 		  {
 			  if (selected_card_index == i)
 			  {
-				  selected_card_index = -1;
+				  select_card(-1);
 			  } else
 			  {
-				  selected_card_index = i;
+				  select_card(i);
 			  }
-			  break;
+			  return;
+		  }
+	  }
+	  if (selected_card_index!=-1)
+	  {
+		  for(i=0;i<test_arg.options.length;i++)
+		  {
+			  var cp=get_card_pos(test_arg.options[i].id+100);
+			  var dx = x-cp.x;
+			  var dy = y-cp.y;
+			  var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/scroll_size;
+			  var ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/scroll_size;
+			  if (tx>-scroll_image.width/2 && tx<scroll_image.width/2 &&
+				  ty>-scroll_image.height/2 && ty<scroll_image.height/2)
+			  {
+				  select_answer(i);
+				  return;
+			  }
 		  }
 	  }
     }
@@ -764,7 +841,7 @@ main.start = function (div) {
         //render_ctx2d.drawDebugPose(spriter_pose_next, atlas_data);
       }
 	  flame_anim_time+=dt;
-	  if (card_image.complete && card_burnt_image.complete)
+	  if (card_image.complete && card_burnt_image.complete && scroll_image.complete)
 	  {
 		  ctx_cards.clearRect(0, 0, ctx_cards.canvas.width, ctx_cards.canvas.height);
 		  card_size=ctx_cards.canvas.width/10/card_image.width;
@@ -791,7 +868,8 @@ main.start = function (div) {
 					card_count--;
 					if (selected_card_index<i) card_index--;
 				}
-				rot=-card_index*max_rot*2/(card_count-1)+max_rot;
+				if (card_count==1) rot = 0;
+				else rot = -card_index*max_rot*2/(card_count-1)+max_rot;
 				card_x=-radi*Math.sin(rot)+ctx_cards.canvas.width/2;
 				card_y=-radi*Math.cos(rot)+radi+ctx_cards.canvas.height/2;
 				if (selected_card_index!=-1)
@@ -799,35 +877,8 @@ main.start = function (div) {
 					card_y+=card_size*card_image.height;
 				}
 			}
-			var cp = get_card_pos(i);
-			if (cp.target_rot!=rot || cp.target_x!=card_x || cp.target_y!=card_y)
-			{
-				if (!cp.init)
-				{
-					cp.init = 1;
-					cp.x=ctx_cards.canvas.width/2;
-					cp.y=ctx_cards.canvas.height/2;
-				}
-				cp.target_rot = rot;
-				cp.target_x = card_x;
-				cp.target_y = card_y;
-				cp.t = 300;
-			}
-			if (cp.t>dt)
-			{
-				var rot_diff = (cp.target_rot - cp.rot+Math.PI*3)%(Math.PI*2)-Math.PI;
-				cp.rot+=rot_diff*dt/cp.t;
-				cp.x+=(cp.target_x-cp.x)*dt/cp.t;
-				cp.y+=(cp.target_y-cp.y)*dt/cp.t;
-				cp.t-=dt;
-			} else
-			{
-				cp.x = cp.target_x;
-				cp.y = cp.target_y;
-				cp.rot=cp.target_rot;
-				cp.t = 0;
-			}
-			
+			var cp = get_card_pos(test_arg.options[i].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
+			anim_card_pos(cp, dt, rot, card_x, card_y, 300);
 			ctx_cards.transform(card_size*Math.cos(cp.rot), -card_size*Math.sin(cp.rot), card_size*Math.sin(cp.rot), card_size*Math.cos(cp.rot), cp.x, cp.y);			
 			var img=card_image;
 			if (i==2) img=card_burnt_image;
@@ -850,6 +901,32 @@ main.start = function (div) {
 			ctx_cards.textAlign = "center";
 			ctx_cards.fillText(test_arg.options[i].chars, 0, 0);
 			ctx_cards.restore();
+		  }
+		  if (selected_card_index!=-1)
+		  {
+			var cp_sel = get_card_pos(test_arg.options[selected_card_index].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
+			var scroll_size=ctx_cards.canvas.width/6/scroll_image.width;
+			for(i=0;i<test_arg.options.length;i++)
+			{
+				ctx_cards.save();
+				var rot = 0;
+				var card_x = ctx_cards.canvas.width/2;
+				var card_y = card_size*card_image.height*1.5;
+				var pos_translate = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]];
+				card_x+=pos_translate[i][0]*(card_size*card_image.width+scroll_size*scroll_image.width/2);
+				card_y+=pos_translate[i][1]*(card_size*card_image.height*0.5+scroll_size*scroll_image.height/2);
+				var cp = get_card_pos(test_arg.options[i].id+100, cp_sel.x, cp_sel.y, 0);
+				anim_card_pos(cp, dt, rot, card_x, card_y, 300);
+				ctx_cards.transform(scroll_size*Math.cos(cp.rot), -scroll_size*Math.sin(cp.rot), scroll_size*Math.sin(cp.rot), scroll_size*Math.cos(cp.rot), cp.x, cp.y);			
+				var img=scroll_image;
+				ctx_cards.drawImage(img, -scroll_image.width/2, -scroll_image.height/2);
+				ctx_cards.font = "50px Arial";
+				//ctx_cards.font = "200px Noto Sans SC";
+				ctx_cards.fillStyle = "blue";
+				ctx_cards.textAlign = "center";
+				ctx_cards.fillText(test_arg.options[i].english, 0, 0);
+				ctx_cards.restore();
+			}
 		  }
 	  }
     }
