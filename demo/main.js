@@ -188,14 +188,84 @@ select_card = function(id, has_accent = 0) { // 0: no, 1: good, 2: mismatched ac
 }
 
 select_answer = function(id) {
-	if (selected_card_index!=-1)
+	if (selected_card_index!=-1 && id>=0 && id<test_arg.options.length)
 	{
+		console.log('selected answer: ', test_arg.options[id].english);
 		test_arg.options.splice(selected_card_index, 1);
 		select_card(-1);
 	}
 }
 
+var arrow_state=[0,0,0,0];
+var arrow_release_time=[0,0,0,0];
+var selected_direction = -1;
+var multi_key_release_time = 200;
+
+var update_selected_direction = function() {
+	var t = window.performance.now();
+	var m = 0;
+	var i;
+	for(i=0;i<4;i++) m+= (arrow_state[i] || arrow_release_time[i]+multi_key_release_time>t)*2**i;
+	var m_to_dir = [
+		-1, 0, 1, -1,
+		2, 4, 5, -1,
+		3, 6, 7, -1,
+		-1, -1, -1, -1];
+	selected_direction = m_to_dir[m];
+}
+
+var get_arrow_id = function(k) {
+	if (k=='ArrowLeft') return 0;
+	if (k=='ArrowRight') return 1;
+	if (k=='ArrowUp') return 2;
+	if (k=='ArrowDown') return 3;
+	return -1;
+}
+
+var clear_arrow_state = function() {
+	arrow_state=[0,0,0,0];
+	arrow_release_time=[0,0,0,0];
+}
+
+var key_released = function(k) {
+	var a = get_arrow_id(k);
+	if (a!=-1)
+	{
+		var t = window.performance.now();
+		var m = 0;
+		var i;
+		for(i=0;i<4;i++) m+= (arrow_state[i]);// || arrow_release_time[i]+multi_key_release_time>t);
+		update_selected_direction();
+		arrow_state[a] = 0;
+		if (m<2)
+		{
+			// release last key
+			arrow_release_time=[0,0,0,0];
+			select_answer(selected_direction);
+		} else
+		{
+			arrow_release_time[a] = t;
+		}
+		update_selected_direction();
+	}
+}
+
 var key_pressed = function(k) {
+	var a = get_arrow_id(k);
+	if (a!=-1)
+	{
+		var opposite_id=[1,0,3,2];
+		if (arrow_state[opposite_id[a]])
+		{
+			clear_arrow_state();
+		} else
+		{
+			arrow_release_time[opposite_id[a]] = 0;
+			arrow_state[a] = 1;
+		}
+		update_selected_direction();
+		return;
+	}
 	if (selected_card_index!=-1 && selected_card_accented==0)
 	{
 		if (k.length==1)
@@ -271,7 +341,14 @@ main.start = function (div) {
 	
   document.addEventListener('keydown', event => {
 	const key = event.key;
-	key_pressed(key);
+	if (!event.repeat)
+	{
+		key_pressed(key);
+	}
+  });
+  document.addEventListener('keyup', event => {
+	const key = event.key;
+	key_released(key);
   });
 
   var div_element = document.getElementById(div);
@@ -669,6 +746,8 @@ main.start = function (div) {
   card_burnt_image.src = "card_burnt.png";
   var scroll_image = new Image();
   scroll_image.src = "scroll.png";
+  var scroll_selected_image = new Image();
+  scroll_selected_image.src = "scroll_selected.png";
   
   
   var flame_image = new Image();
@@ -746,6 +825,8 @@ main.start = function (div) {
 
   var loop = function(time) {
     requestAnimationFrame(loop);
+	
+	update_selected_direction();
 
     var dt = time - (prev_time || time);
     prev_time = time; // ms
@@ -958,7 +1039,7 @@ main.start = function (div) {
         //render_ctx2d.drawDebugPose(spriter_pose_next, atlas_data);
       }
 	  flame_anim_time+=dt;
-	  if (card_image.complete && card_burnt_image.complete && scroll_image.complete)
+	  if (card_image.complete && card_burnt_image.complete && scroll_image.complete && scroll_selected_image.complete)
 	  {
 		  ctx_cards.clearRect(0, 0, ctx_cards.canvas.width, ctx_cards.canvas.height);
 		  var card_size=ctx_cards.canvas.width/10/card_image.width;
@@ -1036,10 +1117,16 @@ main.start = function (div) {
 				anim_card_pos(cp, dt, rot, card_x, card_y, 300);
 				ctx_cards.transform(scroll_size*Math.cos(cp.rot), -scroll_size*Math.sin(cp.rot), scroll_size*Math.sin(cp.rot), scroll_size*Math.cos(cp.rot), cp.x, cp.y);			
 				var img=scroll_image;
+				var text_color = "blue";
+				if (selected_direction==i)
+				{
+					img = scroll_selected_image;
+					text_color = "white";
+				}
 				ctx_cards.drawImage(img, -scroll_image.width/2, -scroll_image.height/2);
 				ctx_cards.font = "50px Arial";
 				//ctx_cards.font = "200px Noto Sans SC";
-				ctx_cards.fillStyle = "blue";
+				ctx_cards.fillStyle = text_color;
 				ctx_cards.textAlign = "center";
 				ctx_cards.fillText(test_arg.options[i].english, 0, 0);
 				ctx_cards.restore();
