@@ -14,6 +14,7 @@ var key_buffer_accented="";
 
 
 const background_layers = [new Image(), new Image(), new Image(), new Image(), new Image()];
+const snow_layer = new Image();
 
 set_enemy = function(id) {
 	enemy_id = id;
@@ -27,6 +28,10 @@ set_background = function(bg_index) {
 	var bg_names=['forest', 'night', 'fairy', 'desert', 'winter'];
 	for(i=0;i<5;i++)
 		background_layers[i].src = 'background/'+bg_names[bg_index%bg_names.length]+'/'+(i+1).toString()+'.png';
+	if (bg_index==4)
+		snow_layer.src = 'background/'+bg_names[bg_index%bg_names.length]+'/Snow.png';
+	else
+		snow_layer.src = '';
 }
 
 test_object_pass = function (example) {
@@ -446,6 +451,16 @@ main.start = function (div) {
 	  var x = (bg_offset*layer_mul[4])%ctx_ground.canvas.width;
 	  ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, -x, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
 	  ctx_ground.drawImage(img_ground, 0, 0, img_ground.width, img_ground.height, ctx_ground.canvas.width-x, 0, ctx_ground.canvas.width, ctx_ground.canvas.height);
+	  if (snow_layer.complete && snow_layer.width>0)
+	  {
+		  var t = window.performance.now();
+		  y = ctx_ground.canvas.height-1-(Math.floor(t/20)%ctx_ground.canvas.height);
+		  x = 0;//Math.floor(t/80)%ctx_ground.canvas.width;
+		  ctx_ground.drawImage(snow_layer, 0, 0, img_ground.width, img_ground.height, -x, -y, ctx_ground.canvas.width, ctx_ground.canvas.height);
+		  ctx_ground.drawImage(snow_layer, 0, 0, img_ground.width, img_ground.height, -x, ctx_ground.canvas.height-y, ctx_ground.canvas.width, ctx_ground.canvas.height);
+		  //ctx_ground.drawImage(snow_layer, 0, 0, img_ground.width, img_ground.height, ctx_ground.canvas.width-x, -y, ctx_ground.canvas.width, ctx_ground.canvas.height);
+		  //ctx_ground.drawImage(snow_layer, 0, 0, img_ground.width, img_ground.height, ctx_ground.canvas.width-x, ctx_ground.canvas.height-y, ctx_ground.canvas.width, ctx_ground.canvas.height);
+	  }
   }
   for(i=0;i<5;i++)
 	background_layers[i].onload = () => { redraw_bg(); };
@@ -862,6 +877,9 @@ main.start = function (div) {
 	  {
 		  //enemy_pos_x+=(dt * anim_rate)/30000.0;
 		  bg_offset+=(dt * anim_rate)/30.0;
+		  redraw_bg();
+	  } else if (snow_layer.complete && snow_layer.width>0)
+	  {
 		  redraw_bg();
 	  }
 		  
