@@ -110,7 +110,10 @@ var test_arg = {
     "pinyin": "nǐ men",
     "english": "you (pl.)",
     "sound": "/mp3/你们.mp3",
-    "unAccented": "ni men"
+    "unAccented": "ni men",
+	"desc":"1 dmg",
+	"rarity":1,
+	"rank":1
   },
   "options": [
     {
@@ -119,7 +122,10 @@ var test_arg = {
       "pinyin": "rén",
       "english": "person",
       "sound": "/mp3/人.mp3",
-      "unAccented": "ren"
+      "unAccented": "ren",
+	"desc":"1 dmg",
+	"rarity":0,
+	"rank":9
     },
     {
 		"id":1,
@@ -127,7 +133,10 @@ var test_arg = {
       "pinyin": "yī",
       "english": "one",
       "sound": "/mp3/一.mp3",
-      "unAccented": "yi"
+      "unAccented": "yi",
+	"desc":"2 dmg\n+1 dmg buff",
+	"rarity":1,
+	"rank":7
     },
     {
 		"id":2,
@@ -135,7 +144,10 @@ var test_arg = {
       "pinyin": "nǐ",
       "english": "you",
       "sound": "/mp3/你.mp3",
-      "unAccented": "ni"
+      "unAccented": "ni",
+	"desc":"1 dmg\ndraw",
+	"rarity":2,
+	"rank":5
     },
     {
 		"id":3,
@@ -143,7 +155,10 @@ var test_arg = {
       "pinyin": "wǔ",
       "english": "five",
       "sound": "/mp3/五.mp3",
-      "unAccented": "wu"
+      "unAccented": "wu",
+	"desc":"double\nnext attack",
+	"rarity":3,
+	"rank":3
     },
     {
 		"id":4,
@@ -151,7 +166,10 @@ var test_arg = {
       "pinyin": "nǐ men",
       "english": "you (pl.)",
       "sound": "/mp3/你们.mp3",
-      "unAccented": "nimen"
+      "unAccented": "nimen",
+	"desc":"5 dmg\nrank based",
+	"rarity":4,
+	"rank":1
     }
   ]
 };
@@ -355,6 +373,13 @@ var key_pressed = function(k) {
 	if (k.length==1)
 	{
 		var c=k[0];
+		if (selected_card_index==-1 && key_buffer.length==0 && c>='1' && c<='9')
+		{
+			var idx = parseInt(c)-1;
+			if (idx<test_arg.options.length)
+				select_card(idx, 0);
+			return;
+		}
 		if (c>='0' && c<='4')
 		{
 			key_buffer_accented = append_accent(key_buffer_accented, parseInt(c));
@@ -818,6 +843,8 @@ main.start = function (div) {
   scroll_image.src = "scroll.png";
   var scroll_selected_image = new Image();
   scroll_selected_image.src = "scroll_selected.png";
+  var rank_image = new Image();
+  rank_image.src = 'rank.png';
   
   
   var flame_image = new Image();
@@ -1112,7 +1139,7 @@ main.start = function (div) {
         //render_ctx2d.drawDebugPose(spriter_pose_next, atlas_data);
       }
 	  flame_anim_time+=dt;
-	  if (card_image.complete && card_burnt_image.complete && scroll_image.complete && scroll_selected_image.complete)
+	  if (card_image.complete && card_burnt_image.complete && scroll_image.complete && scroll_selected_image.complete && rank_image.complete)
 	  {
 		  ctx_cards.clearRect(0, 0, ctx_cards.canvas.width, ctx_cards.canvas.height);
 		  var card_size=ctx_cards.canvas.width/10/card_image.width;
@@ -1154,8 +1181,12 @@ main.start = function (div) {
 			ctx_cards.transform(card_size*Math.cos(cp.rot), -card_size*Math.sin(cp.rot), card_size*Math.sin(cp.rot), card_size*Math.cos(cp.rot), cp.x, cp.y);			
 			var img=card_image;
 			if (i==selected_card_index && selected_card_accented==2) img=card_burnt_image;
-			else if (i>0) img=card_rarity[i%card_rarity.length];
+			else if (test_arg.options[i].rarity>0) img=card_rarity[(test_arg.options[i].rarity-1)%card_rarity.length];
 			ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
+			var rank = test_arg.options[i].rank;
+			var rank_d = 100;
+			ctx_cards.drawImage(rank_image, 0, rank_image.height/10*rank, rank_image.width, rank_image.height/10, 
+				card_image.width/2-rank_d-20, -card_image.height/2+20, rank_d, rank_d);
 			if (flame_image.complete && i==selected_card_index && selected_card_accented==1)
 			{
 				var frame_count = 18;
@@ -1173,6 +1204,16 @@ main.start = function (div) {
 			ctx_cards.fillStyle = "red";
 			ctx_cards.textAlign = "center";
 			ctx_cards.fillText(test_arg.options[i].chars, 0, 0);
+			var font_size=60;
+			ctx_cards.font = font_size.toString()+"px Arial";
+			ctx_cards.fillStyle = "black";
+			ctx_cards.textAlign = "left";
+			ctx_cards.fillText((i+1).toString(), -card_image.width/2+20, -card_image.height/2+10+font_size);
+			ctx_cards.textAlign = "center";
+			const lines=test_arg.options[i].desc.split('\n');
+			var idx;
+			for(idx=0;idx<lines.length;idx++)
+				ctx_cards.fillText(lines[idx], 0, card_image.height/2-15+(idx-lines.length+0.8)*font_size);
 			ctx_cards.restore();
 		  }
 		  if (selected_card_index!=-1)
