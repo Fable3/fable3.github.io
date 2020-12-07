@@ -12,6 +12,7 @@ var selected_card_accented = 0;
 var key_buffer="";
 var key_buffer_accented="";
 
+const audio_play_tone = new Audio();
 
 const background_layers = [new Image(), new Image(), new Image(), new Image(), new Image()];
 const snow_layer = new Image();
@@ -77,6 +78,29 @@ var append_accent = function (str, acc) {
 		}
 	}
 	return str;
+}
+
+var get_accent_num = function(str) {
+	var idx;
+	for(idx=0;idx<str.length;idx++)
+	{
+		var c = str[idx];
+		if (c=='ü') c='v';
+		var i;
+		for(i=0;i<accent_translate.length;i++)
+		{
+			if (c==accent_translate[i].u)
+			{
+				return [str, 4];
+			}
+			var r;
+			for(r=0;r<4;r++) if (c==accent_translate[i].v[r])
+			{
+				return [str.substring(0,idx) + accent_translate[i].u + str.substring(idx+1), r];
+			}
+		}
+	}
+	return [str, 4];
 }
 
 var test_arg = {
@@ -192,10 +216,36 @@ select_card = function(id, has_accent = 0) { // 0: no, 1: good, 2: mismatched ac
 	}
 }
 
+var audio_queue = [];
+
+var play_next_audio = function() {
+	if (audio_queue.length==0) return;
+	audio_play_tone.type = "audio/mpeg";
+	audio_play_tone.src = audio_queue[0];
+	audio_queue.splice(0, 1);
+	audio_play_tone.pause();
+	audio_play_tone.load();
+	audio_play_tone.play();
+}
+
+audio_play_pinyin = function(str) {
+	const words = str.split(' ');
+	audio_play_tone.addEventListener("ended", play_next_audio);
+	var idx = 0;
+	for(idx=0;idx<words.length;idx++)
+	{
+		var acc = get_accent_num(words[idx]);
+		if (acc[1]==4) acc[1]=3;
+		audio_queue.push("http://resources.allsetlearning.com/pronwiki/resources/pinyin-audio/" + acc[0] + (acc[1]+1).toString() + ".mp3");
+	}
+	play_next_audio();
+}
+
 select_answer = function(id) {
 	if (selected_card_index!=-1 && id>=0 && id<test_arg.options.length)
 	{
 		console.log('selected answer: ', test_arg.options[id].english);
+		audio_play_pinyin(test_arg.options[id].pinyin);
 		test_arg.options.splice(selected_card_index, 1);
 		select_card(-1);
 	}
@@ -757,6 +807,11 @@ main.start = function (div) {
   
   var card_image = new Image();
   card_image.src = "card.png";
+  var card_rarity = [new Image(),new Image(),new Image(),new Image()];
+  card_rarity[0].src = "card2.png";
+  card_rarity[1].src = "card3.png";
+  card_rarity[2].src = "card4.png";
+  card_rarity[3].src = "card5.png";
   var card_burnt_image = new Image();
   card_burnt_image.src = "card_burnt.png";
   var scroll_image = new Image();
@@ -1099,6 +1154,7 @@ main.start = function (div) {
 			ctx_cards.transform(card_size*Math.cos(cp.rot), -card_size*Math.sin(cp.rot), card_size*Math.sin(cp.rot), card_size*Math.cos(cp.rot), cp.x, cp.y);			
 			var img=card_image;
 			if (i==selected_card_index && selected_card_accented==2) img=card_burnt_image;
+			else if (i>0) img=card_rarity[i%card_rarity.length];
 			ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
 			if (flame_image.complete && i==selected_card_index && selected_card_accented==1)
 			{
