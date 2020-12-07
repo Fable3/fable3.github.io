@@ -7,7 +7,11 @@ goog.require('RenderWebGL');
 
 var enemy_id = -1;
 var enemy_anim_key = 'idle';
-var selected_card_index = 2;
+var selected_card_index = -1;
+var selected_card_accented = 0;
+var key_buffer="";
+var key_buffer_accented="";
+
 
 const background_layers = [new Image(), new Image(), new Image(), new Image(), new Image()];
 
@@ -37,14 +41,47 @@ test_object_pass = function (example) {
     console.log(example.options[2].chars)
 }
 
+var accent_translate=[
+{"u":"a", "v":"āáǎà"},
+{"u":"e", "v":"ēéěè"},
+{"u":"i", "v":"īíǐì"},
+{"u":"o", "v":"ōóǒò"},
+{"u":"u", "v":"ūúǔù"},
+{"u":"v", "v":"ǖǘǚǜ"}];
+
+var append_accent = function (str, acc) {
+	if (str.length==0) return str;
+	if (acc<1 || acc>4) return str;
+	var idx = str.length-1;
+	if (str.length>1 && (str[idx]=='n' || str[idx-1]=='e' && str[idx]=='r'))
+	{
+		idx--;
+	}
+	else if (str.length>2 && str[idx-1]=='n' && str[idx]=='g')
+	{
+		idx-=2;
+	}
+	var c = str[idx];
+	if (c=='ü') c='v';
+	var i;
+	for(i=0;i<accent_translate.length;i++)
+	{
+		if (c==accent_translate[i].u)
+		{
+			str=str.substring(0,idx) + accent_translate[i].v[acc-1] + str.substring(idx+1);
+		}
+	}
+	return str;
+}
+
 var test_arg = {
   "question": {
 	"id":0,
     "chars": "你们",
-    "pinyin": "nǐmen",
+    "pinyin": "nǐ men",
     "english": "you (pl.)",
     "sound": "/mp3/你们.mp3",
-    "unAccented": "nimen"
+    "unAccented": "ni men"
   },
   "options": [
     {
@@ -82,7 +119,7 @@ var test_arg = {
     {
 		"id":4,
       "chars": "你们",
-      "pinyin": "nǐmen",
+      "pinyin": "nǐ men",
       "english": "you (pl.)",
       "sound": "/mp3/你们.mp3",
       "unAccented": "nimen"
@@ -129,10 +166,13 @@ anim_card_pos = function(cp, dt, rot, x, y, speed)
 }
 
 
-select_card = function(id) {
+select_card = function(id, has_accent = 0) { // 0: no, 1: good, 2: mismatched accent
 	selected_card_index = id;
+	selected_card_accented = has_accent;
 	if (id==-1)
 	{
+		key_buffer='';
+		key_buffer_accented='';
 		var i;
 		for(i=0;i<card_pos.length;)
 		{
@@ -155,7 +195,84 @@ select_answer = function(id) {
 	}
 }
 
+var key_pressed = function(k) {
+	if (selected_card_index!=-1 && selected_card_accented==0)
+	{
+		if (k.length==1)
+		{
+			var c=k[0];
+			if (c>='0' && c<='4')
+			{
+				key_buffer_accented = append_accent(key_buffer_accented, parseInt(c));
+				if (key_buffer_accented!=key_buffer)
+				{
+					if (test_arg.options[selected_card_index].pinyin.replaceAll(' ','')===key_buffer_accented)
+					{
+						select_card(selected_card_index, 1);
+					} else
+					{
+						select_card(selected_card_index, 2);
+					}
+				}
+			}
+		}
+		return;
+	}
+	
+	if (k==="Backspace")
+	{
+		if (key_buffer.length>0)
+		{
+			key_buffer = key_buffer.substring(0, key_buffer.length-1);
+			key_buffer_accented = key_buffer_accented.substring(0, key_buffer_accented.length-1);
+		}
+	}
+	if (k.length==1)
+	{
+		var c=k[0];
+		if (c>='0' && c<='4')
+		{
+			key_buffer_accented = append_accent(key_buffer_accented, parseInt(c));
+		} else
+		if ((c>='a' && c<='z') || (c>='A' && c<='Z'))
+		{
+			c=c.toLowerCase();
+			if (c=='v') c='ü';
+			key_buffer = key_buffer + c;
+			key_buffer_accented = key_buffer_accented + c;
+		}
+		if (selected_card_index==-1)
+		{
+			var i;
+			for(i=0;i<test_arg.options.length;i++)
+			{
+				if (test_arg.options[i].pinyin.replaceAll(' ','')===key_buffer_accented)
+				{
+					select_card(i, 1);
+					break;
+				} else if (test_arg.options[i].unAccented.replaceAll(' ','')===key_buffer)
+				{
+					if (key_buffer_accented!=key_buffer)
+					{
+						select_card(i, 2);
+					} else
+					{
+						select_card(i, 0);
+					}
+					break;
+				}
+			}
+		}
+	}
+	console.log(key_buffer, key_buffer_accented);
+}
+
 main.start = function (div) {
+	
+  document.addEventListener('keydown', event => {
+	const key = event.key;
+	key_pressed(key);
+  });
 
   var div_element = document.getElementById(div);
   var canvas = document.createElement('canvas');
@@ -844,7 +961,8 @@ main.start = function (div) {
 	  if (card_image.complete && card_burnt_image.complete && scroll_image.complete)
 	  {
 		  ctx_cards.clearRect(0, 0, ctx_cards.canvas.width, ctx_cards.canvas.height);
-		  card_size=ctx_cards.canvas.width/10/card_image.width;
+		  var card_size=ctx_cards.canvas.width/10/card_image.width;
+		  var scroll_size=ctx_cards.canvas.width/6/scroll_image.width;
 		  var max_rot = 0.3;
 		  var radi = 3200*card_size;
 
@@ -874,16 +992,16 @@ main.start = function (div) {
 				card_y=-radi*Math.cos(rot)+radi+ctx_cards.canvas.height/2;
 				if (selected_card_index!=-1)
 				{
-					card_y+=card_size*card_image.height;
+					card_y+=card_size*card_image.height+scroll_size*scroll_image.height;
 				}
 			}
 			var cp = get_card_pos(test_arg.options[i].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
 			anim_card_pos(cp, dt, rot, card_x, card_y, 300);
 			ctx_cards.transform(card_size*Math.cos(cp.rot), -card_size*Math.sin(cp.rot), card_size*Math.sin(cp.rot), card_size*Math.cos(cp.rot), cp.x, cp.y);			
 			var img=card_image;
-			if (i==2) img=card_burnt_image;
+			if (i==selected_card_index && selected_card_accented==2) img=card_burnt_image;
 			ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
-			if (flame_image.complete && i==0)
+			if (flame_image.complete && i==selected_card_index && selected_card_accented==1)
 			{
 				var frame_count = 18;
 				var frame_idx = Math.floor(flame_anim_time/100)%frame_count;
@@ -905,7 +1023,6 @@ main.start = function (div) {
 		  if (selected_card_index!=-1)
 		  {
 			var cp_sel = get_card_pos(test_arg.options[selected_card_index].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
-			var scroll_size=ctx_cards.canvas.width/6/scroll_image.width;
 			for(i=0;i<test_arg.options.length;i++)
 			{
 				ctx_cards.save();
