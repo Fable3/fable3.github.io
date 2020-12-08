@@ -34,7 +34,8 @@ leitner = function() {
 	this.createSession = function() {
 		var min_session = -1;
 		var prev_session_size = this.session.length;
-		for (const [key, value] of Object.entries(this.deck)) {
+		for (const [str_key, value] of Object.entries(this.deck)) {
+			var key=parseInt(str_key);
 			if (this.session.indexOf(key)!=-1 || this.hand.indexOf(key)!=-1)
 			{
 				continue;
@@ -316,6 +317,14 @@ get_card_pos = function(id, x, y, rot) {
 	return cp;
 }
 
+remove_card_pos = function(id) {
+	var idx = card_pos.findIndex(cp=>cp.id==id);
+	if (idx!=-1)
+	{
+		card_pos.splice(idx, 1);
+	}
+}
+
 anim_card_pos = function(cp, dt, rot, x, y, speed)
 {
 	if (cp.target_rot!=rot || cp.target_x!=x || cp.target_y!=y)
@@ -352,7 +361,7 @@ select_card = function(id, has_accent = 0) { // 0: no, 1: good, 2: mismatched ac
 		var i;
 		for(i=0;i<card_pos.length;)
 		{
-			if (card_pos[i].id>=100)
+			if (card_pos[i].id>=10000)
 			{
 				card_pos.splice(i, 1);
 			} else
@@ -393,11 +402,25 @@ audio_play_pinyin = function(str) {
 select_answer = function(id) {
 	if (selected_card_index!=-1 && id>=0 && id<GameState.hand[selected_card_index].options.length)
 	{
+		var ch_id = GameState.hand[selected_card_index].id;
 		var eng_id = GameState.hand[selected_card_index].options[id];
-		console.log('selected answer: ', word_db[eng_id].english);
-		audio_play_pinyin(word_db[eng_id].pinyin);
+		var succ = ch_id == eng_id;
+		console.log('selected answer: ', word_db[eng_id].english, succ);
+		if (succ)
+		{
+			audio_play_pinyin(word_db[ch_id].pinyin);
+		}
+		GameState.deck.updateCard(ch_id, succ);
 		GameState.hand.splice(selected_card_index, 1);
 		select_card(-1);
+		remove_card_pos(ch_id);
+		if (GameState.hand.length == 0)
+		{
+			add_random_card_to_deck();
+			add_random_card_to_deck();
+			add_random_card_to_deck();
+			deal_cards();
+		}
 	}
 }
 
@@ -552,7 +575,8 @@ var key_pressed = function(k) {
 function get_english_option(card_id) {
 	var total_weight = 0;
 	var opt = 0;
-	for (const [key, value] of Object.entries(word_db)) {
+	for (const [str_key, value] of Object.entries(word_db)) {
+		var key=parseInt(str_key);
 		if (key!=card_id)
 		{
 			var weight = Math.exp(-Math.abs(key-card_id)/10);
@@ -570,10 +594,42 @@ function start_game()
 {
 	'use strict';
 	var count=0;
-	for (const [key, value] of Object.entries(word_db)) {
+	for (const [str_key, value] of Object.entries(word_db)) {
+		var key=parseInt(str_key);
 		GameState.deck.addCard(key);
 		if (++count>=10) break;
 	}
+	deal_cards();
+}
+
+function add_random_card_to_deck()
+{
+	'use strict';
+	var first_free = -1;
+	var total_weight = 0;
+	var sel = -1;
+	for (const [str_key, value] of Object.entries(word_db)) {
+		var key=parseInt(str_key);
+		if (key in GameState.deck.deck)
+			continue;
+		if (first_free==-1)
+			first_free = key;
+		var weight = Math.exp((first_free-5-key)/10);
+		total_weight+=weight;
+		if (Math.random()*total_weight<weight)
+		{
+			sel = key;
+		}
+	}
+	if (sel!=-1)
+	{
+		GameState.deck.addCard(sel);
+	}
+}
+
+function deal_cards()
+{
+	'use strict';
 	for(i=0;i<5;i++)
 	{
 		var card_id = GameState.deck.draw();
@@ -1111,7 +1167,7 @@ main.start = function (div) {
 		  const options = GameState.hand[selected_card_index].options;
 		  for(i=0;i<options.length;i++)
 		  {
-			  var cp=get_card_pos(options[i].id+10000);
+			  var cp=get_card_pos(options[i]+10000);
 			  var dx = x-cp.x;
 			  var dy = y-cp.y;
 			  var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/scroll_size;
