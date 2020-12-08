@@ -110,6 +110,14 @@ leitner = function() {
 		this.hand.push(card_id);
 		return card_id;
 	}
+	
+	this.clearHand = function() {
+		for(const h of this.hand)
+		{
+			this.session.splice(0, 0, h);
+		}
+		this.hand = [];
+	}
 }
 
 ////
@@ -216,10 +224,10 @@ var test_arg = {
   "question": {
 	"id":0,
     "chars": "你们",
-    "pinyin": "nǐ men",
+    "pinyin": "nǐmen",
     "english": "you (pl.)",
     "sound": "/mp3/你们.mp3",
-    "unAccented": "ni men",
+    "unAccented": "nimen",
 	"desc":"1 dmg",
 	"rarity":1,
 	"rank":1
@@ -272,7 +280,7 @@ var test_arg = {
     {
 		"id":4,
       "chars": "你们",
-      "pinyin": "nǐ men",
+      "pinyin": "nǐmen",
       "english": "you (pl.)",
       "sound": "/mp3/你们.mp3",
       "unAccented": "nimen",
@@ -356,7 +364,7 @@ var play_next_audio = function() {
 }
 
 audio_play_pinyin = function(str) {
-	const words = str.split(' ');
+	const words = pinyin_split(str);
 	audio_play_tone.addEventListener("ended", play_next_audio);
 	var idx = 0;
 	for(idx=0;idx<words.length;idx++)
