@@ -5,6 +5,170 @@ goog.require('atlas');
 goog.require('RenderCtx2D');
 goog.require('RenderWebGL');
 
+
+// Leitner system
+
+leitner = function() {
+	'use strict';
+	
+	this.deck = {};
+	this.session = [];
+	this.sessionCounter  = 0;
+	this.addCard = function(id, lastSessionCounter = 0, rank = 0) {
+		this.deck[id]=[lastSessionCounter, rank];
+	}
+	this.shuffle = function(array, fromIndex) {
+	  var currentIndex = array.length-fromIndex, temporaryValue, randomIndex;
+	  while (0 !== currentIndex) {
+		randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex -= 1;
+		temporaryValue = array[currentIndex+fromIndex];
+		array[currentIndex+fromIndex] = array[randomIndex+fromIndex];
+		array[randomIndex+fromIndex] = temporaryValue;
+	  }
+	  return array;
+	}
+	
+	this.createSession = function() {
+		var min_session = -1;
+		var prev_session_size = this.session.length;
+		for (const [key, value] of Object.entries(this.deck)) {
+			if (this.session.indexOf(key)!=-1)
+			{
+				continue;
+			}
+			if (value[0]+value[1]<this.sessionCounter)
+			{
+				this.session.push(key);
+			} else if (min_session==-1 || value[0]+value[1]<min_session)
+			{
+				min_session = value[0]+value[1];
+			}
+		}
+		this.shuffle(this.session, prev_session_size);
+		return min_session;
+	}
+	
+	this.nextSession = function() {
+		this.sessionCounter++;
+		var prev_session_length = this.session.length;
+		var next_min = this.createSession();
+		if (this.session.length==prev_session_length && next_min!=-1)
+		{
+			this.sessionCounter = next_min+1;
+			this.createSession();
+		}
+	}
+	
+	this.draw = function() {
+		if (this.session.length>0)
+		{
+			return this.session.pop();//[this.session.length-1];
+		}
+	}
+	this.unDraw = function(card_id) {
+		this.session.splice(0, 0, card_id);
+	}
+	this.updateCard = function(card_id, succ) {
+		var card = this.deck[card_id];
+		card[0]=this.sessionCounter;
+		if (succ)
+			card[1]++;
+		else
+			card[1]=0;
+	}
+	this.canDraw = function() {
+		return this.session.length>0;
+	}
+}
+
+var test_leitner = function() {
+	var le = new leitner();
+	var i;
+	for(i=0;i<10;i++)
+		le.addCard(i);
+	var answer_line='';
+	for(i=0;i<100;i++)
+	{
+		if (!le.canDraw())
+		{
+			le.nextSession();
+			console.log('#', le.sessionCounter, 'answer: ', answer_line, ' next:', le.session);
+			answer_line='';
+			if (!le.canDraw())
+			{
+				console.log('next session empty');
+				return;
+			}
+		}
+		var card_id = le.draw();
+		
+		var succ = Math.random()*card_id<5;
+		//succ=true;
+		answer_line+=' '+card_id.toString()+'->'+succ.toString();
+		if (succ) answer_line+=le.deck[card_id][1];
+		le.updateCard(card_id, succ);
+	}
+}
+
+var test_leitner_hand = function() {
+	var le = new leitner();
+	var i;
+	for(i=0;i<10;i++)
+		le.addCard(i);
+	var answer_line='';
+	for(i=0;i<100;i++)
+	{
+		var hand=[];
+		var retries = 0;
+		for(;hand.length<5;)
+		{
+			if (!le.canDraw())
+			{
+				le.nextSession();
+				if (!le.canDraw()) break;
+			}
+			var card_id = le.draw();
+			if (hand.indexOf(card_id)!=-1)
+			{
+				le.unDraw(card_id);
+				retries++;
+				if (retries>=le.session.length)
+				{
+					console.log('hand ', hand, ' no more cards in ', le.session);
+					le.nextSession();
+					if (retries>=le.session.length)
+					{
+						console.log('no new cards in ', le.session);
+						break;
+					}
+				}
+				continue;
+			}
+			retries = 0;
+			hand.push(card_id);
+		}
+		//console.log(hand);
+		if (hand.length!=5)
+		{
+			throw 'test failed';
+		}
+		answer_line='';
+		for(card_id of hand)
+		{
+			var succ = Math.random()*card_id<5;
+			//succ=true;
+			answer_line+=' '+card_id.toString()+'->'+succ.toString();
+			if (succ) answer_line+=le.deck[card_id][1];
+			le.updateCard(card_id, succ);
+		}
+		console.log('#', le.sessionCounter, 'answer: ', answer_line, ' remaining:', le.session);
+	}
+	
+}
+
+////
+
 var enemy_id = -1;
 var enemy_anim_key = 'idle';
 var selected_card_index = -1;
@@ -254,7 +418,9 @@ audio_play_pinyin = function(str) {
 	{
 		var acc = get_accent_num(words[idx]);
 		if (acc[1]==4) acc[1]=3;
-		audio_queue.push("http://resources.allsetlearning.com/pronwiki/resources/pinyin-audio/" + acc[0] + (acc[1]+1).toString() + ".mp3");
+		var str = acc[0];
+		str.replace('v', 'u%CC%88');
+		audio_queue.push("http://resources.allsetlearning.com/pronwiki/resources/pinyin-audio/" + str + (acc[1]+1).toString() + ".mp3");
 	}
 	play_next_audio();
 }
