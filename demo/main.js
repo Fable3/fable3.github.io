@@ -128,6 +128,22 @@ var selected_card_index = -1;
 var selected_card_accented = 0;
 var key_buffer="";
 var key_buffer_accented="";
+var GameState = {
+	"deck": new leitner(),
+	"hand": []
+	};
+
+var word_db = {};
+
+var get_card_rarity = function(card_id) {
+	return 0;
+}
+var get_card_rank = function(card_id) {
+	return 0;
+}
+var get_card_desc = function(card_id) {
+	return {txt:""};
+};
 
 const audio_play_tone = new Audio();
 
@@ -206,10 +222,6 @@ var get_accent_num = function(str) {
 		var i;
 		for(i=0;i<accent_translate.length;i++)
 		{
-			if (c==accent_translate[i].u)
-			{
-				return [str, 4];
-			}
 			var r;
 			for(r=0;r<4;r++) if (c==accent_translate[i].v[r])
 			{
@@ -219,7 +231,7 @@ var get_accent_num = function(str) {
 	}
 	return [str, 4];
 }
-
+/*
 var test_arg = {
   "question": {
 	"id":0,
@@ -289,7 +301,7 @@ var test_arg = {
 	"rank":1
     }
   ]
-};
+};*/
 
 var card_pos=[];
 
@@ -379,11 +391,12 @@ audio_play_pinyin = function(str) {
 }
 
 select_answer = function(id) {
-	if (selected_card_index!=-1 && id>=0 && id<test_arg.options.length)
+	if (selected_card_index!=-1 && id>=0 && id<GameState.hand[selected_card_index].options.length)
 	{
-		console.log('selected answer: ', test_arg.options[id].english);
-		audio_play_pinyin(test_arg.options[id].pinyin);
-		test_arg.options.splice(selected_card_index, 1);
+		var eng_id = GameState.hand[selected_card_index].options[id];
+		console.log('selected answer: ', word_db[eng_id].english);
+		audio_play_pinyin(word_db[eng_id].pinyin);
+		GameState.hand.splice(selected_card_index, 1);
 		select_card(-1);
 	}
 }
@@ -468,7 +481,7 @@ var key_pressed = function(k) {
 				key_buffer_accented = append_accent(key_buffer_accented, parseInt(c));
 				if (key_buffer_accented!=key_buffer)
 				{
-					if (test_arg.options[selected_card_index].pinyin.replaceAll(' ','')===key_buffer_accented)
+					if (word_db[GameState.hand[selected_card_index].id].pinyin===key_buffer_accented)
 					{
 						select_card(selected_card_index, 1);
 					} else
@@ -495,7 +508,7 @@ var key_pressed = function(k) {
 		if (selected_card_index==-1 && key_buffer.length==0 && c>='1' && c<='9')
 		{
 			var idx = parseInt(c)-1;
-			if (idx<test_arg.options.length)
+			if (idx<GameState.hand.length)
 				select_card(idx, 0);
 			return;
 		}
@@ -513,13 +526,13 @@ var key_pressed = function(k) {
 		if (selected_card_index==-1)
 		{
 			var i;
-			for(i=0;i<test_arg.options.length;i++)
+			for(i=0;i<GameState.hand.length;i++)
 			{
-				if (test_arg.options[i].pinyin.replaceAll(' ','')===key_buffer_accented)
+				if (word_db[GameState.hand[i].id].pinyin===key_buffer_accented)
 				{
 					select_card(i, 1);
 					break;
-				} else if (test_arg.options[i].unAccented.replaceAll(' ','')===key_buffer)
+				} else if (word_db[GameState.hand[i].id].unAccented===key_buffer)
 				{
 					if (key_buffer_accented!=key_buffer)
 					{
@@ -536,7 +549,82 @@ var key_pressed = function(k) {
 	console.log(key_buffer, key_buffer_accented);
 }
 
+function get_english_option(card_id) {
+	var total_weight = 0;
+	var opt = 0;
+	for (const [key, value] of Object.entries(word_db)) {
+		if (key!=card_id)
+		{
+			var weight = Math.exp(-Math.abs(key-card_id)/10);
+			total_weight+=weight;
+			if (Math.random()*total_weight<weight)
+			{
+				opt = key;
+			}
+		}
+	}
+	return opt;
+}
+
+function start_game()
+{
+	'use strict';
+	var count=0;
+	for (const [key, value] of Object.entries(word_db)) {
+		GameState.deck.addCard(key);
+		if (++count>=10) break;
+	}
+	for(i=0;i<5;i++)
+	{
+		var card_id = GameState.deck.draw();
+		if (card_id===undefined) break;
+		GameState.hand.push({"id":card_id, "options":""});
+	}
+	for (i=0;i<GameState.hand.length;i++)
+	{
+		var card_id = GameState.hand[i].id;
+		var options = [];
+		for(;options.length<3;)
+		{
+			var opt =  get_english_option(card_id);
+			/*if (Math.random()<0.3)
+			{
+				opt = GameState.hand[...]
+			}*/
+			if (opt == card_id || options.indexOf(opt)!=-1) continue;
+			options.push(opt);
+		}
+		options.splice(Math.floor(Math.random()*(options.length+1)), 0, card_id);
+		GameState.hand[i].options = options;
+	}
+}
+
 main.start = function (div) {
+  loadText("words.txt", function(err, text) {
+	  if (err)
+	  {
+		  return;
+	  }
+	  const lines=text.split('\n');
+	  for(const line of lines)
+	  {
+		  if (line.length>3)
+		  {
+			  const col = line.split(';');
+			  const unAccented = col[2].normalize('NFD').replace(/\u0304|\u0301|\u030c|\u0300| /g, '').
+				normalize('NFC').replace(/(\w|ü)[1-5]/gi, '$1').toLowerCase();
+
+			  word_db[parseInt(col[0])]={"chars": col[1],
+					"pinyinOrig": col[2],
+					"pinyin": col[2].replaceAll(' ', ''),
+					"unAccented": unAccented,
+					"english": col[3]
+			  };
+		  }
+	  }
+	  start_game();
+  });
+  
 	
   document.addEventListener('keydown', event => {
 	const key = event.key;
@@ -998,9 +1086,9 @@ main.start = function (div) {
 	  var i;
 	  var card_size=canvas_cards.width/10/card_image.width;
 	  var scroll_size=canvas_cards.width/6/scroll_image.width;
-	  for(i=0;i<test_arg.options.length;i++)
+	  for(i=0;i<GameState.hand.length;i++)
 	  {
-		  var cp=get_card_pos(test_arg.options[i].id);
+		  var cp=get_card_pos(GameState.hand[i].id);
 		  var dx = x-cp.x;
 		  var dy = y-cp.y;
 		  var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/card_size;
@@ -1020,9 +1108,10 @@ main.start = function (div) {
 	  }
 	  if (selected_card_index!=-1)
 	  {
-		  for(i=0;i<test_arg.options.length;i++)
+		  const options = GameState.hand[selected_card_index].options;
+		  for(i=0;i<options.length;i++)
 		  {
-			  var cp=get_card_pos(test_arg.options[i].id+100);
+			  var cp=get_card_pos(options[i].id+10000);
 			  var dx = x-cp.x;
 			  var dy = y-cp.y;
 			  var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/scroll_size;
@@ -1266,7 +1355,7 @@ main.start = function (div) {
 		  var max_rot = 0.3;
 		  var radi = 3200*card_size;
 
-		  for(i=0;i<test_arg.options.length;i++)
+		  for(i=0;i<GameState.hand.length;i++)
 		  {
 			ctx_cards.save();
 			var rot;
@@ -1279,7 +1368,7 @@ main.start = function (div) {
 				card_y = card_size*card_image.height*1.5;
 			} else
 			{
-				var card_count = test_arg.options.length;
+				var card_count = GameState.hand.length;
 				var card_index = i;
 				if (selected_card_index!=-1)
 				{
@@ -1295,14 +1384,15 @@ main.start = function (div) {
 					card_y+=card_size*card_image.height+scroll_size*scroll_image.height;
 				}
 			}
-			var cp = get_card_pos(test_arg.options[i].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
+			var cp = get_card_pos(GameState.hand[i].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
 			anim_card_pos(cp, dt, rot, card_x, card_y, 300);
 			ctx_cards.transform(card_size*Math.cos(cp.rot), -card_size*Math.sin(cp.rot), card_size*Math.sin(cp.rot), card_size*Math.cos(cp.rot), cp.x, cp.y);			
 			var img=card_image;
+			var rarity = get_card_rarity(GameState.hand[i].id);
 			if (i==selected_card_index && selected_card_accented==2) img=card_burnt_image;
-			else if (test_arg.options[i].rarity>0) img=card_rarity[(test_arg.options[i].rarity-1)%card_rarity.length];
+			else if (rarity>0) img=card_rarity[(rarity-1)%card_rarity.length];
 			ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
-			var rank = test_arg.options[i].rank;
+			var rank = get_card_rank(GameState.hand[i].id);
 			var rank_d = 100;
 			ctx_cards.drawImage(rank_image, 0, rank_image.height/10*rank, rank_image.width, rank_image.height/10, 
 				card_image.width/2-rank_d-20, -card_image.height/2+20, rank_d, rank_d);
@@ -1322,14 +1412,14 @@ main.start = function (div) {
 			//ctx_cards.font = "200px Noto Sans SC";
 			ctx_cards.fillStyle = "red";
 			ctx_cards.textAlign = "center";
-			ctx_cards.fillText(test_arg.options[i].chars, 0, 0);
+			ctx_cards.fillText(word_db[GameState.hand[i].id].chars, 0, 0);
 			var font_size=60;
 			ctx_cards.font = font_size.toString()+"px Arial";
 			ctx_cards.fillStyle = "black";
 			ctx_cards.textAlign = "left";
 			ctx_cards.fillText((i+1).toString(), -card_image.width/2+20, -card_image.height/2+10+font_size);
 			ctx_cards.textAlign = "center";
-			const lines=test_arg.options[i].desc.split('\n');
+			const lines=get_card_desc(GameState.hand[i].id).txt.split('\n');
 			var idx;
 			for(idx=0;idx<lines.length;idx++)
 				ctx_cards.fillText(lines[idx], 0, card_image.height/2-15+(idx-lines.length+0.8)*font_size);
@@ -1337,9 +1427,10 @@ main.start = function (div) {
 		  }
 		  if (selected_card_index!=-1)
 		  {
-			var cp_sel = get_card_pos(test_arg.options[selected_card_index].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
-			for(i=0;i<test_arg.options.length;i++)
+			var cp_sel = get_card_pos(GameState.hand[selected_card_index].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
+			for(i=0;i<GameState.hand[selected_card_index].options.length;i++)
 			{
+				var eng_id = GameState.hand[selected_card_index].options[i];
 				ctx_cards.save();
 				var rot = 0;
 				var card_x = ctx_cards.canvas.width/2;
@@ -1347,7 +1438,7 @@ main.start = function (div) {
 				var pos_translate = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]];
 				card_x+=pos_translate[i][0]*(card_size*card_image.width+scroll_size*scroll_image.width/2);
 				card_y+=pos_translate[i][1]*(card_size*card_image.height*0.5+scroll_size*scroll_image.height/2);
-				var cp = get_card_pos(test_arg.options[i].id+100, cp_sel.x, cp_sel.y, 0);
+				var cp = get_card_pos(eng_id+10000, cp_sel.x, cp_sel.y, 0);
 				anim_card_pos(cp, dt, rot, card_x, card_y, 300);
 				ctx_cards.transform(scroll_size*Math.cos(cp.rot), -scroll_size*Math.sin(cp.rot), scroll_size*Math.sin(cp.rot), scroll_size*Math.cos(cp.rot), cp.x, cp.y);			
 				var img=scroll_image;
@@ -1362,7 +1453,7 @@ main.start = function (div) {
 				//ctx_cards.font = "200px Noto Sans SC";
 				ctx_cards.fillStyle = text_color;
 				ctx_cards.textAlign = "center";
-				ctx_cards.fillText(test_arg.options[i].english, 0, 0);
+				ctx_cards.fillText(word_db[eng_id].english, 0, 0);
 				ctx_cards.restore();
 			}
 		  }

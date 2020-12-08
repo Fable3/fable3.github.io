@@ -1,0 +1,165 @@
+﻿
+1;一;yī;one
+2;二;èr;two
+3;三;sān;three
+4;四;sì;four
+5;五;wǔ;five
+6;六;liù;six
+7;七;qī;seven
+8;八;bā;eight
+9;九;jiǔ;nine
+10;十;shí;ten
+
+11;不;bù;no
+12;在;zài;in, at
+13;上;shàng;up
+14;下;xià;down
+15;年;nián;year
+16;月;yuè;month
+17;日;rì;day
+18;好;hǎo;good
+19;大;dà;big
+20;小;xiǎo;small
+21;人;rén;person
+
+22;爸爸;bàba;father
+23;妈妈;māma;mother
+24;儿子;érzi;son
+25;女儿;nǚér;daughter
+
+26;我;wǒ;I, me
+27;我们;wǒmen;we, us
+28;你;nǐ;you
+29;你们;nǐmen;you (plural)
+30;他;tā;he, him
+31;她;tā;she, her
+32;他们;tāmen;they (male+female / male)
+33;她们;tāmen;they (females)
+34;这;zhè;this
+35;那;nà;that
+
+36;叫;jiào;call
+37;来;lái;come
+38;回;huí;return
+39;去;qù;go
+40;吃;chī;eat
+41;喝;hē;drink
+42;做;zuò;do
+43;买;mǎi;buy
+44;开;kāi;open
+45;坐;zuò;sit
+46;住;zhù;live
+47;是;shì;be (am, is, are)
+48;有;yǒu;have
+49;看;kàn;look
+50;听;tīng;listen
+
+51;多;duō;many, much
+52;少;shǎo;few, little
+53;冷;lěng;cold
+54;热;rè;hot
+55;很;hěn;quite, very
+56;都;dōu;all
+
+57;水;shuǐ;water
+58;菜;cài;vegetable
+59;会;huì;can (knowledge)
+60;能;néng;can (ability)
+61;爱;ài;love
+62;请;qǐng;please
+63;读;dú;read
+64;写;xiě;write
+65;想;xiǎng;want, think
+66;点;diǎn;dot, spot
+
+67;茶;chá;tea
+68;家;jiā;home
+69;钱;qián;money
+70;猫;māo;cat
+71;狗;gǒu;dog
+72;书;shū;book
+73;字;zì;character
+74;零;líng;zero
+75;没有;méiyǒu;to not have
+76;太;tài;too
+77;和;hé;and, with
+
+78;哪;nǎ;which
+79;谁;shuí;who
+80;什么;shénme;what
+81;多少;duōshǎo;how many, how much
+82;几;jǐ;a few, how many
+83;怎么;zěnme;how
+84;怎么样;zěnmeyàng;how about
+85;个;gè;generic measure word
+86;岁;suì;year measure word
+87;本;běn;volume
+88;些;xiē;some
+89;块;kuài;piece
+
+90;的;de;of
+91;了;le;completed action marker
+92;吗;ma;question tag
+93;呢;ne;question particle for subjects already mentioned
+94;喂;wèi;hello
+95;学校;xuéxiào;school
+96;饭店;fàndiàn;restaurant
+97;商店;shāngdiàn;store
+98;医院;yīyuàn;hospital
+99;火车站;huǒchēzhàn;train station
+100;中国;zhōng guó;China
+101;北京;běijīng;Beijing
+
+102;前面;qiánmiàn;front
+103;后面;hòumiàn;behind
+104;里面;lǐmiàn;inside
+105;今天;jīntiān;today
+106;明天;míngtiān;tomorrow
+107;昨天;zuótiān;yesterday
+108;上午;shàngwǔ;morning
+109;中午;zhōngwǔ;noon
+110;下午;xiàwǔ;afternoon
+111;星期;xīngqī;week
+112;分钟;fēnzhōng;minute
+113;现在;xiànzài;now
+114;时候;shíhou;time
+115;老师;lǎoshī;teacher
+116;学生;xuéshēng;student
+117;同学;tóngxué;schoolmate
+118;朋友;péngyou;friend
+119;医生;yīshēng;doctor
+120;先生;xiānsheng;sir
+121;小姐;xiǎojiě;Miss
+122;衣服;yīfu;cloth
+123;米饭;mǐfàn;rice
+124;水果;shuǐguǒ;fruit
+125;苹果;píngguǒ;apple
+126;飞机;fēijī;airplane
+127;出租车;chūzūchē;taxi
+128;电视;diànshì;television
+129;电脑;diànnǎo;computer
+130;电影;diànyǐng;movie
+131;天气;tiānqì;weather
+132;东西;dōngxi;thing
+133;名字;míngzi;name
+134;汉语;hànyǔ;mandarin Chinese
+135;桌子;zhuōzi;desk
+136;椅子;yǐzi;chair
+137;杯子;bēizi;cup
+
+138;谢谢;xièxie;thank
+139;不客气;búkèqì;you are welcome
+140;再见;zàijiàn;good-bye
+141;对不起;duìbùqǐ;sorry
+142;没关系;méiguānxì;It doesn’t matter
+143;说话;shuōhuà;speak
+144;看见;kànjiàn;see
+145;睡觉;shuìjiào;sleep
+146;打电话;dǎdiànhuà;call up
+147;学习;xuéxí;study
+148;工作;gōngzuò;work
+149;下雨;xiàyǔ;rain
+150;喜欢;xǐhuān;like
+151;认识;rènshi;know, recognize
+152;高兴;gāoxìng;happy
+153;漂亮;piàoliàng;beautiful
