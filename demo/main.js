@@ -13,7 +13,9 @@ leitner = function() {
 	
 	this.deck = {};
 	this.session = [];
+	this.hand = [];
 	this.sessionCounter  = 0;
+	this.reDrawCounter = 0;
 	this.addCard = function(id, lastSessionCounter = 0, rank = 0) {
 		this.deck[id]=[lastSessionCounter, rank];
 	}
@@ -33,7 +35,7 @@ leitner = function() {
 		var min_session = -1;
 		var prev_session_size = this.session.length;
 		for (const [key, value] of Object.entries(this.deck)) {
-			if (this.session.indexOf(key)!=-1)
+			if (this.session.indexOf(key)!=-1 || this.hand.indexOf(key)!=-1)
 			{
 				continue;
 			}
@@ -61,15 +63,25 @@ leitner = function() {
 	}
 	
 	this.draw = function() {
+		if (this.session.length==0)
+		{
+			this.nextSession();
+		}
 		if (this.session.length>0)
 		{
-			return this.session.pop();//[this.session.length-1];
+			this.reDrawCounter = 0;
+			var card_id = this.session.pop();//[this.session.length-1];
+			this.hand.push(card_id);
+			return card_id;
 		}
 	}
-	this.unDraw = function(card_id) {
-		this.session.splice(0, 0, card_id);
-	}
+	
 	this.updateCard = function(card_id, succ) {
+		var idx = this.hand.indexOf(card_id);
+		if (idx!=-1)
+		{
+			this.hand.splice(idx, 1);
+		}
 		var card = this.deck[card_id];
 		card[0]=this.sessionCounter;
 		if (succ)
@@ -77,94 +89,27 @@ leitner = function() {
 		else
 			card[1]=0;
 	}
-	this.canDraw = function() {
-		return this.session.length>0;
-	}
-}
-
-var test_leitner = function() {
-	var le = new leitner();
-	var i;
-	for(i=0;i<10;i++)
-		le.addCard(i);
-	var answer_line='';
-	for(i=0;i<100;i++)
-	{
-		if (!le.canDraw())
+	
+	this.reDraw = function(card_id) {
+		var idx = this.hand.indexOf(card_id);
+		if (idx!=-1)
 		{
-			le.nextSession();
-			console.log('#', le.sessionCounter, 'answer: ', answer_line, ' next:', le.session);
-			answer_line='';
-			if (!le.canDraw())
+			this.hand.splice(idx, 1);
+		}
+		this.session.splice(0, 0, card_id);
+		this.reDrawCounter++;
+		if (this.reDrawCounter>=this.session.length)
+		{
+			this.nextSession();
+			if (this.reDrawCounter>=this.session.length)
 			{
-				console.log('next session empty');
 				return;
 			}
 		}
-		var card_id = le.draw();
-		
-		var succ = Math.random()*card_id<5;
-		//succ=true;
-		answer_line+=' '+card_id.toString()+'->'+succ.toString();
-		if (succ) answer_line+=le.deck[card_id][1];
-		le.updateCard(card_id, succ);
+		var card_id = this.session.pop();
+		this.hand.push(card_id);
+		return card_id;
 	}
-}
-
-var test_leitner_hand = function() {
-	var le = new leitner();
-	var i;
-	for(i=0;i<10;i++)
-		le.addCard(i);
-	var answer_line='';
-	for(i=0;i<100;i++)
-	{
-		var hand=[];
-		var retries = 0;
-		for(;hand.length<5;)
-		{
-			if (!le.canDraw())
-			{
-				le.nextSession();
-				if (!le.canDraw()) break;
-			}
-			var card_id = le.draw();
-			if (hand.indexOf(card_id)!=-1)
-			{
-				le.unDraw(card_id);
-				retries++;
-				if (retries>=le.session.length)
-				{
-					console.log('hand ', hand, ' no more cards in ', le.session);
-					le.nextSession();
-					if (retries>=le.session.length)
-					{
-						console.log('no new cards in ', le.session);
-						break;
-					}
-				}
-				continue;
-			}
-			retries = 0;
-			hand.push(card_id);
-		}
-		//console.log(hand);
-		if (hand.length!=5)
-		{
-			throw 'test failed';
-		}
-		answer_line='';
-		for(card_id of hand)
-		{
-			var succ = Math.random()*card_id<5;
-			//succ=true;
-			answer_line+=' '+card_id.toString()+'->'+succ.toString();
-			if (succ) answer_line+=le.deck[card_id][1];
-			le.updateCard(card_id, succ);
-		}
-		console.log('#', le.sessionCounter, 'answer: ', answer_line, ' remaining:', le.session);
-	}
-	
 }
 
 ////
