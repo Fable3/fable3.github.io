@@ -127,6 +127,7 @@ var enemy_id = -1;
 var enemy_anim_key = 'idle';
 var selected_card_index = -1;
 var selected_card_accented = 0;
+var pinyin_revealed = false;
 var key_buffer="";
 var key_buffer_accented="";
 var GameState = {
@@ -140,6 +141,12 @@ var get_card_rarity = function(card_id) {
 	return 0;
 }
 var get_card_rank = function(card_id) {
+	if (card_id in GameState.deck.deck)
+	{
+		var rank= GameState.deck.deck[card_id][1];
+		if (rank>9) rank=9;
+		return rank;
+	}
 	return 0;
 }
 var get_card_desc = function(card_id) {
@@ -351,11 +358,12 @@ anim_card_pos = function(cp, dt, rot, x, y, speed)
 }
 
 
-select_card = function(id, has_accent = 0) { // 0: no, 1: good, 2: mismatched accent
+select_card = function(id, has_accent = 0) { // 0: not yet, 1: good, 2: mismatched accent, 3: clicked, no accent
 	selected_card_index = id;
 	selected_card_accented = has_accent;
 	if (id==-1)
 	{
+		pinyin_revealed = false;
 		key_buffer='';
 		key_buffer_accented='';
 		var i;
@@ -399,6 +407,14 @@ audio_play_pinyin = function(str) {
 	play_next_audio();
 }
 
+reveal_pinyin = function()
+{
+	if (selected_card_index==-1) return;
+	pinyin_revealed = true;
+	var ch_id = GameState.hand[selected_card_index].id;
+	audio_play_pinyin(word_db[ch_id].pinyin);
+}
+
 select_answer = function(id) {
 	if (selected_card_index!=-1 && id>=0 && id<GameState.hand[selected_card_index].options.length)
 	{
@@ -406,10 +422,14 @@ select_answer = function(id) {
 		var eng_id = GameState.hand[selected_card_index].options[id];
 		var succ = ch_id == eng_id;
 		console.log('selected answer: ', word_db[eng_id].english, succ);
-		if (succ)
+		if (!pinyin_revealed)
+		{
+			reveal_pinyin();
+		}
+		/*if (succ)
 		{
 			audio_play_pinyin(word_db[ch_id].pinyin);
-		}
+		}*/
 		GameState.deck.updateCard(ch_id, succ);
 		GameState.hand.splice(selected_card_index, 1);
 		select_card(-1);
@@ -511,6 +531,7 @@ var key_pressed = function(k) {
 					{
 						select_card(selected_card_index, 2);
 					}
+					reveal_pinyin();
 				}
 			}
 		}
@@ -532,7 +553,7 @@ var key_pressed = function(k) {
 		{
 			var idx = parseInt(c)-1;
 			if (idx<GameState.hand.length)
-				select_card(idx, 0);
+				select_card(idx, 3);
 			return;
 		}
 		if (c>='0' && c<='4')
@@ -554,12 +575,14 @@ var key_pressed = function(k) {
 				if (word_db[GameState.hand[i].id].pinyin===key_buffer_accented)
 				{
 					select_card(i, 1);
+					reveal_pinyin();
 					break;
 				} else if (word_db[GameState.hand[i].id].unAccented===key_buffer)
 				{
 					if (key_buffer_accented!=key_buffer)
 					{
 						select_card(i, 2);
+						reveal_pinyin();
 					} else
 					{
 						select_card(i, 0);
@@ -630,7 +653,7 @@ function add_random_card_to_deck()
 function deal_cards()
 {
 	'use strict';
-	for(i=0;i<5;i++)
+	for(var i=0;i<5;i++)
 	{
 		var card_id = GameState.deck.draw();
 		if (card_id===undefined) break;
@@ -656,6 +679,7 @@ function deal_cards()
 }
 
 main.start = function (div) {
+  'use strict';
   loadText("words.txt", function(err, text) {
 	  if (err)
 	  {
@@ -800,7 +824,7 @@ main.start = function (div) {
 		  //ctx_ground.drawImage(snow_layer, 0, 0, img_ground.width, img_ground.height, ctx_ground.canvas.width-x, ctx_ground.canvas.height-y, ctx_ground.canvas.width, ctx_ground.canvas.height);
 	  }
   }
-  for(i=0;i<5;i++)
+  for(var i=0;i<5;i++)
 	background_layers[i].onload = () => { redraw_bg(); };
   
   set_background(0);
@@ -1154,10 +1178,11 @@ main.start = function (div) {
 		  {
 			  if (selected_card_index == i)
 			  {
-				  select_card(-1);
-			  } else
+				  reveal_pinyin();
+			  } else if (selected_card_index==-1)
 			  {
-				  select_card(i);
+				  select_card(i, 3);
+				  reveal_pinyin();
 			  }
 			  return;
 		  }
@@ -1172,7 +1197,7 @@ main.start = function (div) {
 			  var dy = y-cp.y;
 			  var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/scroll_size;
 			  var ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/scroll_size;
-			  if (tx>-scroll_image.width/2 && tx<scroll_image.width/2 &&
+			  if (tx>-cp.width/2 && tx<cp.width/2 &&
 				  ty>-scroll_image.height/2 && ty<scroll_image.height/2)
 			  {
 				  select_answer(i);
@@ -1456,7 +1481,7 @@ main.start = function (div) {
 			{
 				var frame_count = 18;
 				var frame_idx = Math.floor(flame_anim_time/100)%frame_count;
-				frame_height = flame_image.height/frame_count;
+				var frame_height = flame_image.height/frame_count;
 				var marg = 70;
 				ctx_cards.drawImage(flame_image, 0, frame_idx*frame_height, flame_image.width, frame_height, -card_image.width/2-marg, -card_image.height/2-marg, card_image.width+marg*2, card_image.height+marg*2+20);
 			}
@@ -1464,11 +1489,14 @@ main.start = function (div) {
 			//ctx_cards.font = "200px KaiTi";
 			//font-family: 'Ma Shan Zheng', cursive;
 			//font-family: 'Noto Sans SC', sans-serif;
-			ctx_cards.font = "200px Ma Shan Zheng";
+			font_size = 200;
+			var txt = word_db[GameState.hand[i].id].chars;
+			if (txt.length>2) font_size = Math.floor(font_size*2/txt.length);
+			ctx_cards.font = font_size.toString() + "px Ma Shan Zheng";
 			//ctx_cards.font = "200px Noto Sans SC";
 			ctx_cards.fillStyle = "red";
 			ctx_cards.textAlign = "center";
-			ctx_cards.fillText(word_db[GameState.hand[i].id].chars, 0, 0);
+			ctx_cards.fillText(txt, 0, 0);
 			var font_size=60;
 			ctx_cards.font = font_size.toString()+"px Arial";
 			ctx_cards.fillStyle = "black";
@@ -1484,6 +1512,7 @@ main.start = function (div) {
 		  if (selected_card_index!=-1)
 		  {
 			var cp_sel = get_card_pos(GameState.hand[selected_card_index].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
+			var max_width_save=[];
 			for(i=0;i<GameState.hand[selected_card_index].options.length;i++)
 			{
 				var eng_id = GameState.hand[selected_card_index].options[i];
@@ -1492,9 +1521,54 @@ main.start = function (div) {
 				var card_x = ctx_cards.canvas.width/2;
 				var card_y = card_size*card_image.height*1.5;
 				var pos_translate = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]];
-				card_x+=pos_translate[i][0]*(card_size*card_image.width+scroll_size*scroll_image.width/2);
-				card_y+=pos_translate[i][1]*(card_size*card_image.height*0.5+scroll_size*scroll_image.height/2);
+				const px = pos_translate[i][0];
+				const py = pos_translate[i][1];
+				
+				ctx_cards.font = "50px Arial";
+				//ctx_cards.font = "200px Noto Sans SC";
+				ctx_cards.textAlign = "center";
+				ctx_cards.fillStyle = "white";
+				var lines = word_db[eng_id].english.split('\\n');
+				var max_width=0;
+				var line_width=[];
+				ctx_cards.transform(scroll_size, 0, 0, scroll_size, 0, 0);
+				for(var lineidx = 0; lineidx<lines.length;lineidx++)
+				{
+					var w = ctx_cards.measureText(lines[lineidx]).width;
+					if (w>max_width) max_width = w;
+					line_width[lineidx]=w;
+				}
+				ctx_cards.restore();
+				ctx_cards.save();
+				max_width_save[i]=max_width;
+				const scroll_border = scroll_image.width/6;
+				
+				var x_offset = 0;
+				let adj_width = 0;
+				if (py==-1 && px!=0)
+				{
+					adj_width = max_width_save[2];
+				} else if (py==1 && px!=0)
+				{
+					adj_width = max_width_save[3];
+				}
+				let adj_diff = adj_width+2*scroll_border-scroll_image.width;
+				if (adj_diff>0)
+				{
+					x_offset += adj_diff/2*px;
+				}
+				let diff = max_width+2*scroll_border-scroll_image.width;
+				let render_scroll_width = scroll_image.width;
+				if (diff>0)
+				{
+					render_scroll_width = max_width+2*scroll_border;
+					x_offset += diff/2*px;
+				}
+				
+				card_x+=px*(card_size*card_image.width+scroll_size*scroll_image.width/2)+x_offset*scroll_size;
+				card_y+=py*(card_size*card_image.height*0.5+scroll_size*scroll_image.height/2);
 				var cp = get_card_pos(eng_id+10000, cp_sel.x, cp_sel.y, 0);
+				cp.width = render_scroll_width;
 				anim_card_pos(cp, dt, rot, card_x, card_y, 300);
 				ctx_cards.transform(scroll_size*Math.cos(cp.rot), -scroll_size*Math.sin(cp.rot), scroll_size*Math.sin(cp.rot), scroll_size*Math.cos(cp.rot), cp.x, cp.y);			
 				var img=scroll_image;
@@ -1504,12 +1578,24 @@ main.start = function (div) {
 					img = scroll_selected_image;
 					text_color = "white";
 				}
-				ctx_cards.drawImage(img, -scroll_image.width/2, -scroll_image.height/2);
 				ctx_cards.font = "50px Arial";
-				//ctx_cards.font = "200px Noto Sans SC";
-				ctx_cards.fillStyle = text_color;
 				ctx_cards.textAlign = "center";
-				ctx_cards.fillText(word_db[eng_id].english, 0, 0);
+				ctx_cards.fillStyle = text_color;
+				if (diff>0)
+				{
+					ctx_cards.drawImage(img, 0, 0,  scroll_border, scroll_image.height, -max_width/2-scroll_border, -scroll_image.height/2, scroll_border, scroll_image.height);
+					ctx_cards.drawImage(img, scroll_border, 0, scroll_image.width-2*scroll_border,  scroll_image.height, -max_width/2, -scroll_image.height/2, max_width, scroll_image.height);
+					ctx_cards.drawImage(img, scroll_image.width-scroll_border, 0, scroll_border, scroll_image.height, max_width/2, -scroll_image.height/2, scroll_border, scroll_image.height);
+				} else
+				{
+					ctx_cards.drawImage(img, -scroll_image.width/2, -scroll_image.height/2);
+				}
+				
+				for(var lineidx = 0; lineidx<lines.length;lineidx++)
+				{
+					ctx_cards.fillText(lines[lineidx], 0, (lineidx-(lines.length-1)/2)*60+15);
+				}
+				
 				ctx_cards.restore();
 			}
 		  }

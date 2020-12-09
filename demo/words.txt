@@ -100,7 +100,7 @@
 90;的;de;of
 91;了;le;completed action marker
 92;吗;ma;question tag
-93;呢;ne;question particle for subjects already mentioned
+93;呢;ne;question particle for\nsubjects already mentioned
 94;喂;wèi;hello
 95;学校;xuéxiào;school
 96;饭店;fàndiàn;restaurant
