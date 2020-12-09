@@ -1,165 +1,165 @@
 ﻿
-1;一;yī;one
-2;二;èr;two
-3;三;sān;three
-4;四;sì;four
-5;五;wǔ;five
-6;六;liù;six
-7;七;qī;seven
-8;八;bā;eight
-9;九;jiǔ;nine
-10;十;shí;ten
+1;一;yī;one;egy
+2;二;èr;two;kettő
+3;三;sān;three;három
+4;四;sì;four;négy
+5;五;wǔ;five;öt
+6;六;liù;six;hat
+7;七;qī;seven;hét
+8;八;bā;eight;nyolc
+9;九;jiǔ;nine;kilenc
+10;十;shí;ten;tíz
 
-11;不;bù;no
-12;在;zài;in, at
-13;上;shàng;up
-14;下;xià;down
-15;年;nián;year
-16;月;yuè;month
-17;日;rì;day
-18;好;hǎo;good
-19;大;dà;big
-20;小;xiǎo;small
-21;人;rén;person
+11;不;bù;no;nem
+12;在;zài;in, at;helyhatározó
+13;上;shàng;up;fel
+14;下;xià;down;le
+15;年;nián;year;év
+16;月;yuè;month;hónap
+17;日;rì;day;nap
+18;好;hǎo;good;jó
+19;大;dà;big;nagy
+20;小;xiǎo;small;kicsi
+21;人;rén;person;ember
 
-22;爸爸;bàba;father
-23;妈妈;māma;mother
-24;儿子;érzi;son
-25;女儿;nǚér;daughter
+22;爸爸;bàba;father;apa
+23;妈妈;māma;mother;anya
+24;儿子;érzi;son;fiúgyermek
+25;女儿;nǚér;daughter;lánygyermek
 
-26;我;wǒ;I, me
-27;我们;wǒmen;we, us
-28;你;nǐ;you
-29;你们;nǐmen;you (plural)
-30;他;tā;he, him
-31;她;tā;she, her
-32;他们;tāmen;they (male+female / male)
-33;她们;tāmen;they (females)
-34;这;zhè;this
-35;那;nà;that
+26;我;wǒ;I, me;én
+27;我们;wǒmen;we, us;mi
+28;你;nǐ;you;te
+29;你们;nǐmen;you (plural);ti
+30;他;tā;he, him;ő (férfi)
+31;她;tā;she, her;ő (nő)
+32;他们;tāmen;they (male+female / male);ők (férfiak/vegyes)
+33;她们;tāmen;they (females);they (nők)
+34;这;zhè;this;ez
+35;那;nà;that;az
 
-36;叫;jiào;call
-37;来;lái;come
-38;回;huí;return
-39;去;qù;go
-40;吃;chī;eat
-41;喝;hē;drink
-42;做;zuò;do
-43;买;mǎi;buy
-44;开;kāi;open
-45;坐;zuò;sit
-46;住;zhù;live
-47;是;shì;be (am, is, are)
-48;有;yǒu;have
-49;看;kàn;look
-50;听;tīng;listen
+36;叫;jiào;call;hív, nevez
+37;来;lái;come;jön
+38;回;huí;return;visszatér
+39;去;qù;go;megy
+40;吃;chī;eat;eszik
+41;喝;hē;drink;iszik
+42;做;zuò;do;tesz, csinál
+43;买;mǎi;buy;vesz
+44;开;kāi;open;kinyit
+45;坐;zuò;sit;ül
+46;住;zhù;live;él
+47;是;shì;be (am, is, are);azonos
+48;有;yǒu;have;van, birtokol
+49;看;kàn;look;néz
+50;听;tīng;listen;hallgat
 
-51;多;duō;many, much
-52;少;shǎo;few, little
-53;冷;lěng;cold
-54;热;rè;hot
-55;很;hěn;quite, very
-56;都;dōu;all
+51;多;duō;many, much;sok
+52;少;shǎo;few, little;kevés
+53;冷;lěng;cold;hideg
+54;热;rè;hot;meleg
+55;很;hěn;quite, very;nagyon
+56;都;dōu;all;mind
 
-57;水;shuǐ;water
-58;菜;cài;vegetable
-59;会;huì;can (knowledge)
-60;能;néng;can (ability)
-61;爱;ài;love
-62;请;qǐng;please
-63;读;dú;read
-64;写;xiě;write
-65;想;xiǎng;want, think
-66;点;diǎn;dot, spot
+57;水;shuǐ;water;víz
+58;菜;cài;vegetable;zöldség
+59;会;huì;can (knowledge);tud (tanult)
+60;能;néng;can (ability);tud (képesség)
+61;爱;ài;love;szeret, imád
+62;请;qǐng;please;kérem
+63;读;dú;read;olvas
+64;写;xiě;write;ír
+65;想;xiǎng;want, think;szeretne, gondol, akar
+66;点;diǎn;dot, spot, o'clock;pont, kicsit, óra
 
-67;茶;chá;tea
-68;家;jiā;home
-69;钱;qián;money
-70;猫;māo;cat
-71;狗;gǒu;dog
-72;书;shū;book
-73;字;zì;character
-74;零;líng;zero
-75;没有;méiyǒu;to not have
-76;太;tài;too
-77;和;hé;and, with
+67;茶;chá;tea;tea
+68;家;jiā;home;otthon
+69;钱;qián;money;pénz
+70;猫;māo;cat;macska
+71;狗;gǒu;dog;kutya
+72;书;shū;book;könyv
+73;字;zì;character;betű
+74;零;líng;zero;nulla
+75;没有;méiyǒu;to not have;nincsen
+76;太;tài;too;túl, nagyon
+77;和;hé;and, with;és
 
-78;哪;nǎ;which
-79;谁;shuí;who
-80;什么;shénme;what
-81;多少;duōshǎo;how many, how much
-82;几;jǐ;a few, how many
-83;怎么;zěnme;how
-84;怎么样;zěnmeyàng;how about
-85;个;gè;generic measure word
-86;岁;suì;year measure word
-87;本;běn;volume
-88;些;xiē;some
-89;块;kuài;piece
+78;哪;nǎ;which;melyik?
+79;谁;shuí;who;ki?
+80;什么;shénme;what;mi, mit?
+81;多少;duōshǎo;how many, how much;mennyi?
+82;几;jǐ;a few, how many;hány?
+83;怎么;zěnme;how;hogyan?
+84;怎么样;zěnmeyàng;how about;milyen?
+85;个;gè;generic measure word;általános számlálószó
+86;岁;suì;year measure word;év számlálószó
+87;本;běn;volume;kötet
+88;些;xiē;some;néhány
+89;块;kuài;piece;darab, jüan
 
-90;的;de;of
-91;了;le;completed action marker
-92;吗;ma;question tag
-93;呢;ne;question particle for\nsubjects already mentioned
-94;喂;wèi;hello
-95;学校;xuéxiào;school
-96;饭店;fàndiàn;restaurant
-97;商店;shāngdiàn;store
-98;医院;yīyuàn;hospital
-99;火车站;huǒchēzhàn;train station
-100;中国;zhōng guó;China
-101;北京;běijīng;Beijing
+90;的;de;of;birtokos partikula
+91;了;le;completed action marker;befejezettség jele
+92;吗;ma;question tag;kérdező partikula
+93;呢;ne;question particle for\nsubjects already mentioned;visszakérdező partikula
+94;喂;wèi;hello;hello
+95;学校;xuéxiào;school;iskola
+96;饭店;fàndiàn;restaurant;étterem
+97;商店;shāngdiàn;store;bolt
+98;医院;yīyuàn;hospital;kórház
+99;火车站;huǒchēzhàn;train station;vonatállomás
+100;中国;zhōng guó;China;Kína
+101;北京;běijīng;Beijing;Peking
 
-102;前面;qiánmiàn;front
-103;后面;hòumiàn;behind
-104;里面;lǐmiàn;inside
-105;今天;jīntiān;today
-106;明天;míngtiān;tomorrow
-107;昨天;zuótiān;yesterday
-108;上午;shàngwǔ;morning
-109;中午;zhōngwǔ;noon
-110;下午;xiàwǔ;afternoon
-111;星期;xīngqī;week
-112;分钟;fēnzhōng;minute
-113;现在;xiànzài;now
-114;时候;shíhou;time
-115;老师;lǎoshī;teacher
-116;学生;xuéshēng;student
-117;同学;tóngxué;schoolmate
-118;朋友;péngyou;friend
-119;医生;yīshēng;doctor
-120;先生;xiānsheng;sir
-121;小姐;xiǎojiě;Miss
-122;衣服;yīfu;cloth
-123;米饭;mǐfàn;rice
-124;水果;shuǐguǒ;fruit
-125;苹果;píngguǒ;apple
-126;飞机;fēijī;airplane
-127;出租车;chūzūchē;taxi
-128;电视;diànshì;television
-129;电脑;diànnǎo;computer
-130;电影;diànyǐng;movie
-131;天气;tiānqì;weather
-132;东西;dōngxi;thing
-133;名字;míngzi;name
-134;汉语;hànyǔ;mandarin Chinese
-135;桌子;zhuōzi;desk
-136;椅子;yǐzi;chair
-137;杯子;bēizi;cup
+102;前面;qiánmiàn;front;elöl
+103;后面;hòumiàn;behind;hátul
+104;里面;lǐmiàn;inside;-ban, -ben
+105;今天;jīntiān;today;ma
+106;明天;míngtiān;tomorrow;holnap
+107;昨天;zuótiān;yesterday;tegnap
+108;上午;shàngwǔ;morning;délelőtt
+109;中午;zhōngwǔ;noon;dél
+110;下午;xiàwǔ;afternoon;délután
+111;星期;xīngqī;week;hét
+112;分钟;fēnzhōng;minute;perc
+113;现在;xiànzài;now;most
+114;时候;shíhou;time;idő
+115;老师;lǎoshī;teacher;tanár
+116;学生;xuéshēng;student;tanuló
+117;同学;tóngxué;schoolmate;osztálytárs
+118;朋友;péngyou;friend;barát
+119;医生;yīshēng;doctor;doktor
+120;先生;xiānsheng;sir;úr
+121;小姐;xiǎojiě;Miss;kisasszony
+122;衣服;yīfu;cloth;ruha
+123;米饭;mǐfàn;rice;rizs
+124;水果;shuǐguǒ;fruit;gyümölcs
+125;苹果;píngguǒ;apple;alma
+126;飞机;fēijī;airplane;repülőgép
+127;出租车;chūzūchē;taxi;taxi
+128;电视;diànshì;television;TV
+129;电脑;diànnǎo;computer;számítógép
+130;电影;diànyǐng;movie;film
+131;天气;tiānqì;weather;időjárás
+132;东西;dōngxi;thing;dolog
+133;名字;míngzi;name;név
+134;汉语;hànyǔ;mandarin Chinese;kínai nyelv (mandarin)
+135;桌子;zhuōzi;desk;asztal
+136;椅子;yǐzi;chair;szék
+137;杯子;bēizi;cup;csésze
 
-138;谢谢;xièxie;thank
-139;不客气;búkèqì;you are welcome
-140;再见;zàijiàn;good-bye
-141;对不起;duìbùqǐ;sorry
-142;没关系;méiguānxì;It doesn’t matter
-143;说话;shuōhuà;speak
-144;看见;kànjiàn;see
-145;睡觉;shuìjiào;sleep
-146;打电话;dǎdiànhuà;call up
-147;学习;xuéxí;study
-148;工作;gōngzuò;work
-149;下雨;xiàyǔ;rain
-150;喜欢;xǐhuān;like
-151;认识;rènshi;know, recognize
-152;高兴;gāoxìng;happy
-153;漂亮;piàoliàng;beautiful
+138;谢谢;xièxie;thank;köszönöm
+139;不客气;búkèqì;you are welcome;szivesen
+140;再见;zàijiàn;good-bye;viszlát
+141;对不起;duìbùqǐ;sorry;bocsánat
+142;没关系;méiguānxì;It doesn’t matter;semmi gond
+143;说话;shuōhuà;speak;mond
+144;看见;kànjiàn;see;lát
+145;睡觉;shuìjiào;sleep;alszik
+146;打电话;dǎdiànhuà;call up;telefonál
+147;学习;xuéxí;study;tanul
+148;工作;gōngzuò;work;munka
+149;下雨;xiàyǔ;rain;eső esik
+150;喜欢;xǐhuān;like;szeret, kedvel
+151;认识;rènshi;know, recognize;ismer
+152;高兴;gāoxìng;happy;boldog
+153;漂亮;piàoliàng;beautiful;szép

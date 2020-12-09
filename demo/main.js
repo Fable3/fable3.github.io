@@ -77,7 +77,7 @@ leitner = function() {
 		}
 	}
 	
-	this.updateCard = function(card_id, succ) {
+	this.updateCard = function(card_id, succ, adv) {
 		var idx = this.hand.indexOf(card_id);
 		if (idx!=-1)
 		{
@@ -86,7 +86,7 @@ leitner = function() {
 		var card = this.deck[card_id];
 		card[0]=this.sessionCounter;
 		if (succ)
-			card[1]++;
+			card[1]+=adv;
 		else
 			card[1]=0;
 	}
@@ -463,7 +463,7 @@ select_answer = function(id) {
 		var ch_id = GameState.hand[selected_card_index].id;
 		var eng_id = GameState.hand[selected_card_index].options[id];
 		var succ = ch_id == eng_id;
-		console.log('selected answer: ', word_db[eng_id].english, succ);
+		//console.log('selected answer: ', word_db[eng_id].english, succ);
 		if (!pinyin_revealed)
 		{
 			reveal_pinyin();
@@ -483,7 +483,7 @@ end_answer = function(succ) {
 	if (selected_card_index!=-1)
 	{
 		var ch_id = GameState.hand[selected_card_index].id;
-		GameState.deck.updateCard(ch_id, succ);
+		GameState.deck.updateCard(ch_id, succ, [2,3,1,1][selected_card_accented]);
 		GameState.hand.splice(selected_card_index, 1);
 		select_card(-1);
 		remove_card_pos(ch_id);
@@ -611,7 +611,10 @@ var key_pressed = function(k) {
 		{
 			var idx = parseInt(c)-1;
 			if (idx<GameState.hand.length)
+			{
 				select_card(idx, 3);
+				reveal_pinyin();
+			}
 			return;
 		}
 		if (c>='1' && c<='4')
@@ -762,12 +765,13 @@ main.start = function (div) {
 			  const col = line.split(';');
 			  const unAccented = col[2].normalize('NFD').replace(/\u0304|\u0301|\u030c|\u0300| /g, '').
 				normalize('NFC').replace(/(\w|ü)[1-5]/gi, '$1').toLowerCase();
+			  if (col[4] == undefined) throw 'missing column at '+line;
 
 			  word_db[parseInt(col[0])]={"chars": col[1],
 					"pinyinOrig": col[2],
 					"pinyin": col[2].replaceAll(' ', ''),
 					"unAccented": unAccented,
-					"english": col[3]
+					"english": col[4]
 			  };
 		  }
 	  }
@@ -1538,7 +1542,7 @@ main.start = function (div) {
 					if (selected_card_index<i) card_index--;
 				}
 				if (card_count==1) rot = 0;
-				else rot = -card_index*max_rot*2/(card_count-1)+max_rot;
+				else rot = -(2*card_index+1)*max_rot*2/(2*card_count)+max_rot;
 				card_x=-radi*Math.sin(rot)+ctx_cards.canvas.width/2;
 				card_y=-radi*Math.cos(rot)+radi+ctx_cards.canvas.height/2;
 				if (selected_card_index!=-1)
