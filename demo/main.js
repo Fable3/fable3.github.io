@@ -149,8 +149,20 @@ var get_card_rank = function(card_id) {
 	}
 	return 0;
 }
+var get_card_damage = function(card_id) {
+	var base_dmg = Math.floor((card_id-1)/10)+1;
+	var dmg = base_dmg;
+	if (selected_card_index!=-1)
+	{
+		if (GameState.hand[selected_card_index].id==card_id)
+		{
+			dmg*=[2,3,1,1][selected_card_accented];
+		}
+	}
+	return dmg;
+}
 var get_card_desc = function(card_id) {
-	return {txt:""};
+	return {txt:get_card_damage(card_id).toString() + " dmg"};
 };
 
 const audio_play_tone = new Audio();
@@ -200,13 +212,39 @@ var append_accent = function (str, acc) {
 	if (str.length==0) return str;
 	if (acc<1 || acc>4) return str;
 	var idx = str.length-1;
-	if (str.length>1 && (str[idx]=='n' || str[idx-1]=='e' && str[idx]=='r'))
+	if (str.length>1 && str[idx-1]=='e' && str[idx]=='r')
 	{
 		idx--;
-	}
-	else if (str.length>2 && str[idx-1]=='n' && str[idx]=='g')
+	} else
 	{
-		idx-=2;
+		if (str.length>1 && str[idx]=='n')
+		{
+			idx--;
+		}
+		else if (str.length>2 && str[idx-1]=='n' && str[idx]=='g')
+		{
+			idx-=2;
+		}
+		if (idx>1 && str[idx-1]=='i' && str[idx]=='u')
+		{
+			// iu or ui -> mark on terminal
+			// ui is handled by priority order
+		} else
+		{
+			// can skip v and ü, it's last in order (nüè works)
+			const l = "aoeiu";
+			var best_p = 10;
+			for(var i=idx;i>=0;i--)
+			{
+				var p = l.indexOf(str[i]);
+				if (p==-1) break;
+				if (p<best_p)
+				{
+					best_p=p;
+					idx=i;
+				}
+			}
+		}
 	}
 	var c = str[idx];
 	if (c=='ü') c='v';
@@ -401,7 +439,7 @@ audio_play_pinyin = function(str) {
 		var acc = get_accent_num(words[idx]);
 		if (acc[1]==4) acc[1]=3;
 		var str = acc[0];
-		str.replace('v', 'u%CC%88');
+		str = str.replace('v', 'u%CC%88');
 		audio_queue.push("http://resources.allsetlearning.com/pronwiki/resources/pinyin-audio/" + str + (acc[1]+1).toString() + ".mp3");
 	}
 	play_next_audio();
@@ -556,11 +594,11 @@ var key_pressed = function(k) {
 				select_card(idx, 3);
 			return;
 		}
-		if (c>='0' && c<='4')
+		if (c>='1' && c<='4')
 		{
 			key_buffer_accented = append_accent(key_buffer_accented, parseInt(c));
 		} else
-		if ((c>='a' && c<='z') || (c>='A' && c<='Z'))
+		if ((c>='a' && c<='z') || (c>='A' && c<='Z') || c=='ü' || c=='Ü')
 		{
 			c=c.toLowerCase();
 			if (c=='v') c='ü';
@@ -579,13 +617,24 @@ var key_pressed = function(k) {
 					break;
 				} else if (word_db[GameState.hand[i].id].unAccented===key_buffer)
 				{
-					if (key_buffer_accented!=key_buffer)
+					//if (key_buffer_accented!=key_buffer)
+					
+					var any_match = 0;
+					for(var r=1;r<=4;r++)
+					{
+						if (word_db[GameState.hand[i].id].pinyin === append_accent(key_buffer_accented, r))
+						{
+							any_match = 1;
+						}
+					}
+					
+					if (any_match)
+					{
+						select_card(i, 0);
+					} else
 					{
 						select_card(i, 2);
 						reveal_pinyin();
-					} else
-					{
-						select_card(i, 0);
 					}
 					break;
 				}
@@ -1482,18 +1531,22 @@ main.start = function (div) {
 				var frame_count = 18;
 				var frame_idx = Math.floor(flame_anim_time/100)%frame_count;
 				var frame_height = flame_image.height/frame_count;
-				var marg = 70;
-				ctx_cards.drawImage(flame_image, 0, frame_idx*frame_height, flame_image.width, frame_height, -card_image.width/2-marg, -card_image.height/2-marg, card_image.width+marg*2, card_image.height+marg*2+20);
+				var marg_x = 80;
+				var marg_y= 105;
+				ctx_cards.drawImage(flame_image, 0, frame_idx*frame_height, flame_image.width, frame_height, -card_image.width/2-marg_x, -card_image.height/2-marg_y, card_image.width+marg_x*2, card_image.height+marg_y*2+30);
 			}
-			//ctx_cards.font = "200px FangSong";
-			//ctx_cards.font = "200px KaiTi";
-			//font-family: 'Ma Shan Zheng', cursive;
 			//font-family: 'Noto Sans SC', sans-serif;
+			//font-family: 'Noto Serif SC', serif;
+			//font-family: 'Ma Shan Zheng', cursive;
+			//font-family: 'Zhi Mang Xing', cursive;
 			font_size = 200;
 			var txt = word_db[GameState.hand[i].id].chars;
 			if (txt.length>2) font_size = Math.floor(font_size*2/txt.length);
-			ctx_cards.font = font_size.toString() + "px Ma Shan Zheng";
-			//ctx_cards.font = "200px Noto Sans SC";
+			//var font_type = "Noto Sans SC";
+			var font_type = "Noto Serif SC";
+			if (rank>=6) font_type = "Zhi Mang Xing";
+			else if (rank>=3) font_type = "Ma Shan Zheng";
+			ctx_cards.font = font_size.toString() + "px " + font_type;
 			ctx_cards.fillStyle = "red";
 			ctx_cards.textAlign = "center";
 			ctx_cards.fillText(txt, 0, 0);
