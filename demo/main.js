@@ -127,6 +127,8 @@ var enemy_id = -1;
 var enemy_anim_key = 'idle';
 var selected_card_index = -1;
 var selected_card_accented = 0;
+var selected_answer_index = -1;
+var good_answer_index = -1;
 var pinyin_revealed = false;
 var key_buffer="";
 var key_buffer_accented="";
@@ -399,6 +401,8 @@ anim_card_pos = function(cp, dt, rot, x, y, speed)
 select_card = function(id, has_accent = 0) { // 0: not yet, 1: good, 2: mismatched accent, 3: clicked, no accent
 	selected_card_index = id;
 	selected_card_accented = has_accent;
+	selected_answer_index = -1;
+	good_answer_index = -1;
 	if (id==-1)
 	{
 		pinyin_revealed = false;
@@ -454,7 +458,7 @@ reveal_pinyin = function()
 }
 
 select_answer = function(id) {
-	if (selected_card_index!=-1 && id>=0 && id<GameState.hand[selected_card_index].options.length)
+	if (selected_card_index!=-1 && id>=0 && id<GameState.hand[selected_card_index].options.length && selected_answer_index==-1)
 	{
 		var ch_id = GameState.hand[selected_card_index].id;
 		var eng_id = GameState.hand[selected_card_index].options[id];
@@ -464,10 +468,21 @@ select_answer = function(id) {
 		{
 			reveal_pinyin();
 		}
-		/*if (succ)
+		if (succ)
 		{
-			audio_play_pinyin(word_db[ch_id].pinyin);
-		}*/
+			end_answer(true);
+		} else
+		{
+			selected_answer_index = id;
+			good_answer_index = GameState.hand[selected_card_index].options.indexOf(ch_id);
+		}
+	}
+}
+
+end_answer = function(succ) {
+	if (selected_card_index!=-1)
+	{
+		var ch_id = GameState.hand[selected_card_index].id;
 		GameState.deck.updateCard(ch_id, succ);
 		GameState.hand.splice(selected_card_index, 1);
 		select_card(-1);
@@ -583,6 +598,11 @@ var key_pressed = function(k) {
 			key_buffer = key_buffer.substring(0, key_buffer.length-1);
 			key_buffer_accented = key_buffer_accented.substring(0, key_buffer_accented.length-1);
 		}
+	}
+	if (selected_card_index!=-1 && selected_answer_index!=-1 && (k==="Enter" || k===" "))
+	{
+		end_answer(false);
+		return;
 	}
 	if (k.length==1)
 	{
@@ -1179,6 +1199,8 @@ main.start = function (div) {
   scroll_image.src = "scroll.png";
   var scroll_selected_image = new Image();
   scroll_selected_image.src = "scroll_selected.png";
+  var scroll_wrong_image = new Image();
+  scroll_wrong_image.src = "scroll_wrong.png";
   var rank_image = new Image();
   rank_image.src = 'rank.png';
   
@@ -1249,8 +1271,18 @@ main.start = function (div) {
 			  if (tx>-cp.width/2 && tx<cp.width/2 &&
 				  ty>-scroll_image.height/2 && ty<scroll_image.height/2)
 			  {
-				  select_answer(i);
-				  return;
+				  if (selected_answer_index!=-1)
+				  {
+					  if (i==good_answer_index)
+					  {
+						end_answer(false);
+						return;
+					  }
+				  } else
+				  {
+					select_answer(i);
+					return;
+				  }
 			  }
 		  }
 	  }
@@ -1477,7 +1509,7 @@ main.start = function (div) {
         //render_ctx2d.drawDebugPose(spriter_pose_next, atlas_data);
       }
 	  flame_anim_time+=dt;
-	  if (card_image.complete && card_burnt_image.complete && scroll_image.complete && scroll_selected_image.complete && rank_image.complete)
+	  if (card_image.complete && card_burnt_image.complete && scroll_image.complete && scroll_selected_image.complete && scroll_wrong_image.complete && rank_image.complete)
 	  {
 		  ctx_cards.clearRect(0, 0, ctx_cards.canvas.width, ctx_cards.canvas.height);
 		  var card_size=ctx_cards.canvas.width/10/card_image.width;
@@ -1626,10 +1658,25 @@ main.start = function (div) {
 				ctx_cards.transform(scroll_size*Math.cos(cp.rot), -scroll_size*Math.sin(cp.rot), scroll_size*Math.sin(cp.rot), scroll_size*Math.cos(cp.rot), cp.x, cp.y);			
 				var img=scroll_image;
 				var text_color = "blue";
-				if (selected_direction==i)
+				if (selected_answer_index==-1)
 				{
-					img = scroll_selected_image;
-					text_color = "white";
+					if (selected_direction==i)
+					{
+						img = scroll_selected_image;
+						text_color = "white";
+					}
+				} else
+				{
+					if (good_answer_index == i)
+					{
+						img = scroll_selected_image;
+						text_color = "white";
+					} else
+					if (selected_answer_index==i)
+					{
+						img = scroll_wrong_image;
+						text_color = "white";
+					}
 				}
 				ctx_cards.font = "50px Arial";
 				ctx_cards.textAlign = "center";
