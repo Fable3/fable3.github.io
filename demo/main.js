@@ -510,6 +510,10 @@ select_answer = function(id) {
 }
 update_enemy = function() {
 	GameState.monsterHP = 10+GameState.level*2;
+	if (GameState.level%10==9)
+	{
+		GameState.monsterHP *= 2;
+	}
 	set_enemy(1, enemy_id_from_level(GameState.level));
 	set_anim(1, 'idle');
 	set_background(Math.floor(GameState.level/10));
@@ -554,9 +558,12 @@ end_answer = function(succ) {
 		remove_card_pos(ch_id);
 		if (GameState.monsterHP==0)
 		{
-			add_random_card_to_deck();
 			GameState.level++;
-			if (GameState.level>GameState.maxLevel) GameState.maxLevel=GameState.level;
+			if (GameState.level>GameState.maxLevel)
+			{
+				GameState.maxLevel=GameState.level;
+				add_random_card_to_deck();
+			}
 			GameState.playerHP = 5;
 			update_enemy();
 			deal_cards(default_hand_size-GameState.hand.length);
@@ -804,6 +811,7 @@ function start_game()
 		GameState.maxLevel = st.maxLevel;
 		GameState.level = st.maxLevel-3;
 		if (GameState.level<1) GameState.level = 1;
+		if (Math.floor(GameState.maxLevel/10)!=Math.floor(GameState.level/10)) GameState.level = Math.floor(GameState.maxLevel/10)*10;
 		GameState.deck.clearHand(true);		
 		GameState.hand = [];
 		GameState.playerHP = 5;
@@ -846,18 +854,28 @@ function add_random_card_to_deck()
 function deal_cards(count)
 {
 	'use strict';
-	const prev_hand_length = GameState.hand.length;
+	var prev_hand_length = GameState.hand.length;
 	for(var i=0;i<count;i++)
 	{
 		var card_id = GameState.deck.draw();
 		if (card_id===undefined) break;
 		GameState.hand.push({"id":card_id, "options":""});
 	}
+	var options_count = 4;
+	if (GameState.level%10==9) options_count=8;
+	for(i=0;i<prev_hand_length;i++)
+	{
+		if (GameState.hand[i].options.length!=options_count)
+		{
+			prev_hand_length=i;
+		}
+	}
+	
 	for (i=prev_hand_length;i<GameState.hand.length;i++)
 	{
 		var card_id = GameState.hand[i].id;
 		var options = [];
-		for(;options.length<3;)
+		for(;options.length<options_count-1;)
 		{
 			var opt =  get_english_option(card_id);
 			/*if (Math.random()<0.3)
