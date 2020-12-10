@@ -123,8 +123,8 @@ leitner = function() {
 
 ////
 
-var enemy_id = -1;
-var enemy_anim_key = 'idle';
+var enemy_id = [-1, -1];
+var enemy_anim_key = ['idle', 'idle'];
 var selected_card_index = -1;
 var selected_card_accented = 0;
 var selected_answer_index = -1;
@@ -176,12 +176,12 @@ const audio_play_tone = new Audio();
 const background_layers = [new Image(), new Image(), new Image(), new Image(), new Image()];
 const snow_layer = new Image();
 
-set_enemy = function(id) {
-	enemy_id = id;
+set_enemy = function(spid, id) {
+	enemy_id[spid] = id;
 }
 
-set_anim = function(key) {
-	enemy_anim_key = key;
+set_anim = function(spid, key) {
+	enemy_anim_key[spid] = key;
 }
 
 var current_backgroud_index = 1;
@@ -196,6 +196,23 @@ set_background = function(bg_index) {
 		snow_layer.src = 'background/'+bg_names[bg_index%bg_names.length]+'/Snow.png';
 	else
 		snow_layer.src = '';
+}
+
+
+enemy_id_from_level = function(id) {
+	const boss_at_level = 10;
+	const enemy_models = 5;
+	const enemy_variants = 3;
+	var m10 = Math.floor(id/boss_at_level);
+	if (id==m10*boss_at_level+boss_at_level-1)
+	{
+		return (m10%enemy_variants)+(enemy_models*enemy_variants);
+	}
+	id=(id-m10)%(enemy_models*enemy_variants);
+	var m5 = Math.floor(id/enemy_models);
+	id=id%enemy_models;
+	id=(id*(m5+1))%enemy_models;
+	return id*3+m5;
 }
 
 test_object_pass = function (example) {
@@ -494,23 +511,31 @@ end_answer = function(succ) {
 		var draw_cards = false;
 		if (succ)
 		{
+			set_anim(0, 'attack');
 			var dmg = get_card_damage(ch_id);
 			GameState.monsterHP -= dmg;
 			if (GameState.monsterHP<=0)
 			{
 				GameState.monsterHP = 0;
-				set_anim('die');
+				set_anim(1, 'die');
 			} else
 			{
-				set_anim('hurt');
+				set_anim(1, 'hurt');
 			}
 		} else
 		{
 			//var dmg = GameState.level;
 			GameState.playerHP -= 1;
-			if (GameState.playerHP<0) GameState.playerHP = 0;
+			if (GameState.playerHP<=0)
+			{
+				GameState.playerHP = 0;
+				set_anim(0, 'die');
+			} else
+			{
+				set_anim(0, 'hurt');
+			}
 			draw_cards = true;
-			set_anim('attack');
+			set_anim(1, 'attack');
 		}
 		GameState.deck.updateCard(ch_id, succ, [2,3,1,1][selected_card_accented]);
 		GameState.hand.splice(selected_card_index, 1);
@@ -522,8 +547,8 @@ end_answer = function(succ) {
 			GameState.level++;
 			GameState.monsterHP = 10+GameState.level*2;
 			GameState.playerHP = 5;
-			set_enemy(GameState.level%4);
-			set_anim('idle');
+			set_enemy(1, enemy_id_from_level(GameState.level));
+			set_anim(1, 'idle');
 			set_background(Math.floor(GameState.level/10));
 			deal_cards(default_hand_size-GameState.hand.length);
 		} else
@@ -534,7 +559,7 @@ end_answer = function(succ) {
 				GameState.playerHP -= 1;
 				if (GameState.playerHP<0) GameState.playerHP = 0;
 				draw_cards = true;
-				set_anim('attack');
+				set_anim(1, 'hurt+attack');
 			}
 		}
 		if (draw_cards && GameState.playerHP!=0)
@@ -687,29 +712,23 @@ var key_pressed = function(k) {
 					break;
 				} else if (word_db[GameState.hand[i].id].unAccented===key_buffer)
 				{
-					if (key_buffer_accented==key_buffer)
+					var any_match = 0;
+					for(var r=1;r<=4;r++)
+					{
+						if (word_db[GameState.hand[i].id].pinyin === append_accent(key_buffer_accented, r))
+						{
+							any_match = 1;
+						}
+					}
+					
+					if (any_match)
 					{
 						select_card(i, 0);
 					} else
 					{
-						var any_match = 0;
-						for(var r=1;r<=4;r++)
-						{
-							if (word_db[GameState.hand[i].id].pinyin === append_accent(key_buffer_accented, r))
-							{
-								any_match = 1;
-							}
-						}
-						
-						if (any_match)
-						{
-							select_card(i, 0);
-						} else
-						{
-							select_card(i, 2);
-							reveal_pinyin();
-						}
-					}
+						select_card(i, 2);
+						reveal_pinyin();
+					}				
 					break;
 				}
 			}
@@ -802,6 +821,14 @@ function deal_cards(count)
 	}
 }
 
+first_anim_key = function(str) {
+  if (str.indexOf('+')!=-1)
+  {
+	  return str.substr(0, str.indexOf('+'));
+  }
+  return str;
+}
+
 main.start = function (div) {
   'use strict';
   loadText("words.txt", function(err, text) {
@@ -844,47 +871,60 @@ main.start = function (div) {
   });
 
   var div_element = document.getElementById(div);
-  var canvas = document.createElement('canvas');
-  canvas.width = div_element.offsetWidth;
-  canvas.height = div_element.offsetHeight;
-  canvas.style.position = 'absolute';
-  canvas.style.width = canvas.width + 'px';
-  canvas.style.height = canvas.height + 'px';
-  canvas.style.zIndex = -1; // behind controls
+  var canvas = [document.createElement('canvas'), document.createElement('canvas')];
+  var ctx = [null, null];
+  for(var spid=0;spid<2;spid++)
+  {
+	  canvas[spid].width = div_element.offsetWidth;
+	  canvas[spid].height = div_element.offsetHeight;
+	  canvas[spid].style.position = 'absolute';
+	  canvas[spid].style.width = canvas.width + 'px';
+	  canvas[spid].style.height = canvas.height + 'px';
+	  canvas[spid].style.zIndex = -1; // behind controls
+	  div_element.appendChild(canvas[spid]);
 
-  div_element.appendChild(canvas);
-
-  var ctx = canvas.getContext('2d');
-
-  window.addEventListener('resize', function() {
-    canvas.width = div_element.offsetWidth;
-    canvas.height = div_element.offsetHeight;
-    canvas.style.width = canvas.width + 'px';
-    canvas.style.height = canvas.height + 'px';
-  });
-
-  var render_ctx2d = new RenderCtx2D(ctx);
-
-  var canvas_gl = document.createElement('canvas');
-  canvas_gl.width = div_element.offsetWidth;
-  canvas_gl.height = div_element.offsetHeight;
-  canvas_gl.style.position = 'absolute';
-  canvas_gl.style.width = canvas_gl.width + 'px';
-  canvas_gl.style.height = canvas_gl.height + 'px';
-  canvas_gl.style.zIndex = -2; // behind 2D context canvas
-
-  div_element.appendChild(canvas_gl);
-
-  var gl = canvas_gl.getContext('webgl') || canvas_gl.getContext('experimental-webgl');
+      ctx[spid] = canvas[spid].getContext('2d');
+  }
 
   window.addEventListener('resize', function() {
-    canvas_gl.width = div_element.offsetWidth;
-    canvas_gl.height = div_element.offsetHeight;
-    canvas_gl.style.width = canvas_gl.width + 'px';
-    canvas_gl.style.height = canvas_gl.height + 'px';
+	for(var spid=0;spid<2;spid++)
+	{		
+		canvas[spid].width = div_element.offsetWidth;
+		canvas[spid].height = div_element.offsetHeight;
+		canvas[spid].style.width = canvas.width + 'px';
+		canvas[spid].style.height = canvas.height + 'px';
+	}
   });
 
-  var render_webgl = new RenderWebGL(gl);
+  var render_ctx2d = [new RenderCtx2D(ctx[0]), new RenderCtx2D(ctx[1])];
+
+  var canvas_gl = [document.createElement('canvas'), document.createElement('canvas')];
+  var gl = [null, null];
+  for(var spid=1;spid>=0;spid--)
+  {
+	  canvas_gl[spid].width = div_element.offsetWidth;
+	  canvas_gl[spid].height = div_element.offsetHeight;
+	  canvas_gl[spid].style.position = 'absolute';
+	  canvas_gl[spid].style.width = canvas_gl.width + 'px';
+	  canvas_gl[spid].style.height = canvas_gl.height + 'px';
+	  canvas_gl[spid].style.zIndex = -2; // behind 2D context canvas
+
+	div_element.appendChild(canvas_gl[spid]);
+
+	gl[spid] = canvas_gl[spid].getContext('webgl') || canvas_gl[spid].getContext('experimental-webgl');
+  }
+
+  window.addEventListener('resize', function() {
+	  for(var spid=0;spid<2;spid++)
+	  {
+		canvas_gl[spid].width = div_element.offsetWidth;
+		canvas_gl[spid].height = div_element.offsetHeight;
+		canvas_gl[spid].style.width = canvas_gl.width + 'px';
+		canvas_gl[spid].style.height = canvas_gl.height + 'px';
+	  }
+  });
+
+  var render_webgl = [new RenderWebGL(gl[0]), new RenderWebGL(gl[1])];
   
   var canvas_bg = document.createElement('canvas');
   canvas_bg.width = div_element.offsetWidth;
@@ -990,11 +1030,11 @@ main.start = function (div) {
   var camera_zoom = 1;
   //var absolute_x = 490;
   //var absolute_y = 500;
-  var enemy_pos_x = 0.3;
-  var enemy_pos_y = 0.925;
+  var enemy_pos_x = [-200, -200];
+  var enemy_pos_y = [0.925, 0.925];
 
-  var enable_render_webgl = !!gl;
-  var enable_render_ctx2d = !!ctx && !enable_render_webgl;
+  var enable_render_webgl = !!gl[0];
+  var enable_render_ctx2d = !!ctx[0] && !enable_render_webgl;
 
   var enable_render_debug_pose = false;
 
@@ -1004,33 +1044,32 @@ main.start = function (div) {
   player_web.mute = true;
   player_web.sounds = {};
 
-  var spriter_data = null;
-  var spriter_pose = null;
-  var spriter_pose_next = null;
-  var atlas_data = null;
+  var spriter_data = [null, null];
+  var spriter_pose = [null, null];
+  var atlas_data = [null, null];
 
-  var anim_time = 0;
-  var anim_length = 0;
+  var anim_time = [0, 0];
+  var anim_length = [0,0];
   var anim_rate = 1;
   var anim_repeat = 1;
+  var next_blink_delay = [5,0];
 
   var alpha = 1.0;
 
-  var loadFile = function(file, callback) {
-    render_ctx2d.dropData(spriter_data, atlas_data);
-    render_webgl.dropData(spriter_data, atlas_data);
+  var loadFile = function(file, spid, callback) {
+    render_ctx2d[spid].dropData(spriter_data[spid], atlas_data[spid]);
+    render_webgl[spid].dropData(spriter_data[spid], atlas_data[spid]);
 
-    spriter_pose = null;
-    spriter_pose_next = null;
-    atlas_data = null;
+    spriter_pose[spid] = null;
+    atlas_data[spid] = null;
 
     var file_path = file.path;
-    var file_spriter_url = file_path + file.spriter_url;
+    var file_spriter_url = file.spriter_url;
     var file_atlas_url = (file.atlas_url) ? (file_path + file.atlas_url) : ("");
 
     loadText(file_spriter_url, function(err, text) {
       if (err) {
-        callback();
+        callback(spid);
         return;
       }
 
@@ -1045,13 +1084,12 @@ main.start = function (div) {
         json_text = json_text.replace(/"@(.*)":/g, "\"$1\":");
         var json = JSON.parse(json_text);
         var spriter_json = json.spriter_data;
-        spriter_data = new spriter.Data().load(spriter_json);
+        spriter_data[spid] = new spriter.Data().load(spriter_json);
       } else {
-        spriter_data = new spriter.Data().load(JSON.parse(text));
+        spriter_data[spid] = new spriter.Data().load(JSON.parse(text));
       }
 
-      spriter_pose = new spriter.Pose(spriter_data);
-      spriter_pose_next = new spriter.Pose(spriter_data);
+      spriter_pose[spid] = new spriter.Pose(spriter_data[spid]);
 
       loadText(file_atlas_url, function(err, atlas_text) {
         var images = {};
@@ -1062,20 +1100,20 @@ main.start = function (div) {
         }
         var counter_dec = function() {
           if (--counter === 0) {
-            render_ctx2d.loadData(spriter_data, atlas_data, images);
-            render_webgl.loadData(spriter_data, atlas_data, images);
-            callback();
+            render_ctx2d[spid].loadData(spriter_data[spid], atlas_data[spid], images);
+            render_webgl[spid].loadData(spriter_data[spid], atlas_data[spid], images);
+            callback(spid);
           }
         }
 
         counter_inc();
 
         if (!err && atlas_text) {
-          atlas_data = new atlas.Data().importTpsText(atlas_text);
+          atlas_data[spid] = new atlas.Data().importTpsText(atlas_text);
 
           // load atlas page images
           var dir_path = file_atlas_url.slice(0, file_atlas_url.lastIndexOf('/'));
-          atlas_data.pages.forEach(function(page) {
+          atlas_data[spid].pages.forEach(function(page) {
             var image_key = page.name;
             var image_url = dir_path + "/" + image_key;
             counter_inc();
@@ -1091,7 +1129,7 @@ main.start = function (div) {
             })(page));
           });
         } else {
-          spriter_data.folder_array.forEach(function(folder) {
+          spriter_data[spid].folder_array.forEach(function(folder) {
             folder.file_array.forEach(function(file) {
               switch (file.type) {
                 case 'image':
@@ -1117,7 +1155,7 @@ main.start = function (div) {
         }
 
         // with an atlas, still need to load the sound files
-        spriter_data.folder_array.forEach(function(folder) {
+        spriter_data[spid].folder_array.forEach(function(folder) {
           folder.file_array.forEach(function(file) {
             switch (file.type) {
               case 'sound':
@@ -1161,86 +1199,28 @@ main.start = function (div) {
 	file.shift_y=(shift_y||0)*scale;
     files.push(file);
   }
-
- /* add_file("SCML/b1/", "1.scml", 0.3, 200);
-  add_file("SCML/b2/", "2.scml", 0.3, 300);
-  add_file("SCML/b3/", "3.scml", 0.3);
-  add_file("SCML/b4/", "4.scml", 0.3);
-  add_file("SCML/b5/", "5.scml", 0.3);
-  add_file("SCML/b6/", "6.scml", 0.3, 80);
-  add_file("SCML/b7/", "7.scml", 0.3);
-  add_file("SCML/b8/", "8.scml", 0.3, 80);
-  add_file("SCML/b9/", "9.scml", 0.3);
-  add_file("SCML/b10/", "10.scml", 0.3, 250);
-  add_file("SCML/a1/", "1.scml", 0.3);
-  add_file("SCML/a2/", "2.scml", 0.3);
-  add_file("SCML/a3/", "3.scml", 0.3);
-  add_file("SCML/a4/", "4.scml", 0.3);
-  add_file("SCML/a5/", "5.scml", 0.3);
-  add_file("SCML/a6/", "6.scml", 0.3);
-  add_file("SCML/a7/", "7.scml", 0.3);
-  add_file("SCML/a8/", "8.scml", 0.3);
-  add_file("SCML/a9/", "9.scml", 0.3);
-  add_file("SCML/a10/", "10.scml", 0.3);
-  
-  add_file("SCML/1_ORK/", "1_ork.scml", 0.3, 150);
-  add_file("SCML/2_ORK/", "2_ork.scml", 0.3, 150);
-  add_file("SCML/3_ORK/", "3_ork.scml", 0.3, 150);
-  
-  add_file("SCML/1_KNIGHT/", "1_KNIGHT.scml", 0.2, 350);
-  add_file("SCML/2_KNIGHT/", "2_KNIGHT.scml", 0.2, 350);
-  add_file("SCML/3_KNIGHT/", "3_KNIGHT.scml", 0.2, 350);
-  
-  // kicsit fel
-  add_file("SCML/elf_1/", "1.scml", 0.2, 150);
-  add_file("SCML/elf_2/", "2.scml", 0.2, 250);
-  add_file("SCML/elf_3/", "3.scml", 0.2, 200);
+  add_file("SCML/satyr_1/", "SCML/satyr.scml", 1);
+  add_file("SCML/satyr_2/", "SCML/satyr.scml", 1);
+  add_file("SCML/satyr_3/", "SCML/satyr.scml", 1);
+  add_file("SCML/SmallGolem_1/", "SCML/small_golem.scml", 1);
+  add_file("SCML/SmallGolem_2/", "SCML/small_golem.scml", 1);
+  add_file("SCML/SmallGolem_3/", "SCML/small_golem.scml", 1);
+  add_file("SCML/minotaur_1/", "SCML/minotaur.scml", 1);
+  add_file("SCML/minotaur_2/", "SCML/minotaur.scml", 1);
+  add_file("SCML/minotaur_3/", "SCML/minotaur.scml", 1);
+  add_file("SCML/reaper_1/", "SCML/reaper.scml", 0.6);
+  add_file("SCML/reaper_2/", "SCML/reaper.scml", 0.6);
+  add_file("SCML/reaper_3/", "SCML/reaper.scml", 0.6);
+  add_file("SCML/Golem_1/", "SCML/golem.scml", 0.8);
+  add_file("SCML/Golem_2/", "SCML/golem.scml", 0.8);
+  add_file("SCML/Golem_3/", "SCML/golem.scml", 0.8);
   
   
-  add_file("SCML/1_troll/", "1_troll.scml", 0.8, 280);
-  add_file("SCML/2_troll/", "2_troll.scml", 0.8, 280);
-  add_file("SCML/3_troll/", "3_troll.scml", 0.8, 280);
+  add_file("SCML/1_troll/", "SCML/1_troll/1_troll.scml", 1, 280);
+  add_file("SCML/2_troll/", "SCML/2_troll/2_troll.scml", 1, 280);
+  add_file("SCML/3_troll/", "SCML/3_troll/3_troll.scml", 1, 280);
   
-  
-  add_file("SCML/woman_warrior_1/", "1.scml", 0.2);
-  add_file("SCML/woman_warrior_2/", "2.scml", 0.2);
-  add_file("SCML/woman_warrior_3/", "3.scml", 0.2);
-  
-  add_file("SCML/minotaur_1/", "Animations.scml", 1);
-  add_file("SCML/minotaur_2/", "Animations.scml", 1);
-  add_file("SCML/minotaur_3/", "Animations.scml", 1);
-  
-  add_file("SCML/Golem_1/", "Animations.scml", 1);
-  add_file("SCML/Golem_2/", "Animations.scml", 1);
-  add_file("SCML/Golem_3/", "Animations.scml", 1);
-  
-  
-  
-  add_file("SCML/reaper_1/", "Animations.scml", 0.4);
-  add_file("SCML/reaper_2/", "Animations.scml", 0.4);
-  add_file("SCML/reaper_3/", "Animations.scml", 0.4);
-  
-  add_file("SCML/satyr_1/", "Animations.scml", 1);
-  add_file("SCML/satyr_2/", "Animations.scml", 1);
-  add_file("SCML/satyr_3/", "Animations.scml", 1);
-  
-  add_file("SCML/wraith_1/", "Animations.scml", 1);
-  add_file("SCML/wraith_2/", "Animations.scml", 1);
-  add_file("SCML/wraith_3/", "Animations.scml", 1);
-  
-  add_file("SCML/GolemB_1/", "Animations.scml", 1);
-  add_file("SCML/GolemB_2/", "Animations.scml", 1);
-  add_file("SCML/GolemB_3/", "Animations.scml", 1);
-  
-  add_file("SCML/fairy_1/", "1.scml", 0.2);
-  add_file("SCML/fairy_2/", "2.scml", 0.2);
-  add_file("SCML/fairy_3/", "3.scml", 0.2);*/
-  
-  
-  add_file("SCML/woman_warrior_1/", "1.scml", 0.2);
-  add_file("SCML/GolemB_1/", "Animations.scml", 1);
-  add_file("SCML/1_troll/", "1_troll.scml", 0.8, 280);
-  add_file("SCML/minotaur_1/", "Animations.scml", 1);
+  add_file("SCML/woman_warrior_1/", "SCML/woman_warrior_1/1.scml", 0.3);
   
   var card_image = new Image();
   card_image.src = "card.png";
@@ -1267,21 +1247,33 @@ main.start = function (div) {
   flame_image.src="flame.png";
   var flame_anim_time=0;
   
-  var file_index = 0;
+  var file_index = [18,0];
   
-  var loading = false;
+  var loading = [false, false];
 
-  var file = files[file_index];
-  var anim_key = 'idle';
- 
-  loading = true;
-  loadFile(file, function() {
-    loading = false;
-    var entity_key = spriter_data.getEntityKeys()[0];
-    spriter_pose.setEntity(entity_key);
-    spriter_pose.setAnim(anim_key);
-    spriter_pose.setTime(anim_time = 0);
-    anim_length = spriter_pose.curAnimLength() || 1000;
+  var file = [files[file_index[0]], files[file_index[1]]];
+  var anim_key = ['idle', 'idle'];
+  var can_blink = [false, true];
+  
+  var spid = 0;
+  loading[spid] = true;
+  loadFile(file[spid], spid, function(spid) {
+    loading[spid] = false;
+    var entity_key = spriter_data[spid].getEntityKeys()[0];
+    spriter_pose[spid].setEntity(entity_key);
+    spriter_pose[spid].setAnim(first_anim_key(anim_key[spid]));
+    spriter_pose[spid].setTime(anim_time[spid] = 0);
+    anim_length[spid] = spriter_pose[spid].curAnimLength() || 1000;
+  });
+  spid = 1;
+  loading[spid] = true;
+  loadFile(file[spid], spid, function(spid) {
+    loading[spid] = false;
+    var entity_key = spriter_data[spid].getEntityKeys()[0];
+    spriter_pose[spid].setEntity(entity_key);
+    spriter_pose[spid].setAnim(first_anim_key(anim_key[spid]));
+    spriter_pose[spid].setTime(anim_time[spid] = 0);
+    anim_length[spid] = spriter_pose[spid].curAnimLength() || 1000;
   });
 
   var prev_time = 0;
@@ -1357,94 +1349,117 @@ main.start = function (div) {
     prev_time = time; // ms
 
     var entity_key;
-    if (enemy_id!=-1 && enemy_id!=file_index && !loading)
+	var spid;
+	for(spid=0;spid<2;spid++)
 	{
-	  file_index = enemy_id;
-	  file = files[file_index];
-	  loading = true;
-	  loadFile(file, function() {
-		loading = false;
-		var entity_key = spriter_data.getEntityKeys()[0];
-		spriter_pose.setEntity(entity_key);
-		anim_key = 'idle';
-		spriter_pose.setAnim(anim_key);
-		spriter_pose.setTime(anim_time = 0);
-		anim_length = spriter_pose.curAnimLength() || 1000;
-	  });
-	  return;
-	}	
+		if (ctx[spid]) {
+		  ctx[spid].setTransform(1, 0, 0, 1, 0, 0);
+		  ctx[spid].clearRect(0, 0, ctx[spid].canvas.width, ctx[spid].canvas.height);
+		}
+
+		if (gl[spid]) {
+		  gl[spid].viewport(0, 0, gl[spid].drawingBufferWidth, gl[spid].drawingBufferHeight);
+		  gl[spid].clearColor(0, 0, 0, 0);
+		  gl[spid].clear(gl[spid].COLOR_BUFFER_BIT);
+		}
+		
+		if (enemy_id[spid]!=-1 && enemy_id[spid]!=file_index[spid] && !loading[spid])
+		{
+		  file_index[spid] = enemy_id[spid];
+		  file[spid] = files[file_index[spid]];
+		  loading[spid] = true;
+		  loadFile(file[spid], spid, function(spid) {
+			loading[spid] = false;
+			var entity_key = spriter_data[spid].getEntityKeys()[0];
+			spriter_pose[spid].setEntity(entity_key);
+			anim_key[spid] = 'idle';
+			can_blink[spid] = spriter_data[spid].getAnimKeys(entity_key).indexOf('idle_blink')!=-1;
+			spriter_pose[spid].setAnim(anim_key[spid]);
+			spriter_pose[spid].setTime(anim_time[spid] = 0);
+			anim_length[spid] = spriter_pose[spid].curAnimLength() || 1000;
+		  });
+		  continue;
+		}	
 	
-    if (!loading) {
-      spriter_pose.update(dt * anim_rate);
-      anim_time += dt * anim_rate;
-	  if (anim_key=='run')
-	  {
-		  //spriter_pose.x+=(dt * anim_rate)/1.0;
-		  //enemy_pos_x+=(dt * anim_rate)/10000.0;
-		  bg_offset+=(dt * anim_rate)/10.0;
-		  redraw_bg();
-	  } else if (anim_key=='walk')
-	  {
-		  //enemy_pos_x+=(dt * anim_rate)/30000.0;
-		  bg_offset+=(dt * anim_rate)/30.0;
-		  redraw_bg();
-	  } else if (snow_layer.complete && snow_layer.width>0)
-	  {
-		  redraw_bg();
-	  }
+	
+		if (!loading[spid]) {
+		  spriter_pose[spid].update(dt * anim_rate);
+		  anim_time[spid] += dt * anim_rate;
+		  if (anim_key[spid]=='run')
+		  {
+			  //spriter_pose.x+=(dt * anim_rate)/1.0;
+			  //enemy_pos_x+=(dt * anim_rate)/10000.0;
+			  bg_offset+=(dt * anim_rate)/10.0;
+			  redraw_bg();
+		  } else if (anim_key=='walk')
+		  {
+			  //enemy_pos_x+=(dt * anim_rate)/30000.0;
+			  bg_offset+=(dt * anim_rate)/30.0;
+			  redraw_bg();
+		  } else if (snow_layer.complete && snow_layer.width>0)
+		  {
+			  redraw_bg();
+		  }
+			  
+
+		  if (anim_time[spid] >= (anim_length[spid] * anim_repeat) && anim_key[spid]!='idle' && anim_key[spid]!='walk' && anim_key[spid]!='run') {
+			if (anim_key[spid]=='die')
+			{
+				//anim_time = anim_length-1;
+				//console.log('die end '+anim_length);
+			}
+			else
+			{
+				var next_anim_key = 'idle';
+				if (anim_key[spid]=='jump_start') next_anim_key = 'jump';
+				else if (anim_key[spid].indexOf('+')!=-1)
+				{
+					next_anim_key = anim_key[spid].substr(anim_key[spid].indexOf('+')+1);
+				}
+				console.log('anim ' + anim_key[spid] +' -> '+next_anim_key);
+				var entity_key = spriter_data[spid].getEntityKeys()[0];
+				anim_key[spid] = next_anim_key;
+				
+				spriter_pose[spid].setAnim(first_anim_key(anim_key[spid]));
+				spriter_pose[spid].setTime(anim_time[spid] = 0);
+				anim_length[spid] = spriter_pose[spid].curAnimLength() || 1000;
+			}
+		  }
 		  
-
-      if (anim_time >= (anim_length * anim_repeat) && anim_key!='idle' && anim_key!='walk' && anim_key!='run') {
-		if (anim_key=='die')
-		{
-			//anim_time = anim_length-1;
-			//console.log('die end '+anim_length);
+		  if (enemy_anim_key[spid]!='' && enemy_anim_key[spid]!=anim_key[spid])
+		  {
+			var entity_key = spriter_data[spid].getEntityKeys()[0];
+			spriter_pose[spid].setEntity(entity_key);
+			anim_key[spid] = enemy_anim_key[spid];
+			enemy_anim_key[spid]='';
+			spriter_pose[spid].setAnim(first_anim_key(anim_key[spid]));
+			spriter_pose[spid].setTime(anim_time[spid] = 0);
+			anim_length[spid] = spriter_pose[spid].curAnimLength() || 1000;
+		  }
+		  if (anim_key[spid]=='idle' && can_blink[spid] && anim_time[spid]>=anim_length[spid]*next_blink_delay[spid])
+		  {
+			var entity_key = spriter_data[spid].getEntityKeys()[0];
+			spriter_pose[spid].setEntity(entity_key);
+			anim_key[spid] = 'idle_blink';
+			spriter_pose[spid].setAnim(anim_key[spid]);
+			spriter_pose[spid].setTime(anim_time[spid] = 0);
+			anim_length[spid] = spriter_pose[spid].curAnimLength() || 1000;
+			next_blink_delay[spid] = Math.floor(Math.random()*5)+3;
+		  }
 		}
-		else
-		{
-			console.log('anim ' + anim_key +' -> idle');
-			entity_key = spriter_data.getEntityKeys()[0];
-			anim_key = 'idle';
-			spriter_pose.setAnim(anim_key);
-			spriter_pose.setTime(anim_time = 0);
-			anim_length = spriter_pose.curAnimLength() || 1000;
+
+
+		if (loading[spid]) {
+		  continue;
 		}
-      }
-	  
-	  if (enemy_anim_key!='' && enemy_anim_key!=anim_key)
-	  {
-		entity_key = spriter_data.getEntityKeys()[0];
-		spriter_pose.setEntity(entity_key);
-		anim_key = enemy_anim_key;
-		enemy_anim_key='';
-		spriter_pose.setAnim(anim_key);
-		spriter_pose.setTime(anim_time = 0);
-	    anim_length = spriter_pose.curAnimLength() || 1000;
-	  }
-    }
-
-    if (ctx) {
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    }
-
-    if (gl) {
-      gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-      gl.clearColor(0, 0, 0, 0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-    }
-
-    if (loading) {
-      return;
-    }
-	
-	if (anim_key!='die' || anim_time<anim_length)
-	{
-		spriter_pose.strike();
-	}
+		
+		if (anim_key[spid]!='die' || anim_time[spid]<anim_length[spid])
+		{
+			spriter_pose[spid].strike();
+		}
     //spriter_pose_next.strike();
 
-    spriter_pose.sound_array.forEach(function(sound) {
+    /*spriter_pose.sound_array.forEach(function(sound) {
       if (!player_web.mute) {
         if (player_web.ctx) {
           var source = player_web.ctx.createBufferSource();
@@ -1461,353 +1476,359 @@ main.start = function (div) {
           console.log("TODO: play sound", sound.name, sound.volume, sound.panning);
         }
       }
-    });
+    });*/
 
     // compute bone world space
-    spriter_pose.bone_array.forEach(function(bone) {
-      var parent_bone = spriter_pose.bone_array[bone.parent_index];
-      if (parent_bone) {
-        spriter.Space.combine(parent_bone.world_space, bone.local_space, bone.world_space);
-      } else {
-        bone.world_space.copy(bone.local_space);
-      }
-    });
-
-    // compute object world space
-    spriter_pose.object_array.forEach(function(object) {
-      switch (object.type) {
-        case 'sprite':
-          var bone = spriter_pose.bone_array[object.parent_index];
-          if (bone) {
-            spriter.Space.combine(bone.world_space, object.local_space, object.world_space);
-          } else {
-            object.world_space.copy(object.local_space);
-          }
-          var folder = spriter_data.folder_array[object.folder_index];
-          var file = folder && folder.file_array[object.file_index];
-          if (file) {
-            var offset_x = (0.5 - object.pivot.x) * file.width;
-            var offset_y = (0.5 - object.pivot.y) * file.height;
-            spriter.Space.translate(object.world_space, offset_x, offset_y);
-          }
-          break;
-        case 'bone':
-          var bone = spriter_pose.bone_array[object.parent_index];
-          if (bone) {
-            spriter.Space.combine(bone.world_space, object.local_space, object.world_space);
-          } else {
-            object.world_space.copy(object.local_space);
-          }
-          break;
-        case 'box':
-          var bone = spriter_pose.bone_array[object.parent_index];
-          if (bone) {
-            spriter.Space.combine(bone.world_space, object.local_space, object.world_space);
-          } else {
-            object.world_space.copy(object.local_space);
-          }
-          var entity = spriter_pose.curEntity();
-          var box_info = entity.obj_info_map[object.name];
-          if (box_info) {
-            var offset_x = (0.5 - object.pivot.x) * box_info.w;
-            var offset_y = (0.5 - object.pivot.y) * box_info.h;
-            spriter.Space.translate(object.world_space, offset_x, offset_y);
-          }
-          break;
-        case 'point':
-          var bone = spriter_pose.bone_array[object.parent_index];
-          if (bone) {
-            spriter.Space.combine(bone.world_space, object.local_space, object.world_space);
-          } else {
-            object.world_space.copy(object.local_space);
-          }
-          break;
-        case 'sound':
-          break;
-        case 'entity':
-          var bone = spriter_pose.bone_array[object.parent_index];
-          if (bone) {
-            spriter.Space.combine(bone.world_space, object.local_space, object.world_space);
-          } else {
-            object.world_space.copy(object.local_space);
-          }
-          break;
-        case 'variable':
-          break;
-        default:
-          throw new Error(object.type);
-      }
-    });
-
-    if (ctx) {
-      ctx.globalAlpha = alpha;
-
-      // origin at center, x right, y up
-      //ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
-	  ctx.translate(ctx.canvas.width*enemy_pos_x, ctx.canvas.height*enemy_pos_y-file.shift_y);
-      ctx.scale(1, -1);
-
-      if (enable_render_ctx2d && enable_render_webgl) {
-        ctx.translate(-ctx.canvas.width / 4, 0);
-      }
-
-      ctx.translate(-camera_x, -camera_y);
-      ctx.scale(camera_zoom*file.scale, camera_zoom*file.scale);
-      ctx.lineWidth = 1 / (camera_zoom*file.scale);
-
-      if (enable_render_ctx2d) {
-        render_ctx2d.drawPose(spriter_pose, atlas_data);
-        //ctx.translate(0, -10);
-        //render_ctx2d.drawPose(spriter_pose_next, atlas_data);
-      }
-
-      if (enable_render_debug_pose) {
-        render_ctx2d.drawDebugPose(spriter_pose, atlas_data);
-        //ctx.translate(0, -10);
-        //render_ctx2d.drawDebugPose(spriter_pose_next, atlas_data);
-      }
-	  flame_anim_time+=dt;
-	  if (card_image.complete && card_burnt_image.complete && scroll_image.complete && scroll_selected_image.complete && scroll_wrong_image.complete && rank_image.complete)
-	  {
-		  ctx_cards.clearRect(0, 0, ctx_cards.canvas.width, ctx_cards.canvas.height);
-		  var font_size=ctx_cards.canvas.height/20;
-		  ctx_cards.font = font_size.toString()+"px Arial Bold";
-		  ctx_cards.fillStyle = "black";
-		  ctx_cards.textAlign = "left";
-		  var line_idx = 1;
-		  ctx_cards.lineWidth = font_size/10;
-		  ctx_cards.lineJoin="miter";
-		  ctx_cards.miterLimit=2;
-		  function drawStroked(text, x, y) {
-			  ctx_cards.strokeStyle = 'white';
-			  ctx_cards.strokeText(text, x, y);
-			  ctx_cards.fillStyle = 'black';
-			  ctx_cards.fillText(text, x, y);
+		spriter_pose[spid].bone_array.forEach(function(bone) {
+		  var parent_bone = spriter_pose[spid].bone_array[bone.parent_index];
+		  if (parent_bone) {
+			spriter.Space.combine(parent_bone.world_space, bone.local_space, bone.world_space);
+		  } else {
+			bone.world_space.copy(bone.local_space);
 		  }
-		  drawStroked('Level: ' + (GameState.level).toString(), 20, (line_idx++)*font_size);
-		  drawStroked('Player HP: ', 20, (line_idx++)*font_size);// + (GameState.playerHP).toString(), 20, (line_idx++)*font_size);
-		  if (heart_image.complete)
-		  {
-			  var heart_x = ctx_cards.measureText('Player HP: ').width+20;
-			  var heart_y = (line_idx-2)*font_size+font_size*0.2;
-			  for(i=0;i<GameState.playerHP;i++) ctx_cards.drawImage(heart_image, 0, 0, heart_image.width, heart_image.height, heart_x+i*font_size*1.2, heart_y, font_size, heart_image.height*font_size/heart_image.width);
+		});
+
+		// compute object world space
+		spriter_pose[spid].object_array.forEach(function(object) {
+		  switch (object.type) {
+			case 'sprite':
+			  var bone = spriter_pose[spid].bone_array[object.parent_index];
+			  if (bone) {
+				spriter.Space.combine(bone.world_space, object.local_space, object.world_space);
+			  } else {
+				object.world_space.copy(object.local_space);
+			  }
+			  var folder = spriter_data[spid].folder_array[object.folder_index];
+			  var file = folder && folder.file_array[object.file_index];
+			  if (file) {
+				var offset_x = (0.5 - object.pivot.x) * file.width;
+				var offset_y = (0.5 - object.pivot.y) * file.height;
+				spriter.Space.translate(object.world_space, offset_x, offset_y);
+			  }
+			  break;
+			case 'bone':
+			  var bone = spriter_pose[spid].bone_array[object.parent_index];
+			  if (bone) {
+				spriter.Space.combine(bone.world_space, object.local_space, object.world_space);
+			  } else {
+				object.world_space.copy(object.local_space);
+			  }
+			  break;
+			case 'box':
+			  var bone = spriter_pose[spid].bone_array[object.parent_index];
+			  if (bone) {
+				spriter.Space.combine(bone.world_space, object.local_space, object.world_space);
+			  } else {
+				object.world_space.copy(object.local_space);
+			  }
+			  var entity = spriter_pose[spid].curEntity();
+			  var box_info = entity.obj_info_map[object.name];
+			  if (box_info) {
+				var offset_x = (0.5 - object.pivot.x) * box_info.w;
+				var offset_y = (0.5 - object.pivot.y) * box_info.h;
+				spriter.Space.translate(object.world_space, offset_x, offset_y);
+			  }
+			  break;
+			case 'point':
+			  var bone = spriter_pose[spid].bone_array[object.parent_index];
+			  if (bone) {
+				spriter.Space.combine(bone.world_space, object.local_space, object.world_space);
+			  } else {
+				object.world_space.copy(object.local_space);
+			  }
+			  break;
+			case 'sound':
+			  break;
+			case 'entity':
+			  var bone = spriter_pose[spid].bone_array[object.parent_index];
+			  if (bone) {
+				spriter.Space.combine(bone.world_space, object.local_space, object.world_space);
+			  } else {
+				object.world_space.copy(object.local_space);
+			  }
+			  break;
+			case 'variable':
+			  break;
+			default:
+			  throw new Error(object.type);
 		  }
-		  drawStroked('Monster HP: ' + (GameState.monsterHP).toString(), 20, (line_idx++)*font_size);
-		  drawStroked('Pinyin input: ' + key_buffer_accented, 20, (line_idx++)*font_size);
+		});
+
+		if (ctx[spid]) {
+		  ctx[spid].globalAlpha = alpha;
+
+		  // origin at center, x right, y up
+		  //ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
+		  ctx[spid].translate(ctx[spid].canvas.width/2, ctx[spid].canvas.height*enemy_pos_y[spid]-file[spid].shift_y);
+		  if (spid==0)
+			ctx[spid].scale(1, -1);
+		  else
+			ctx[spid].scale(-1, -1);
+
+		  if (enable_render_ctx2d && enable_render_webgl) {
+			ctx[spid].translate(-ctx[spid].canvas.width / 4, 0);
+		  }
+
+		  ctx[spid].translate(-camera_x+enemy_pos_x[spid], -camera_y);
+		  ctx[spid].scale(camera_zoom*file[spid].scale, camera_zoom*file[spid].scale);
+		  ctx[spid].lineWidth = 1 / (camera_zoom*file[spid].scale);
+
+		  if (enable_render_ctx2d) {
+			render_ctx2d[spid].drawPose(spriter_pose[spid], atlas_data[spid]);
+			//ctx.translate(0, -10);
+			//render_ctx2d.drawPose(spriter_pose_next, atlas_data[spid]);
+		  }
+
+		  if (enable_render_debug_pose) {
+			render_ctx2d[spid].drawDebugPose(spriter_pose[spid], atlas_data[spid]);
+			//ctx.translate(0, -10);
+			//render_ctx2d.drawDebugPose(spriter_pose_next, atlas_data[spid]);
+		  }
+		}
+		if (gl[spid]) {
+		  var gl_color = render_webgl[spid].gl_color;
+		  gl_color[3] = alpha;
+
+		  var gl_projection = render_webgl[spid].gl_projection;
+		  mat4x4Identity(gl_projection);
+		  var mirror = 1;
+		  if (spid==0) mirror = -1;
+		  mat4x4Ortho(gl_projection, mirror*gl[spid].canvas.width / 2, -mirror*gl[spid].canvas.width / 2, -gl[spid].canvas.height / 2, gl[spid].canvas.height / 2, -1, 1);
+		  //mat4x4Ortho(gl_projection, -absolute_x, -absolute_x+gl.canvas.width, -absolute_y, -absolute_y+gl.canvas.height, -1, 1);
 		  
-		  var card_size=ctx_cards.canvas.width/10/card_image.width;
-		  var scroll_size=ctx_cards.canvas.width/6/scroll_image.width;
-		  var max_rot = 0.3;
-		  var radi = 3200*card_size;
+		  mat4x4Translate(gl_projection, enemy_pos_x[spid], (gl[spid].canvas.height / 2-gl[spid].canvas.height*enemy_pos_y[spid]+file[spid].shift_y), 0);
 
-		  for(i=0;i<GameState.hand.length;i++)
-		  {
-			ctx_cards.save();
-			var rot;
-			var card_x;
-			var card_y;
-			if (selected_card_index==i)
+		  if (enable_render_ctx2d && enable_render_webgl) {
+			mat4x4Translate(gl_projection, gl[spid].canvas.width / 4, 0, 0);
+		  }
+
+		  mat4x4Translate(gl_projection, -camera_x, -camera_y, 0);
+		  mat4x4Scale(gl_projection, camera_zoom*file[spid].scale, camera_zoom*file[spid].scale, camera_zoom*file[spid].scale);
+
+		  if (enable_render_webgl) {
+			render_webgl[spid].drawPose(spriter_pose[spid], atlas_data[spid]);
+			//mat4x4Translate(gl_projection, 0, -10, 0);
+			//render_webgl.drawPose(spriter_pose_next, atlas_data[spid]);
+		  }
+		}
+	}
+	
+  flame_anim_time+=dt;
+  if (card_image.complete && card_burnt_image.complete && scroll_image.complete && scroll_selected_image.complete && scroll_wrong_image.complete && rank_image.complete)
+  {
+	  ctx_cards.clearRect(0, 0, ctx_cards.canvas.width, ctx_cards.canvas.height);
+	  var font_size=ctx_cards.canvas.height/20;
+	  ctx_cards.font = font_size.toString()+"px Arial Bold";
+	  ctx_cards.fillStyle = "black";
+	  ctx_cards.textAlign = "left";
+	  var line_idx = 1;
+	  ctx_cards.lineWidth = font_size/10;
+	  ctx_cards.lineJoin="miter";
+	  ctx_cards.miterLimit=2;
+	  function drawStroked(text, x, y) {
+		  ctx_cards.strokeStyle = 'white';
+		  ctx_cards.strokeText(text, x, y);
+		  ctx_cards.fillStyle = 'black';
+		  ctx_cards.fillText(text, x, y);
+	  }
+	  drawStroked('Level: ' + (GameState.level).toString(), 20, (line_idx++)*font_size);
+	  drawStroked('Player HP: ', 20, (line_idx++)*font_size);// + (GameState.playerHP).toString(), 20, (line_idx++)*font_size);
+	  if (heart_image.complete)
+	  {
+		  var heart_x = ctx_cards.measureText('Player HP: ').width+20;
+		  var heart_y = (line_idx-2)*font_size+font_size*0.2;
+		  for(i=0;i<GameState.playerHP;i++) ctx_cards.drawImage(heart_image, 0, 0, heart_image.width, heart_image.height, heart_x+i*font_size*1.2, heart_y, font_size, heart_image.height*font_size/heart_image.width);
+	  }
+	  drawStroked('Monster HP: ' + (GameState.monsterHP).toString(), 20, (line_idx++)*font_size);
+	  drawStroked('Pinyin input: ' + key_buffer_accented, 20, (line_idx++)*font_size);
+	  
+	  var card_size=ctx_cards.canvas.width/10/card_image.width;
+	  var scroll_size=ctx_cards.canvas.width/6/scroll_image.width;
+	  var max_rot = 0.3;
+	  var radi = 3200*card_size;
+
+	  for(i=0;i<GameState.hand.length;i++)
+	  {
+		ctx_cards.save();
+		var rot;
+		var card_x;
+		var card_y;
+		if (selected_card_index==i)
+		{
+			rot = 0;
+			card_x = ctx_cards.canvas.width/2;
+			card_y = card_size*card_image.height*1.5;
+		} else
+		{
+			var card_count = GameState.hand.length;
+			var card_index = i;
+			if (selected_card_index!=-1)
 			{
-				rot = 0;
-				card_x = ctx_cards.canvas.width/2;
-				card_y = card_size*card_image.height*1.5;
+				card_count--;
+				if (selected_card_index<i) card_index--;
+			}
+			if (card_count==1) rot = 0;
+			else rot = -(2*card_index+1)*max_rot*2/(2*card_count)+max_rot;
+			card_x=-radi*Math.sin(rot)+ctx_cards.canvas.width/2;
+			card_y=-radi*Math.cos(rot)+radi+ctx_cards.canvas.height/2;
+			if (selected_card_index!=-1)
+			{
+				card_y+=card_size*card_image.height+scroll_size*scroll_image.height;
+			}
+		}
+		var cp = get_card_pos(GameState.hand[i].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
+		anim_card_pos(cp, dt, rot, card_x, card_y, 300);
+		ctx_cards.transform(card_size*Math.cos(cp.rot), -card_size*Math.sin(cp.rot), card_size*Math.sin(cp.rot), card_size*Math.cos(cp.rot), cp.x, cp.y);			
+		var img=card_image;
+		var rarity = get_card_rarity(GameState.hand[i].id);
+		if (i==selected_card_index && selected_card_accented==2) img=card_burnt_image;
+		else if (rarity>0) img=card_rarity[(rarity-1)%card_rarity.length];
+		ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
+		var rank = get_card_rank(GameState.hand[i].id);
+		var rank_d = 100;
+		ctx_cards.drawImage(rank_image, 0, rank_image.height/10*rank, rank_image.width, rank_image.height/10, 
+			card_image.width/2-rank_d-20, -card_image.height/2+20, rank_d, rank_d);
+		if (flame_image.complete && i==selected_card_index && selected_card_accented==1)
+		{
+			var frame_count = 18;
+			var frame_idx = Math.floor(flame_anim_time/100)%frame_count;
+			var frame_height = flame_image.height/frame_count;
+			var marg_x = 80;
+			var marg_y= 105;
+			ctx_cards.drawImage(flame_image, 0, frame_idx*frame_height, flame_image.width, frame_height, -card_image.width/2-marg_x, -card_image.height/2-marg_y, card_image.width+marg_x*2, card_image.height+marg_y*2+30);
+		}
+		//font-family: 'Noto Sans SC', sans-serif;
+		//font-family: 'Noto Serif SC', serif;
+		//font-family: 'Ma Shan Zheng', cursive;
+		//font-family: 'Zhi Mang Xing', cursive;
+		font_size = 200;
+		var txt = word_db[GameState.hand[i].id].chars;
+		if (txt.length>2) font_size = Math.floor(font_size*2/txt.length);
+		//var font_type = "Noto Sans SC";
+		var font_type = "Noto Serif SC";
+		if (rank>=6) font_type = "Zhi Mang Xing";
+		else if (rank>=3) font_type = "Ma Shan Zheng";
+		ctx_cards.font = font_size.toString() + "px " + font_type;
+		ctx_cards.fillStyle = "red";
+		ctx_cards.textAlign = "center";
+		ctx_cards.fillText(txt, 0, 0);
+		var font_size=60;
+		ctx_cards.font = font_size.toString()+"px Arial";
+		ctx_cards.fillStyle = "black";
+		ctx_cards.textAlign = "left";
+		ctx_cards.fillText((i+1).toString(), -card_image.width/2+20, -card_image.height/2+10+font_size);
+		ctx_cards.textAlign = "center";
+		const lines=get_card_desc(GameState.hand[i].id).txt.split('\n');
+		var idx;
+		for(idx=0;idx<lines.length;idx++)
+			ctx_cards.fillText(lines[idx], 0, card_image.height/2-15+(idx-lines.length+0.8)*font_size);
+		ctx_cards.restore();
+	  }
+	  if (selected_card_index!=-1)
+	  {
+		var cp_sel = get_card_pos(GameState.hand[selected_card_index].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
+		var max_width_save=[];
+		for(i=0;i<GameState.hand[selected_card_index].options.length;i++)
+		{
+			var eng_id = GameState.hand[selected_card_index].options[i];
+			ctx_cards.save();
+			var rot = 0;
+			var card_x = ctx_cards.canvas.width/2;
+			var card_y = card_size*card_image.height*1.5;
+			var pos_translate = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]];
+			const px = pos_translate[i][0];
+			const py = pos_translate[i][1];
+			
+			ctx_cards.font = "50px Arial";
+			//ctx_cards.font = "200px Noto Sans SC";
+			ctx_cards.textAlign = "center";
+			ctx_cards.fillStyle = "white";
+			var lines = word_db[eng_id].english.split('\\n');
+			var max_width=0;
+			var line_width=[];
+			ctx_cards.transform(scroll_size, 0, 0, scroll_size, 0, 0);
+			for(var lineidx = 0; lineidx<lines.length;lineidx++)
+			{
+				var w = ctx_cards.measureText(lines[lineidx]).width;
+				if (w>max_width) max_width = w;
+				line_width[lineidx]=w;
+			}
+			ctx_cards.restore();
+			ctx_cards.save();
+			max_width_save[i]=max_width;
+			const scroll_border = scroll_image.width/6;
+			
+			var x_offset = 0;
+			let adj_width = 0;
+			if (py==-1 && px!=0)
+			{
+				adj_width = max_width_save[2];
+			} else if (py==1 && px!=0)
+			{
+				adj_width = max_width_save[3];
+			}
+			let adj_diff = adj_width+2*scroll_border-scroll_image.width;
+			if (adj_diff>0)
+			{
+				x_offset += adj_diff/2*px;
+			}
+			let diff = max_width+2*scroll_border-scroll_image.width;
+			let render_scroll_width = scroll_image.width;
+			if (diff>0)
+			{
+				render_scroll_width = max_width+2*scroll_border;
+				x_offset += diff/2*px;
+			}
+			
+			card_x+=px*(card_size*card_image.width+scroll_size*scroll_image.width/2)+x_offset*scroll_size;
+			card_y+=py*(card_size*card_image.height*0.5+scroll_size*scroll_image.height/2);
+			var cp = get_card_pos(eng_id+10000, cp_sel.x, cp_sel.y, 0);
+			cp.width = render_scroll_width;
+			anim_card_pos(cp, dt, rot, card_x, card_y, 300);
+			ctx_cards.transform(scroll_size*Math.cos(cp.rot), -scroll_size*Math.sin(cp.rot), scroll_size*Math.sin(cp.rot), scroll_size*Math.cos(cp.rot), cp.x, cp.y);			
+			var img=scroll_image;
+			var text_color = "blue";
+			if (selected_answer_index==-1)
+			{
+				if (selected_direction==i)
+				{
+					img = scroll_selected_image;
+					text_color = "white";
+				}
 			} else
 			{
-				var card_count = GameState.hand.length;
-				var card_index = i;
-				if (selected_card_index!=-1)
+				if (good_answer_index == i)
 				{
-					card_count--;
-					if (selected_card_index<i) card_index--;
-				}
-				if (card_count==1) rot = 0;
-				else rot = -(2*card_index+1)*max_rot*2/(2*card_count)+max_rot;
-				card_x=-radi*Math.sin(rot)+ctx_cards.canvas.width/2;
-				card_y=-radi*Math.cos(rot)+radi+ctx_cards.canvas.height/2;
-				if (selected_card_index!=-1)
+					img = scroll_selected_image;
+					text_color = "white";
+				} else
+				if (selected_answer_index==i)
 				{
-					card_y+=card_size*card_image.height+scroll_size*scroll_image.height;
+					img = scroll_wrong_image;
+					text_color = "white";
 				}
 			}
-			var cp = get_card_pos(GameState.hand[i].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
-			anim_card_pos(cp, dt, rot, card_x, card_y, 300);
-			ctx_cards.transform(card_size*Math.cos(cp.rot), -card_size*Math.sin(cp.rot), card_size*Math.sin(cp.rot), card_size*Math.cos(cp.rot), cp.x, cp.y);			
-			var img=card_image;
-			var rarity = get_card_rarity(GameState.hand[i].id);
-			if (i==selected_card_index && selected_card_accented==2) img=card_burnt_image;
-			else if (rarity>0) img=card_rarity[(rarity-1)%card_rarity.length];
-			ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
-			var rank = get_card_rank(GameState.hand[i].id);
-			var rank_d = 100;
-			ctx_cards.drawImage(rank_image, 0, rank_image.height/10*rank, rank_image.width, rank_image.height/10, 
-				card_image.width/2-rank_d-20, -card_image.height/2+20, rank_d, rank_d);
-			if (flame_image.complete && i==selected_card_index && selected_card_accented==1)
+			ctx_cards.font = "50px Arial";
+			ctx_cards.textAlign = "center";
+			ctx_cards.fillStyle = text_color;
+			if (diff>0)
 			{
-				var frame_count = 18;
-				var frame_idx = Math.floor(flame_anim_time/100)%frame_count;
-				var frame_height = flame_image.height/frame_count;
-				var marg_x = 80;
-				var marg_y= 105;
-				ctx_cards.drawImage(flame_image, 0, frame_idx*frame_height, flame_image.width, frame_height, -card_image.width/2-marg_x, -card_image.height/2-marg_y, card_image.width+marg_x*2, card_image.height+marg_y*2+30);
+				ctx_cards.drawImage(img, 0, 0,  scroll_border, scroll_image.height, -max_width/2-scroll_border, -scroll_image.height/2, scroll_border, scroll_image.height);
+				ctx_cards.drawImage(img, scroll_border, 0, scroll_image.width-2*scroll_border,  scroll_image.height, -max_width/2, -scroll_image.height/2, max_width, scroll_image.height);
+				ctx_cards.drawImage(img, scroll_image.width-scroll_border, 0, scroll_border, scroll_image.height, max_width/2, -scroll_image.height/2, scroll_border, scroll_image.height);
+			} else
+			{
+				ctx_cards.drawImage(img, -scroll_image.width/2, -scroll_image.height/2);
 			}
-			//font-family: 'Noto Sans SC', sans-serif;
-			//font-family: 'Noto Serif SC', serif;
-			//font-family: 'Ma Shan Zheng', cursive;
-			//font-family: 'Zhi Mang Xing', cursive;
-			font_size = 200;
-			var txt = word_db[GameState.hand[i].id].chars;
-			if (txt.length>2) font_size = Math.floor(font_size*2/txt.length);
-			//var font_type = "Noto Sans SC";
-			var font_type = "Noto Serif SC";
-			if (rank>=6) font_type = "Zhi Mang Xing";
-			else if (rank>=3) font_type = "Ma Shan Zheng";
-			ctx_cards.font = font_size.toString() + "px " + font_type;
-			ctx_cards.fillStyle = "red";
-			ctx_cards.textAlign = "center";
-			ctx_cards.fillText(txt, 0, 0);
-			var font_size=60;
-			ctx_cards.font = font_size.toString()+"px Arial";
-			ctx_cards.fillStyle = "black";
-			ctx_cards.textAlign = "left";
-			ctx_cards.fillText((i+1).toString(), -card_image.width/2+20, -card_image.height/2+10+font_size);
-			ctx_cards.textAlign = "center";
-			const lines=get_card_desc(GameState.hand[i].id).txt.split('\n');
-			var idx;
-			for(idx=0;idx<lines.length;idx++)
-				ctx_cards.fillText(lines[idx], 0, card_image.height/2-15+(idx-lines.length+0.8)*font_size);
+			
+			for(var lineidx = 0; lineidx<lines.length;lineidx++)
+			{
+				ctx_cards.fillText(lines[lineidx], 0, (lineidx-(lines.length-1)/2)*60+15);
+			}
+			
 			ctx_cards.restore();
-		  }
-		  if (selected_card_index!=-1)
-		  {
-			var cp_sel = get_card_pos(GameState.hand[selected_card_index].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
-			var max_width_save=[];
-			for(i=0;i<GameState.hand[selected_card_index].options.length;i++)
-			{
-				var eng_id = GameState.hand[selected_card_index].options[i];
-				ctx_cards.save();
-				var rot = 0;
-				var card_x = ctx_cards.canvas.width/2;
-				var card_y = card_size*card_image.height*1.5;
-				var pos_translate = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]];
-				const px = pos_translate[i][0];
-				const py = pos_translate[i][1];
-				
-				ctx_cards.font = "50px Arial";
-				//ctx_cards.font = "200px Noto Sans SC";
-				ctx_cards.textAlign = "center";
-				ctx_cards.fillStyle = "white";
-				var lines = word_db[eng_id].english.split('\\n');
-				var max_width=0;
-				var line_width=[];
-				ctx_cards.transform(scroll_size, 0, 0, scroll_size, 0, 0);
-				for(var lineidx = 0; lineidx<lines.length;lineidx++)
-				{
-					var w = ctx_cards.measureText(lines[lineidx]).width;
-					if (w>max_width) max_width = w;
-					line_width[lineidx]=w;
-				}
-				ctx_cards.restore();
-				ctx_cards.save();
-				max_width_save[i]=max_width;
-				const scroll_border = scroll_image.width/6;
-				
-				var x_offset = 0;
-				let adj_width = 0;
-				if (py==-1 && px!=0)
-				{
-					adj_width = max_width_save[2];
-				} else if (py==1 && px!=0)
-				{
-					adj_width = max_width_save[3];
-				}
-				let adj_diff = adj_width+2*scroll_border-scroll_image.width;
-				if (adj_diff>0)
-				{
-					x_offset += adj_diff/2*px;
-				}
-				let diff = max_width+2*scroll_border-scroll_image.width;
-				let render_scroll_width = scroll_image.width;
-				if (diff>0)
-				{
-					render_scroll_width = max_width+2*scroll_border;
-					x_offset += diff/2*px;
-				}
-				
-				card_x+=px*(card_size*card_image.width+scroll_size*scroll_image.width/2)+x_offset*scroll_size;
-				card_y+=py*(card_size*card_image.height*0.5+scroll_size*scroll_image.height/2);
-				var cp = get_card_pos(eng_id+10000, cp_sel.x, cp_sel.y, 0);
-				cp.width = render_scroll_width;
-				anim_card_pos(cp, dt, rot, card_x, card_y, 300);
-				ctx_cards.transform(scroll_size*Math.cos(cp.rot), -scroll_size*Math.sin(cp.rot), scroll_size*Math.sin(cp.rot), scroll_size*Math.cos(cp.rot), cp.x, cp.y);			
-				var img=scroll_image;
-				var text_color = "blue";
-				if (selected_answer_index==-1)
-				{
-					if (selected_direction==i)
-					{
-						img = scroll_selected_image;
-						text_color = "white";
-					}
-				} else
-				{
-					if (good_answer_index == i)
-					{
-						img = scroll_selected_image;
-						text_color = "white";
-					} else
-					if (selected_answer_index==i)
-					{
-						img = scroll_wrong_image;
-						text_color = "white";
-					}
-				}
-				ctx_cards.font = "50px Arial";
-				ctx_cards.textAlign = "center";
-				ctx_cards.fillStyle = text_color;
-				if (diff>0)
-				{
-					ctx_cards.drawImage(img, 0, 0,  scroll_border, scroll_image.height, -max_width/2-scroll_border, -scroll_image.height/2, scroll_border, scroll_image.height);
-					ctx_cards.drawImage(img, scroll_border, 0, scroll_image.width-2*scroll_border,  scroll_image.height, -max_width/2, -scroll_image.height/2, max_width, scroll_image.height);
-					ctx_cards.drawImage(img, scroll_image.width-scroll_border, 0, scroll_border, scroll_image.height, max_width/2, -scroll_image.height/2, scroll_border, scroll_image.height);
-				} else
-				{
-					ctx_cards.drawImage(img, -scroll_image.width/2, -scroll_image.height/2);
-				}
-				
-				for(var lineidx = 0; lineidx<lines.length;lineidx++)
-				{
-					ctx_cards.fillText(lines[lineidx], 0, (lineidx-(lines.length-1)/2)*60+15);
-				}
-				
-				ctx_cards.restore();
-			}
-		  }
+		}
 	  }
-    }
-
-    if (gl) {
-      var gl_color = render_webgl.gl_color;
-      gl_color[3] = alpha;
-
-      var gl_projection = render_webgl.gl_projection;
-      mat4x4Identity(gl_projection);
-      mat4x4Ortho(gl_projection, -gl.canvas.width / 2, gl.canvas.width / 2, -gl.canvas.height / 2, gl.canvas.height / 2, -1, 1);
-	  //mat4x4Ortho(gl_projection, -absolute_x, -absolute_x+gl.canvas.width, -absolute_y, -absolute_y+gl.canvas.height, -1, 1);
-	  
-	  mat4x4Translate(gl_projection, -(gl.canvas.width / 2-gl.canvas.width*enemy_pos_x), (gl.canvas.height / 2-gl.canvas.height*enemy_pos_y+file.shift_y), 0);
-
-      if (enable_render_ctx2d && enable_render_webgl) {
-        mat4x4Translate(gl_projection, gl.canvas.width / 4, 0, 0);
-      }
-
-      mat4x4Translate(gl_projection, -camera_x, -camera_y, 0);
-      mat4x4Scale(gl_projection, camera_zoom*file.scale, camera_zoom*file.scale, camera_zoom*file.scale);
-
-      if (enable_render_webgl) {
-        render_webgl.drawPose(spriter_pose, atlas_data);
-        //mat4x4Translate(gl_projection, 0, -10, 0);
-        //render_webgl.drawPose(spriter_pose_next, atlas_data);
-      }
     }
   }
 
