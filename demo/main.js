@@ -1640,7 +1640,19 @@ main.start = function (div) {
 		  for(i=0;i<GameState.playerHP;i++) ctx_cards.drawImage(heart_image, 0, 0, heart_image.width, heart_image.height, heart_x+i*font_size*1.2, heart_y, font_size, heart_image.height*font_size/heart_image.width);
 	  }
 	  drawStroked('Monster HP: ' + (GameState.monsterHP).toString(), 20, (line_idx++)*font_size);
-	  drawStroked('Pinyin input: ' + key_buffer_accented, 20, (line_idx++)*font_size);
+	  if (selected_card_index!=-1 && pinyin_revealed)
+	  {
+		  if (selected_card_accented==2)
+		  {
+			  drawStroked('Pinyin input: ' + key_buffer_accented+ ' correct: '+word_db[GameState.hand[selected_card_index].id].pinyin, 20, (line_idx++)*font_size);
+		  } else
+		  {
+			  drawStroked('Correct pinyin: ' + word_db[GameState.hand[selected_card_index].id].pinyin, 20, (line_idx++)*font_size);
+		  }
+	  } else
+	  {
+		drawStroked('Pinyin input: ' + key_buffer_accented, 20, (line_idx++)*font_size);
+	  }
 	  
 	  var card_size=ctx_cards.canvas.width/10/card_image.width;
 	  var scroll_size=ctx_cards.canvas.width/6/scroll_image.width;
