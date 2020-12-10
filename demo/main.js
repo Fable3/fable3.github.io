@@ -140,6 +140,7 @@ var GameState = {
 	"deck": new leitner(),
 	"hand": [],
 	"level": 1,
+	"maxLevel":1,
 	"playerHP":5,
 	"monsterHP":10
 	};
@@ -555,6 +556,7 @@ end_answer = function(succ) {
 		{
 			add_random_card_to_deck();
 			GameState.level++;
+			if (GameState.level>GameState.maxLevel) GameState.maxLevel=GameState.level;
 			GameState.playerHP = 5;
 			update_enemy();
 			deal_cards(default_hand_size-GameState.hand.length);
@@ -799,7 +801,8 @@ function start_game()
 		GameState.deck.session = st.deck.session;
 		GameState.deck.sessionCounter  = st.deck.sessionCounter;
 		GameState.deck.reDrawCounter = st.deck.reDrawCounter;
-		GameState.level = st.level-3;
+		GameState.maxLevel = st.maxLevel;
+		GameState.level = st.maxLevel-3;
 		if (GameState.level<1) GameState.level = 1;
 		GameState.deck.clearHand(true);		
 		GameState.hand = [];
