@@ -112,12 +112,16 @@ leitner = function() {
 		return card_id;
 	}
 	
-	this.clearHand = function() {
+	this.clearHand = function(shuffle) {
 		for(const h of this.hand)
 		{
 			this.session.splice(0, 0, h);
 		}
 		this.hand = [];
+		if (shuffle)
+		{
+			this.shuffle(this.session, 0);
+		}
 	}
 }
 
@@ -503,6 +507,12 @@ select_answer = function(id) {
 		}
 	}
 }
+update_enemy = function() {
+	GameState.monsterHP = 10+GameState.level*2;
+	set_enemy(1, enemy_id_from_level(GameState.level));
+	set_anim(1, 'idle');
+	set_background(Math.floor(GameState.level/10));
+}
 
 end_answer = function(succ) {
 	if (selected_card_index!=-1)
@@ -545,11 +555,8 @@ end_answer = function(succ) {
 		{
 			add_random_card_to_deck();
 			GameState.level++;
-			GameState.monsterHP = 10+GameState.level*2;
 			GameState.playerHP = 5;
-			set_enemy(1, enemy_id_from_level(GameState.level));
-			set_anim(1, 'idle');
-			set_background(Math.floor(GameState.level/10));
+			update_enemy();
 			deal_cards(default_hand_size-GameState.hand.length);
 		} else
 		{
@@ -566,6 +573,7 @@ end_answer = function(succ) {
 		{
 			deal_cards(default_hand_size-GameState.hand.length);
 		}
+		save_cookie();
 	}
 }
 
@@ -755,16 +763,56 @@ function get_english_option(card_id) {
 	return opt;
 }
 
+function getCookie(cname) {
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i <ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
 function start_game()
 {
 	'use strict';
-	var count=0;
-	for (const [str_key, value] of Object.entries(word_db)) {
-		var key=parseInt(str_key);
-		GameState.deck.addCard(key);
-		if (++count>=10) break;
+	var json = getCookie('game');
+	if (json=="")
+	{
+		var count=0;
+		for (const [str_key, value] of Object.entries(word_db)) {
+			var key=parseInt(str_key);
+			GameState.deck.addCard(key);
+			if (++count>=10) break;
+		}
+	} else
+	{
+		var st = JSON.parse(json);
+		GameState.deck.deck = st.deck.deck;
+		GameState.deck.hand = st.deck.hand;
+		GameState.deck.session = st.deck.session;
+		GameState.deck.sessionCounter  = st.deck.sessionCounter;
+		GameState.deck.reDrawCounter = st.deck.reDrawCounter;
+		GameState.level = st.level-3;
+		if (GameState.level<1) GameState.level = 1;
+		GameState.deck.clearHand(true);		
+		GameState.hand = [];
+		GameState.playerHP = 5;
+		update_enemy();
 	}
 	deal_cards(default_hand_size);
+}
+
+function save_cookie()
+{
+	var e = 'Tue, 19 Jan 2038 03:14:07 UTC';
+	document.cookie = 'game='+ JSON.stringify(GameState) +';expires=' + e;
 }
 
 function add_random_card_to_deck()
