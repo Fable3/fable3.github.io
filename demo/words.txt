@@ -34,7 +34,7 @@
 30;他;tā;he, him;ő (férfi)
 31;她;tā;she, her;ő (nő)
 32;他们;tāmen;they (male+female / male);ők (férfiak/vegyes)
-33;她们;tāmen;they (females);they (nők)
+33;她们;tāmen;they (females);ők (nők)
 34;这;zhè;this;ez
 35;那;nà;that;az
 

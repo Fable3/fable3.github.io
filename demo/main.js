@@ -134,9 +134,13 @@ var key_buffer="";
 var key_buffer_accented="";
 var GameState = {
 	"deck": new leitner(),
-	"hand": []
+	"hand": [],
+	"level": 1,
+	"playerHP":5,
+	"monsterHP":10
 	};
 
+var default_hand_size = 5;
 var word_db = {};
 
 var get_card_rarity = function(card_id) {
@@ -152,7 +156,7 @@ var get_card_rank = function(card_id) {
 	return 0;
 }
 var get_card_damage = function(card_id) {
-	var base_dmg = Math.floor((card_id-1)/10)+1;
+	var base_dmg = Math.floor((card_id-1)/10)+2;
 	var dmg = base_dmg;
 	if (selected_card_index!=-1)
 	{
@@ -180,7 +184,11 @@ set_anim = function(key) {
 	enemy_anim_key = key;
 }
 
+var current_backgroud_index = 1;
+
 set_background = function(bg_index) {
+	if (current_backgroud_index==bg_index) return;
+	current_backgroud_index = bg_index;
 	var bg_names=['forest', 'night', 'fairy', 'desert', 'winter'];
 	for(i=0;i<5;i++)
 		background_layers[i].src = 'background/'+bg_names[bg_index%bg_names.length]+'/'+(i+1).toString()+'.png';
@@ -483,16 +491,55 @@ end_answer = function(succ) {
 	if (selected_card_index!=-1)
 	{
 		var ch_id = GameState.hand[selected_card_index].id;
+		var draw_cards = false;
+		if (succ)
+		{
+			var dmg = get_card_damage(ch_id);
+			GameState.monsterHP -= dmg;
+			if (GameState.monsterHP<=0)
+			{
+				GameState.monsterHP = 0;
+				set_anim('die');
+			} else
+			{
+				set_anim('hurt');
+			}
+		} else
+		{
+			//var dmg = GameState.level;
+			GameState.playerHP -= 1;
+			if (GameState.playerHP<0) GameState.playerHP = 0;
+			draw_cards = true;
+			set_anim('attack');
+		}
 		GameState.deck.updateCard(ch_id, succ, [2,3,1,1][selected_card_accented]);
 		GameState.hand.splice(selected_card_index, 1);
 		select_card(-1);
 		remove_card_pos(ch_id);
-		if (GameState.hand.length == 0)
+		if (GameState.monsterHP==0)
 		{
 			add_random_card_to_deck();
-			add_random_card_to_deck();
-			add_random_card_to_deck();
-			deal_cards();
+			GameState.level++;
+			GameState.monsterHP = 10+GameState.level*2;
+			GameState.playerHP = 5;
+			set_enemy(GameState.level%4);
+			set_anim('idle');
+			set_background(Math.floor(GameState.level/10));
+			deal_cards(default_hand_size-GameState.hand.length);
+		} else
+		{
+			if (GameState.hand.length == 0 && !draw_cards)
+			{
+				//var dmg = GameState.level;
+				GameState.playerHP -= 1;
+				if (GameState.playerHP<0) GameState.playerHP = 0;
+				draw_cards = true;
+				set_anim('attack');
+			}
+		}
+		if (draw_cards && GameState.playerHP!=0)
+		{
+			deal_cards(default_hand_size-GameState.hand.length);
 		}
 	}
 }
@@ -640,24 +687,28 @@ var key_pressed = function(k) {
 					break;
 				} else if (word_db[GameState.hand[i].id].unAccented===key_buffer)
 				{
-					//if (key_buffer_accented!=key_buffer)
-					
-					var any_match = 0;
-					for(var r=1;r<=4;r++)
-					{
-						if (word_db[GameState.hand[i].id].pinyin === append_accent(key_buffer_accented, r))
-						{
-							any_match = 1;
-						}
-					}
-					
-					if (any_match)
+					if (key_buffer_accented==key_buffer)
 					{
 						select_card(i, 0);
 					} else
 					{
-						select_card(i, 2);
-						reveal_pinyin();
+						var any_match = 0;
+						for(var r=1;r<=4;r++)
+						{
+							if (word_db[GameState.hand[i].id].pinyin === append_accent(key_buffer_accented, r))
+							{
+								any_match = 1;
+							}
+						}
+						
+						if (any_match)
+						{
+							select_card(i, 0);
+						} else
+						{
+							select_card(i, 2);
+							reveal_pinyin();
+						}
 					}
 					break;
 				}
@@ -694,7 +745,7 @@ function start_game()
 		GameState.deck.addCard(key);
 		if (++count>=10) break;
 	}
-	deal_cards();
+	deal_cards(default_hand_size);
 }
 
 function add_random_card_to_deck()
@@ -722,16 +773,17 @@ function add_random_card_to_deck()
 	}
 }
 
-function deal_cards()
+function deal_cards(count)
 {
 	'use strict';
-	for(var i=0;i<5;i++)
+	const prev_hand_length = GameState.hand.length;
+	for(var i=0;i<count;i++)
 	{
 		var card_id = GameState.deck.draw();
 		if (card_id===undefined) break;
 		GameState.hand.push({"id":card_id, "options":""});
 	}
-	for (i=0;i<GameState.hand.length;i++)
+	for (i=prev_hand_length;i<GameState.hand.length;i++)
 	{
 		var card_id = GameState.hand[i].id;
 		var options = [];
@@ -1207,6 +1259,8 @@ main.start = function (div) {
   scroll_wrong_image.src = "scroll_wrong.png";
   var rank_image = new Image();
   rank_image.src = 'rank.png';
+  var heart_image = new Image();
+  heart_image.src = 'heart.png';
   
   
   var flame_image = new Image();
@@ -1516,6 +1570,31 @@ main.start = function (div) {
 	  if (card_image.complete && card_burnt_image.complete && scroll_image.complete && scroll_selected_image.complete && scroll_wrong_image.complete && rank_image.complete)
 	  {
 		  ctx_cards.clearRect(0, 0, ctx_cards.canvas.width, ctx_cards.canvas.height);
+		  var font_size=ctx_cards.canvas.height/20;
+		  ctx_cards.font = font_size.toString()+"px Arial Bold";
+		  ctx_cards.fillStyle = "black";
+		  ctx_cards.textAlign = "left";
+		  var line_idx = 1;
+		  ctx_cards.lineWidth = font_size/10;
+		  ctx_cards.lineJoin="miter";
+		  ctx_cards.miterLimit=2;
+		  function drawStroked(text, x, y) {
+			  ctx_cards.strokeStyle = 'white';
+			  ctx_cards.strokeText(text, x, y);
+			  ctx_cards.fillStyle = 'black';
+			  ctx_cards.fillText(text, x, y);
+		  }
+		  drawStroked('Level: ' + (GameState.level).toString(), 20, (line_idx++)*font_size);
+		  drawStroked('Player HP: ', 20, (line_idx++)*font_size);// + (GameState.playerHP).toString(), 20, (line_idx++)*font_size);
+		  if (heart_image.complete)
+		  {
+			  var heart_x = ctx_cards.measureText('Player HP: ').width+20;
+			  var heart_y = (line_idx-2)*font_size+font_size*0.2;
+			  for(i=0;i<GameState.playerHP;i++) ctx_cards.drawImage(heart_image, 0, 0, heart_image.width, heart_image.height, heart_x+i*font_size*1.2, heart_y, font_size, heart_image.height*font_size/heart_image.width);
+		  }
+		  drawStroked('Monster HP: ' + (GameState.monsterHP).toString(), 20, (line_idx++)*font_size);
+		  drawStroked('Pinyin input: ' + key_buffer_accented, 20, (line_idx++)*font_size);
+		  
 		  var card_size=ctx_cards.canvas.width/10/card_image.width;
 		  var scroll_size=ctx_cards.canvas.width/6/scroll_image.width;
 		  var max_rot = 0.3;
