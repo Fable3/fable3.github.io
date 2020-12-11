@@ -90,7 +90,16 @@ leitner = function() {
 		var card = this.deck[card_id];
 		card[0]=this.sessionCounter;
 		if (succ)
-			card[1]+=adv;
+		{
+			if (card[1]>=9 &&
+				Object.keys(GameState.deck.deck).indexOf(card_id.toString())+10<Object.keys(GameState.deck.deck).length)
+			{
+				card[1]=Math.floor(Math.random()*30)+adv*20;
+			} else
+			{
+				card[1]+=adv;
+			}
+		}
 		else
 			card[1]=0;
 	}
@@ -592,12 +601,31 @@ var key_pressed = function(k) {
 		update_selected_direction();
 		return;
 	}
-	if (selected_card_index!=-1 && selected_card_accented==0)
+	if (k==="Backspace")
 	{
-		if (k.length==1)
+		if (key_buffer.length>0)
 		{
-			var c=k[0];
-			if (c>='0' && c<='4')
+			key_buffer = key_buffer.substring(0, key_buffer.length-1);
+			key_buffer_accented = key_buffer_accented.substring(0, key_buffer_accented.length-1);
+		}
+	}
+	if (selected_card_index!=-1 && (k==="Enter" || k===" "))
+	{
+		if (selected_answer_index!=-1)
+		{
+			end_answer(false);
+		} else if (selected_card_accented==0)
+		{
+			select_card(selected_card_index, 4);
+		}
+		return;
+	}
+	if (k.length==1)
+	{
+		var c=k[0];
+		if (selected_card_index!=-1)
+		{
+			if (selected_card_accented==0 && c>='1' && c<='4')
 			{
 				key_buffer_accented = append_accent(key_buffer_accented, parseInt(c));
 				if (key_buffer_accented!=key_buffer)
@@ -612,26 +640,9 @@ var key_pressed = function(k) {
 					reveal_pinyin();
 				}
 			}
+			return;
 		}
-		return;
-	}
-	
-	if (k==="Backspace")
-	{
-		if (key_buffer.length>0)
-		{
-			key_buffer = key_buffer.substring(0, key_buffer.length-1);
-			key_buffer_accented = key_buffer_accented.substring(0, key_buffer_accented.length-1);
-		}
-	}
-	if (selected_card_index!=-1 && selected_answer_index!=-1 && (k==="Enter" || k===" "))
-	{
-		end_answer(false);
-		return;
-	}
-	if (k.length==1)
-	{
-		var c=k[0];
+		
 		if (selected_card_index==-1 && key_buffer.length==0 && c>='1' && c<='9')
 		{
 			var idx = parseInt(c)-1;
