@@ -1030,8 +1030,8 @@ main.start = function (div) {
 	  if (snow_layer.complete && snow_layer.width>0)
 	  {
 		  var t = window.performance.now();
-		  y = ctx_ground.canvas.height-1-(Math.floor(t/20)%ctx_ground.canvas.height);
-		  x = 0;//Math.floor(t/80)%ctx_ground.canvas.width;
+		  var y = ctx_ground.canvas.height-1-(Math.floor(t/20)%ctx_ground.canvas.height);
+		  var x = 0;//Math.floor(t/80)%ctx_ground.canvas.width;
 		  ctx_ground.drawImage(snow_layer, 0, 0, img_ground.width, img_ground.height, -x, -y, ctx_ground.canvas.width, ctx_ground.canvas.height);
 		  ctx_ground.drawImage(snow_layer, 0, 0, img_ground.width, img_ground.height, -x, ctx_ground.canvas.height-y, ctx_ground.canvas.width, ctx_ground.canvas.height);
 		  //ctx_ground.drawImage(snow_layer, 0, 0, img_ground.width, img_ground.height, ctx_ground.canvas.width-x, -y, ctx_ground.canvas.width, ctx_ground.canvas.height);
