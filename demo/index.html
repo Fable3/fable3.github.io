@@ -12,7 +12,45 @@
 		<script type="text/javascript" src="render-webgl.js"></script>
 		<script type="text/javascript" src="pinyin_split.js"></script>
 		<script type="text/javascript" src="main.js"></script>
-		<script type="text/javascript">window.addEventListener('load', function (event) { main.start('full'); }, false);</script>
+		<script type="text/javascript">
+		function prestart_ready()
+		{
+			lang_index=[0,1].find(id=>document.getElementById('lang'+id.toString()).checked);
+			hard_mode=document.getElementById('hard_mode').checked;
+			document.getElementById('prestart').style='display:none';
+			document.getElementById('full').style='display:block';
+			main.start('full');
+		}
+		function prestart_new_player()
+		{
+			hsk_level = ['hsk1', 'hsk2'].find(id=>document.getElementById(id).checked);
+			player_name=document.getElementById('username').value;
+			prestart_ready();
+		}
+		
+		var saved_games = [];
+		function prestart_select_saved_game(idx)
+		{
+			player_name= saved_games[idx][0];
+			hsk_level = saved_games[idx][1];
+			prestart_ready();
+		}
+		function prestart_list_cookies()
+		{
+			saved_games = get_all_saved_games();
+			for(var i=0;i<saved_games.length;i++)
+			{
+				var a = document.createElement('a');
+				var linkText = document.createTextNode(saved_games[i][0] + ' - '+saved_games[i][1]);
+				a.appendChild(linkText);
+				a.title = saved_games[i][0] + ' - '+saved_games[i][1];
+				a.href = "javascript:prestart_select_saved_game("+i.toString()+");";
+				document.getElementById('prestart').appendChild(a);
+				document.getElementById('prestart').appendChild(document.createElement('br'));
+			}
+		}
+		window.addEventListener('load', function (event) { prestart_list_cookies(); }, false);
+		</script>
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@500&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
 		<style>
@@ -27,6 +65,31 @@
 		</style>
 	</head>
 	<body>
-	<div id="full" class="full-height"></div>
+	<div id="prestart" style="margin:10px;">
+	  <p/>
+	  <label for="username">Name:</label>
+	  <input type="text" id="username" value="Player"><p/>
+	  
+	  <label for="hsk1">HSK 1</label>
+	  <input type="radio" name="hsk" id="hsk1" value="hsk1" checked /><br/>
+	  <label for="hsk2">HSK 2</label>
+	  <input type="radio" name="hsk" id="hsk2" value="hsk2" /><br/>
+	  <p/>
+	  <label for="lang0">English</label>
+	  <input type="radio" name="lang" id="lang0" value="lang0" /><br/>
+	  <label for="lang1">Magyar</label>
+	  <input type="radio" name="lang" id="lang1" value="lang1" checked /><br/>
+	  <p/>
+	  <label for="hard_mode">Hard mode:</label>
+	  <input type="checkbox" id="hard_mode">
+	  <p/>
+	  
+	  <a href="javascript:prestart_new_player();">start</a>
+	  <p/>
+	  
+	</div>
+	<div id="full" class="full-height" style="display:none">
+		
+	</div>
 	</body>
 </html>

@@ -1,321 +1,321 @@
 ﻿
-1;一;yī;one;egy
-2;二;èr;two;kettő
-3;三;sān;three;három
-4;四;sì;four;négy
-5;五;wǔ;five;öt
-6;六;liù;six;hat
-7;七;qī;seven;hét
-8;八;bā;eight;nyolc
-9;九;jiǔ;nine;kilenc
-10;十;shí;ten;tíz
+hsk1;1;一;yī;one;egy
+hsk1;2;二;èr;two;kettő
+hsk1;3;三;sān;three;három
+hsk1;4;四;sì;four;négy
+hsk1;5;五;wǔ;five;öt
+hsk1;6;六;liù;six;hat
+hsk1;7;七;qī;seven;hét
+hsk1;8;八;bā;eight;nyolc
+hsk1;9;九;jiǔ;nine;kilenc
+hsk1;10;十;shí;ten;tíz
 
-11;不;bù;no;nem
-12;在;zài;in, at;helyhatározó
-13;上;shàng;up;fel
-14;下;xià;down;le
-15;年;nián;year;év
-16;月;yuè;month;hónap
-17;日;rì;day;nap
-18;好;hǎo;good;jó
-19;大;dà;big;nagy
-20;小;xiǎo;small;kicsi
-21;人;rén;person;ember
+hsk1;11;不;bù;no;nem
+hsk1;12;在;zài;in, at;helyhatározó
+hsk1;13;上;shàng;up;fel
+hsk1;14;下;xià;down;le
+hsk1;15;年;nián;year;év
+hsk1;16;月;yuè;month;hónap
+hsk1;17;日;rì;day;nap
+hsk1;18;好;hǎo;good;jó
+hsk1;19;大;dà;big;nagy
+hsk1;20;小;xiǎo;small;kicsi
+hsk1;21;人;rén;person;ember
 
-22;爸爸;bàba;father;apa
-23;妈妈;māma;mother;anya
-24;儿子;érzi;son;fiúgyermek
-25;女儿;nǚér;daughter;lánygyermek
+hsk1;22;爸爸;bàba;father;apa
+hsk1;23;妈妈;māma;mother;anya
+hsk1;24;儿子;érzi;son;fiúgyermek
+hsk1;25;女儿;nǚér;daughter;lánygyermek
 
-26;我;wǒ;I, me;én
-27;我们;wǒmen;we, us;mi
-28;你;nǐ;you;te
-29;你们;nǐmen;you (plural);ti
-30;他;tā;he, him;ő (férfi)
-31;她;tā;she, her;ő (nő)
-32;他们;tāmen;they (male+female / male);ők (férfiak/vegyes)
-33;她们;tāmen;they (females);ők (nők)
-34;这;zhè;this;ez
-35;那;nà;that;az
+hsk1;26;我;wǒ;I, me;én
+hsk1;27;我们;wǒmen;we, us;mi
+hsk1;28;你;nǐ;you;te
+hsk1;29;你们;nǐmen;you (plural);ti
+hsk1;30;他;tā;he, him;ő (férfi)
+hsk1;31;她;tā;she, her;ő (nő)
+hsk1;32;他们;tāmen;they (male+female / male);ők (férfiak/vegyes)
+hsk1;33;她们;tāmen;they (females);ők (nők)
+hsk1;34;这;zhè;this;ez
+hsk1;35;那;nà;that;az
 
-36;叫;jiào;call;hív, nevez
-37;来;lái;come;jön
-38;回;huí;return;visszatér
-39;去;qù;go;megy
-40;吃;chī;eat;eszik
-41;喝;hē;drink;iszik
-42;做;zuò;do;tesz, csinál
-43;买;mǎi;buy;vesz
-44;开;kāi;open;kinyit
-45;坐;zuò;sit;ül
-46;住;zhù;live;él
-47;是;shì;be (am, is, are);azonos
-48;有;yǒu;have;van, birtokol
-49;看;kàn;look;néz
-50;听;tīng;listen;hallgat
+hsk1;36;叫;jiào;call;hív, nevez
+hsk1;37;来;lái;come;jön
+hsk1;38;回;huí;return;visszatér
+hsk1;39;去;qù;go;megy
+hsk1;40;吃;chī;eat;eszik
+hsk1;41;喝;hē;drink;iszik
+hsk1;42;做;zuò;do;tesz, csinál
+hsk1;43;买;mǎi;buy;vesz
+hsk1;44;开;kāi;open;kinyit
+hsk1;45;坐;zuò;sit;ül
+hsk1;46;住;zhù;live;él
+hsk1;47;是;shì;be (am, is, are);azonos
+hsk1;48;有;yǒu;have;van, birtokol
+hsk1;49;看;kàn;look;néz
+hsk1;50;听;tīng;listen;hallgat
 
-51;多;duō;many, much;sok
-52;少;shǎo;few, little;kevés
-53;冷;lěng;cold;hideg
-54;热;rè;hot;meleg
-55;很;hěn;quite, very;nagyon
-56;都;dōu;all;mind
+hsk1;51;多;duō;many, much;sok
+hsk1;52;少;shǎo;few, little;kevés
+hsk1;53;冷;lěng;cold;hideg
+hsk1;54;热;rè;hot;meleg
+hsk1;55;很;hěn;quite, very;nagyon
+hsk1;56;都;dōu;all;mind
 
-57;水;shuǐ;water;víz
-58;菜;cài;vegetable;zöldség
-59;会;huì;can (knowledge);tud (tanult)
-60;能;néng;can (ability);tud (képesség)
-61;爱;ài;love;szeret, imád
-62;请;qǐng;please;kérem
-63;读;dú;read;olvas
-64;写;xiě;write;ír
-65;想;xiǎng;want, think;szeretne, gondol, akar
-66;点;diǎn;dot, spot, o'clock;pont, kicsit, óra
+hsk1;57;水;shuǐ;water;víz
+hsk1;58;菜;cài;vegetable;zöldség
+hsk1;59;会;huì;can (knowledge);tud (tanult)
+hsk1;60;能;néng;can (ability);tud (képesség)
+hsk1;61;爱;ài;love;szeret, imád
+hsk1;62;请;qǐng;please;kérem
+hsk1;63;读;dú;read;olvas
+hsk1;64;写;xiě;write;ír
+hsk1;65;想;xiǎng;want, think;szeretne, gondol, akar
+hsk1;66;点;diǎn;dot, spot, o'clock;pont, kicsit, óra
 
-67;茶;chá;tea;tea
-68;家;jiā;home;otthon
-69;钱;qián;money;pénz
-70;猫;māo;cat;macska
-71;狗;gǒu;dog;kutya
-72;书;shū;book;könyv
-73;字;zì;character;betű
-74;零;líng;zero;nulla
-75;没有;méiyǒu;to not have;nincsen
-76;太;tài;too;túl, nagyon
-77;和;hé;and, with;és
+hsk1;67;茶;chá;tea;tea
+hsk1;68;家;jiā;home;otthon
+hsk1;69;钱;qián;money;pénz
+hsk1;70;猫;māo;cat;macska
+hsk1;71;狗;gǒu;dog;kutya
+hsk1;72;书;shū;book;könyv
+hsk1;73;字;zì;character;betű
+hsk1;74;零;líng;zero;nulla
+hsk1;75;没有;méiyǒu;to not have;nincsen
+hsk1;76;太;tài;too;túl, nagyon
+hsk1;77;和;hé;and, with;és
 
-78;哪;nǎ;which;melyik?
-79;谁;shuí;who;ki?
-80;什么;shénme;what;mi, mit?
-81;多少;duōshǎo;how many, how much;mennyi?
-82;几;jǐ;a few, how many;hány?
-83;怎么;zěnme;how;hogyan?
-84;怎么样;zěnmeyàng;how about;milyen?
-85;个;gè;generic measure word;általános számlálószó
-86;岁;suì;year measure word;év számlálószó
-87;本;běn;volume;kötet
-88;些;xiē;some;néhány
-89;块;kuài;piece;darab, jüan
+hsk1;78;哪;nǎ;which;melyik?
+hsk1;79;谁;shuí;who;ki?
+hsk1;80;什么;shénme;what;mi, mit?
+hsk1;81;多少;duōshǎo;how many, how much;mennyi?
+hsk1;82;几;jǐ;a few, how many;hány?
+hsk1;83;怎么;zěnme;how;hogyan?
+hsk1;84;怎么样;zěnmeyàng;how about;milyen?
+hsk1;85;个;gè;generic measure word;általános számlálószó
+hsk1;86;岁;suì;year measure word;év számlálószó
+hsk1;87;本;běn;volume;kötet
+hsk1;88;些;xiē;some;néhány
+hsk1;89;块;kuài;piece;darab, jüan
 
-90;的;de;of;birtokos partikula
-91;了;le;completed action marker;befejezettség jele
-92;吗;ma;question tag;kérdező partikula
-93;呢;ne;question particle for\nsubjects already mentioned;visszakérdező partikula
-94;喂;wèi;hello;hello
-95;学校;xuéxiào;school;iskola
-96;饭店;fàndiàn;restaurant;étterem
-97;商店;shāngdiàn;store;bolt
-98;医院;yīyuàn;hospital;kórház
-99;火车站;huǒchēzhàn;train station;vonatállomás
-100;中国;zhōng guó;China;Kína
-101;北京;běijīng;Beijing;Peking
+hsk1;90;的;de;of;birtokos partikula
+hsk1;91;了;le;completed action marker;befejezettség jele
+hsk1;92;吗;ma;question tag;kérdező partikula
+hsk1;93;呢;ne;question particle for\nsubjects already mentioned;visszakérdező partikula
+hsk1;94;喂;wèi;hello;hello
+hsk1;95;学校;xuéxiào;school;iskola
+hsk1;96;饭店;fàndiàn;restaurant;étterem
+hsk1;97;商店;shāngdiàn;store;bolt
+hsk1;98;医院;yīyuàn;hospital;kórház
+hsk1;99;火车站;huǒchēzhàn;train station;vonatállomás
+hsk1;100;中国;zhōng guó;China;Kína
+hsk1;101;北京;běijīng;Beijing;Peking
 
-102;前面;qiánmiàn;front;elöl
-103;后面;hòumiàn;behind;hátul
-104;里面;lǐmiàn;inside;belül
-105;今天;jīntiān;today;ma
-106;明天;míngtiān;tomorrow;holnap
-107;昨天;zuótiān;yesterday;tegnap
-108;上午;shàngwǔ;morning;délelőtt
-109;中午;zhōngwǔ;noon;dél
-110;下午;xiàwǔ;afternoon;délután
-111;星期;xīngqī;week;hét
-112;分钟;fēnzhōng;minute;perc
-113;现在;xiànzài;now;most
-114;时候;shíhou;time, moment;időpillanat
-115;老师;lǎoshī;teacher;tanár
-116;学生;xuéshēng;student;tanuló
-117;同学;tóngxué;schoolmate;osztálytárs
-118;朋友;péngyou;friend;barát
-119;医生;yīshēng;doctor;doktor
-120;先生;xiānsheng;sir;úr
-121;小姐;xiǎojiě;Miss;kisasszony
-122;衣服;yīfu;cloth;ruha
-123;米饭;mǐfàn;rice;rizs
-124;水果;shuǐguǒ;fruit;gyümölcs
-125;苹果;píngguǒ;apple;alma
-126;飞机;fēijī;airplane;repülőgép
-127;出租车;chūzūchē;taxi;taxi
-128;电视;diànshì;television;TV
-129;电脑;diànnǎo;computer;számítógép
-130;电影;diànyǐng;movie;film
-131;天气;tiānqì;weather;időjárás
-132;东西;dōngxi;thing;dolog
-133;名字;míngzi;name;név
-134;汉语;hànyǔ;mandarin Chinese;kínai nyelv (mandarin)
-135;桌子;zhuōzi;desk;asztal
-136;椅子;yǐzi;chair;szék
-137;杯子;bēizi;cup;csésze
+hsk1;102;前面;qiánmiàn;front;elöl
+hsk1;103;后面;hòumiàn;behind;hátul
+hsk1;104;里面;lǐmiàn;inside;belül
+hsk1;105;今天;jīntiān;today;ma
+hsk1;106;明天;míngtiān;tomorrow;holnap
+hsk1;107;昨天;zuótiān;yesterday;tegnap
+hsk1;108;上午;shàngwǔ;morning;délelőtt
+hsk1;109;中午;zhōngwǔ;noon;dél
+hsk1;110;下午;xiàwǔ;afternoon;délután
+hsk1;111;星期;xīngqī;week;hét
+hsk1;112;分钟;fēnzhōng;minute;perc
+hsk1;113;现在;xiànzài;now;most
+hsk1;114;时候;shíhou;time, moment;időpillanat
+hsk1;115;老师;lǎoshī;teacher;tanár
+hsk1;116;学生;xuéshēng;student;tanuló
+hsk1;117;同学;tóngxué;schoolmate;osztálytárs
+hsk1;118;朋友;péngyou;friend;barát
+hsk1;119;医生;yīshēng;doctor;doktor
+hsk1;120;先生;xiānsheng;sir;úr
+hsk1;121;小姐;xiǎojiě;Miss;kisasszony
+hsk1;122;衣服;yīfu;cloth;ruha
+hsk1;123;米饭;mǐfàn;rice;rizs
+hsk1;124;水果;shuǐguǒ;fruit;gyümölcs
+hsk1;125;苹果;píngguǒ;apple;alma
+hsk1;126;飞机;fēijī;airplane;repülőgép
+hsk1;127;出租车;chūzūchē;taxi;taxi
+hsk1;128;电视;diànshì;television;TV
+hsk1;129;电脑;diànnǎo;computer;számítógép
+hsk1;130;电影;diànyǐng;movie;film
+hsk1;131;天气;tiānqì;weather;időjárás
+hsk1;132;东西;dōngxi;thing;dolog
+hsk1;133;名字;míngzi;name;név
+hsk1;134;汉语;hànyǔ;mandarin Chinese;kínai nyelv (mandarin)
+hsk1;135;桌子;zhuōzi;desk;asztal
+hsk1;136;椅子;yǐzi;chair;szék
+hsk1;137;杯子;bēizi;cup;csésze
 
-138;谢谢;xièxie;thank;köszönöm
-139;不客气;búkèqì;you are welcome;szivesen
-140;再见;zàijiàn;good-bye;viszlát
-141;对不起;duìbùqǐ;sorry;bocsánat
-142;没关系;méiguānxì;It doesn’t matter;semmi gond
-143;说话;shuōhuà;speak;mond
-144;看见;kànjiàn;see;lát
-145;睡觉;shuìjiào;sleep;alszik
-146;打电话;dǎdiànhuà;call up;telefonál
-147;学习;xuéxí;study;tanul
-148;工作;gōngzuò;work;munka
-149;下雨;xiàyǔ;rain;eső esik
-150;喜欢;xǐhuān;like;szeret, kedvel
-151;认识;rènshi;know, recognize;ismer
-152;高兴;gāoxìng;happy;boldog
-153;漂亮;piàoliàng;beautiful;szép
+hsk1;138;谢谢;xièxie;thank;köszönöm
+hsk1;139;不客气;búkèqì;you are welcome;szivesen
+hsk1;140;再见;zàijiàn;good-bye;viszlát
+hsk1;141;对不起;duìbùqǐ;sorry;bocsánat
+hsk1;142;没关系;méiguānxì;It doesn’t matter;semmi gond
+hsk1;143;说话;shuōhuà;speak;mond
+hsk1;144;看见;kànjiàn;see;lát
+hsk1;145;睡觉;shuìjiào;sleep;alszik
+hsk1;146;打电话;dǎdiànhuà;call up;telefonál
+hsk1;147;学习;xuéxí;study;tanul
+hsk1;148;工作;gōngzuò;work;munka
+hsk1;149;下雨;xiàyǔ;rain;eső esik
+hsk1;150;喜欢;xǐhuān;like;szeret, kedvel
+hsk1;151;认识;rènshi;know, recognize;ismer
+hsk1;152;高兴;gāoxìng;happy;boldog
+hsk1;153;漂亮;piàoliàng;beautiful;szép
 
 
-201;哥哥;gēge;brother;báty
-202;姐姐;jiějie;sister;nővér
-203;弟弟;dìdi;younger brother;öcs
-204;妹妹;mèimei;sis;hug
-205;丈夫;zhàngfu;husband;férj
-206;妻子;qīzi;wife;feleség
-207;孩子;háizi;child;gyermek
-208;男人;nánrén;man;férfi
-209;女人;nǚrén;woman;nő
+hsk2;1;哥哥;gēge;brother;báty
+hsk2;2;姐姐;jiějie;sister;nővér
+hsk2;3;弟弟;dìdi;younger brother;öcs
+hsk2;4;妹妹;mèimei;sis;hug
+hsk2;5;丈夫;zhàngfu;husband;férj
+hsk2;6;妻子;qīzi;wife;feleség
+hsk2;7;孩子;háizi;child;gyermek
+hsk2;8;男人;nánrén;man;férfi
+hsk2;9;女人;nǚrén;woman;nő
 
-210;高;gāo;tall;magas
-211;红;hóng;red;piros
-212;白;bái;white;fehér
-213;黑;hēi;black;fekete
-214;忙;máng;busy;elfoglalt
-215;快;kuài;fast;gyors
-216;慢;màn;slow;lassú
-217;远;yuǎn;far;messzi
-218;近;jìn;close;közeli
-219;好吃;hǎochī;delicioous;finom
-220;累;lèi;tired;fáradt
-221;长;cháng;long;hosszú
-222;新;xīn;new;új
-223;贵;guì;expensive;drága
-224;便宜;piányi;cheap;olcsó
-225;晴;qíng;clear, fine (weather);tiszta (idő)
-226;阴;yīn;cloudy;felhős
-227;错;cuò;wrong;rossz
-228;快乐;kuàilè;happy;boldog
+hsk2;10;高;gāo;tall;magas
+hsk2;11;红;hóng;red;piros
+hsk2;12;白;bái;white;fehér
+hsk2;13;黑;hēi;black;fekete
+hsk2;14;忙;máng;busy;elfoglalt
+hsk2;15;快;kuài;fast;gyors
+hsk2;16;慢;màn;slow;lassú
+hsk2;17;远;yuǎn;far;messzi
+hsk2;18;近;jìn;close;közeli
+hsk2;19;好吃;hǎochī;delicious;finom
+hsk2;20;累;lèi;tired;fáradt
+hsk2;21;长;cháng;long;hosszú
+hsk2;22;新;xīn;new;új
+hsk2;23;贵;guì;expensive;drága
+hsk2;24;便宜;piányi;cheap;olcsó
+hsk2;25;晴;qíng;clear, fine (weather);tiszta (idő)
+hsk2;26;阴;yīn;cloudy;felhős
+hsk2;27;错;cuò;wrong;rossz
+hsk2;28;快乐;kuàilè;happy;boldog
 
-229;饭馆;fàn guǎn;restaurant;étterem
-230;机场;jīchǎng;airport;repülőtér
-231;教室;jiàoshì;classroom;osztályterem
-232;房间;fángjiān;room;szoba
-233;路;lù;road;út
-234;鱼;yú;fish;hal
-235;羊肉;yángròu;mutton;birkahús
-236;牛奶;niúnǎi;milk;tej
-237;鸡蛋;jīdàn;egg;tojás
-238;西瓜;xīguā;watermelon;dinnye
-239;咖啡;kāfēi;coffee;kávé
-240;自行车;zìxíngchē;bike;bicikli
-241;船;chuán;boat;hajó
-242;雪;xué;snow;hó
-243;药;yào;medicine;orvosság
-244;手机;shǒujī;phone;mobiltelefon
-245;手表;shǒubiǎo;watch;karóra
-246;眼睛;yǎnjīng;eye;szem
-247;身体;shēntǐ;body;test
-248;公共汽车;gōnggòngqìchē;bus;busz
-249;报纸;bàozhǐ;newspaper;újság
-250;门;mén;door;ajtó
+hsk2;29;饭馆;fàn guǎn;restaurant;étterem
+hsk2;30;机场;jīchǎng;airport;repülőtér
+hsk2;31;教室;jiàoshì;classroom;osztályterem
+hsk2;32;房间;fángjiān;room;szoba
+hsk2;33;路;lù;road;út
+hsk2;34;鱼;yú;fish;hal
+hsk2;35;羊肉;yángròu;mutton;birkahús
+hsk2;36;牛奶;niúnǎi;milk;tej
+hsk2;37;鸡蛋;jīdàn;egg;tojás
+hsk2;38;西瓜;xīguā;watermelon;dinnye
+hsk2;39;咖啡;kāfēi;coffee;kávé
+hsk2;40;自行车;zìxíngchē;bike;bicikli
+hsk2;41;船;chuán;boat;hajó
+hsk2;42;雪;xué;snow;hó
+hsk2;43;药;yào;medicine;orvosság
+hsk2;44;手机;shǒujī;phone;mobiltelefon
+hsk2;45;手表;shǒubiǎo;watch;karóra
+hsk2;46;眼睛;yǎnjīng;eye;szem
+hsk2;47;身体;shēntǐ;body;test
+hsk2;48;公共汽车;gōnggòngqìchē;bus;busz
+hsk2;49;报纸;bàozhǐ;newspaper;újság
+hsk2;50;门;mén;door;ajtó
 
-251;起床;qǐchuáng;get up;felkel
-252;唱歌;chànggē;sing;énekel
-253;跳舞;tiàowǔ;dance;táncol
-254;旅游;lǚyóu;travel;utazás
-255;上班;shàngbān;be on duty;műszakban van, tanul
-256;生病;shēngbìng;fall ill;lebetegszik
-257;休息;xiūxi;rest;pihen
-258;运动;yùndòng;exercise;edz
-259;游泳;yóuyǒng;swim;úszik
-260;踢足球;tīzúqiú;play footbal;focizik
-261;打篮球;dǎlánqiú;play basketball;kosarazik
-262;完;wán;finish;befejez
-263;觉得;juédé;feel;érez
-264;知道;zhīdào;know;tud (ismeret)
-265;希望;xīwàng;hope;remél
+hsk2;51;起床;qǐchuáng;get up;felkel
+hsk2;52;唱歌;chànggē;sing;énekel
+hsk2;53;跳舞;tiàowǔ;dance;táncol
+hsk2;54;旅游;lǚyóu;travel;utazás
+hsk2;55;上班;shàngbān;be on duty;műszakban van, tanul
+hsk2;56;生病;shēngbìng;fall ill;lebetegszik
+hsk2;57;休息;xiūxi;rest;pihen
+hsk2;58;运动;yùndòng;exercise;edz
+hsk2;59;游泳;yóuyǒng;swim;úszik
+hsk2;60;踢足球;tīzúqiú;play footbal;focizik
+hsk2;61;打篮球;dǎlánqiú;play basketball;kosarazik
+hsk2;62;完;wán;finish;befejez
+hsk2;63;觉得;juédé;feel;érez
+hsk2;64;知道;zhīdào;know;tud (ismeret)
+hsk2;65;希望;xīwàng;hope;remél
 
-266;您;nín;you;ön
-267;它;tā;it;az (személyes névmás)
-268;大家;dàjiā;everyone; mindenki
-269;每;měi;every;minden
-270;为什么;wèishénme;why;miért?
-271;两;liǎng;two;két
-272;百;bǎi;hundred;száz
-273;千;qiān;thousand;ezer
-274;第一;dìyī;first;első
-275;次;cì;number of times;alkalom
-276;公斤;gōngjīn;kilogram;kilogram
-277;元;yuán;yuan;jüan
-278;件;jiàn;piece;darab
-279;张;zhāng;sheet;lap
-280;别;bié;other, leave, don't;hagy, különbség, ne
-281;非常;fēicháng;very much;nagyon, különösen
-282;也;yě;likewise;is
-283;还;hái;repay;visszafizet
-284;最;zuì;most;leg-
-285;真;zhēn;real;igaz
-286;正在;zhèngzài;be being;folyamatban van
-287;已经;yǐjīng;already;már
-288;一起;yìqǐ;together;együtt
-289;再;zài;again;újra
-290;就;jiǜ;at once, then;akkor
-291;因为;yīnwèi;because;mert, mivel
-292;所以;suǒyǐ;and so;és aztán
-293;但是;dànshì;but;de
-294;从;cóng;from;-tól, -től
-295;对;duì;right, correct;helyes
-296;此;cǐ;this, here, now;ez, itt, most
-297;向;xiàng;towards;felé
-298;离;lí;leave;elhagy
-299;得;de;effect, degree particle;hatás, lehetőség partikula
-300;着;zhe;with, continued action particle;-vel, -vel, folyamat partikula
-301;过;guo;particle for past experience;múltbéli tapasztalat partikula
-302;吧;ba;softening particle;lágyító partikula
-303;左边;zuǒbiān;left;bal
-304;右边;yòubiān;right;jobb
-305;外;wài;outer;külső
-306;旁边;pángbiān;side, next to;oldalsó
-307;早上;zǎoshàng;morning;reggel
-308;晚上;wǎnshàng;night;este
-309;小时;xiǎoshí;hour;óra
-310;时间;shíjiān;time period;idő
-311;去年;qùnián;last year;múlt év
-312;号;hào;number, day of month;szám, hónap napja
-313;生日;shēngrì;birthday;születésnap
-314;服务员;fúwùyuán;waiter;pincér
-315;题;tí;topic, problem, question;téma, kérdés
-316;课;kè;lesson;kurzus, (tan)óra
-317;姓;xìng;surname;családnév
-318;问题;wèntí;question;kérdés
-319;事情;shìqing;matter;dolog, ügy
-320;考试;kǎoshì;exam;vizsga
-321;票;piào;ticket;jegy
-322;意思;yìsi;meaning;jelentés
-323;颜色;yánsè;color;szín
-324;欢迎;huānyíng;welcome;üdvözlet
-325;问;wèn;ask;kérdez
-326;走;zǒu;walk;megy
-327;进;jìn;enter;halad, bemegy
-328;出;chū;come out, happen;kimegy, történik
-329;跑步;pǎobù;run;fut
-330;到;dào;to, until;-ig
-331;穿;chuān;wear;visel
-332;洗;xǐ;wash;mos
-333;给;gěi;give, allow, for;ad, enged, -nak
-334;找;zhǎo;find, look for;keres
-335;懂;dǒng;understand;megért
-336;笑;xiào;smile;mosoly
-337;回答;huídá;answer;válasz
-338;告诉;gàosù;tell;megmond
-339;准备;zhǔnbèi;prepare;felkészül
-340;开始;kāishǐ;begin;kezd
-341;介绍;jièshào;introduce;bemutat
-342;帮助;bāngzhù;help;segít
-343;玩;wán;play, to have fun;játszik, szórakozik
-344;送;sòng;present, send;átad, küld
-345;等;děng;wait;vár
-346;让;ràng;let... (causation);hagy... (műveltető)
+hsk2;66;您;nín;you;ön
+hsk2;67;它;tā;it;az (személyes névmás)
+hsk2;68;大家;dàjiā;everyone; mindenki
+hsk2;69;每;měi;every;minden
+hsk2;70;为什么;wèishénme;why;miért?
+hsk2;71;两;liǎng;two;két
+hsk2;72;百;bǎi;hundred;száz
+hsk2;73;千;qiān;thousand;ezer
+hsk2;74;第一;dìyī;first;első
+hsk2;75;次;cì;number of times;alkalom
+hsk2;76;公斤;gōngjīn;kilogram;kilogram
+hsk2;77;元;yuán;yuan;jüan
+hsk2;78;件;jiàn;piece;darab
+hsk2;79;张;zhāng;sheet;lap
+hsk2;80;别;bié;other, leave, don't;hagy, különbség, ne
+hsk2;81;非常;fēicháng;very much;nagyon, különösen
+hsk2;82;也;yě;likewise;is
+hsk2;83;还;hái;repay;visszafizet
+hsk2;84;最;zuì;most;leg-
+hsk2;85;真;zhēn;real;igaz
+hsk2;86;正在;zhèngzài;be being;folyamatban van
+hsk2;87;已经;yǐjīng;already;már
+hsk2;88;一起;yìqǐ;together;együtt
+hsk2;89;再;zài;again;újra
+hsk2;90;就;jiǜ;at once, then;akkor
+hsk2;91;因为;yīnwèi;because;mert, mivel
+hsk2;92;所以;suǒyǐ;and so;és aztán
+hsk2;93;但是;dànshì;but;de
+hsk2;94;从;cóng;from;-tól, -től
+hsk2;95;对;duì;right, correct;helyes
+hsk2;96;此;cǐ;this, here, now;ez, itt, most
+hsk2;97;向;xiàng;towards;felé
+hsk2;98;离;lí;leave;elhagy
+hsk2;99;得;de;effect, degree particle;hatás, lehetőség partikula
+hsk2;100;着;zhe;with, continued action particle;-vel, -vel, folyamat partikula
+hsk2;101;过;guo;particle for past experience;múltbéli tapasztalat partikula
+hsk2;102;吧;ba;softening particle;lágyító partikula
+hsk2;103;左边;zuǒbiān;left;bal
+hsk2;104;右边;yòubiān;right;jobb
+hsk2;105;外;wài;outer;külső
+hsk2;106;旁边;pángbiān;side, next to;oldalsó
+hsk2;107;早上;zǎoshàng;morning;reggel
+hsk2;108;晚上;wǎnshàng;night;este
+hsk2;109;小时;xiǎoshí;hour;óra
+hsk2;110;时间;shíjiān;time period;idő
+hsk2;111;去年;qùnián;last year;múlt év
+hsk2;112;号;hào;number, day of month;szám, hónap napja
+hsk2;113;生日;shēngrì;birthday;születésnap
+hsk2;114;服务员;fúwùyuán;waiter;pincér
+hsk2;115;题;tí;topic, problem, question;téma, kérdés
+hsk2;116;课;kè;lesson;kurzus, (tan)óra
+hsk2;117;姓;xìng;surname;családnév
+hsk2;118;问题;wèntí;question;kérdés
+hsk2;119;事情;shìqing;matter;dolog, ügy
+hsk2;120;考试;kǎoshì;exam;vizsga
+hsk2;121;票;piào;ticket;jegy
+hsk2;122;意思;yìsi;meaning;jelentés
+hsk2;123;颜色;yánsè;color;szín
+hsk2;124;欢迎;huānyíng;welcome;üdvözlet
+hsk2;125;问;wèn;ask;kérdez
+hsk2;126;走;zǒu;walk;megy
+hsk2;127;进;jìn;enter;halad, bemegy
+hsk2;128;出;chū;come out, happen;kimegy, történik
+hsk2;129;跑步;pǎobù;run;fut
+hsk2;130;到;dào;to, until;-ig
+hsk2;131;穿;chuān;wear;visel
+hsk2;132;洗;xǐ;wash;mos
+hsk2;133;给;gěi;give, allow, for;ad, enged, -nak
+hsk2;134;找;zhǎo;find, look for;keres
+hsk2;135;懂;dǒng;understand;megért
+hsk2;136;笑;xiào;smile;mosoly
+hsk2;137;回答;huídá;answer;válasz
+hsk2;138;告诉;gàosù;tell;megmond
+hsk2;139;准备;zhǔnbèi;prepare;felkészül
+hsk2;140;开始;kāishǐ;begin;kezd
+hsk2;141;介绍;jièshào;introduce;bemutat
+hsk2;142;帮助;bāngzhù;help;segít
+hsk2;143;玩;wán;play, to have fun;játszik, szórakozik
+hsk2;144;送;sòng;present, send;átad, küld
+hsk2;145;等;děng;wait;vár
+hsk2;146;让;ràng;let... (causation);hagy... (műveltető)
 
-347;可以;kěyǐ;can, may;tud (szabad)
-348;要;yào;ask for, want;akar
-349;可能;kěnéng;possible;lehetséges
+hsk2;147;可以;kěyǐ;can, may;tud (szabad)
+hsk2;148;要;yào;ask for, want;akar
+hsk2;149;可能;kěnéng;possible;lehetséges

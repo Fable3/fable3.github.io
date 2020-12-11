@@ -5,6 +5,10 @@ goog.require('atlas');
 goog.require('RenderCtx2D');
 goog.require('RenderWebGL');
 
+var hsk_level = 'hsk2';
+var player_name = 'player';
+var lang_index = 1;
+var hard_mode = false;
 
 // Leitner system
 
@@ -164,7 +168,7 @@ var get_card_damage = function(card_id) {
 	{
 		if (GameState.hand[selected_card_index].id==card_id)
 		{
-			dmg*=[2,3,1,1][selected_card_accented];
+			dmg*=[2,3,1,1,2][selected_card_accented];
 		}
 	}
 	return dmg;
@@ -354,7 +358,7 @@ anim_card_pos = function(cp, dt, rot, x, y, speed)
 }
 
 
-select_card = function(id, has_accent = 0) { // 0: not yet, 1: good, 2: mismatched accent, 3: clicked, no accent
+select_card = function(id, has_accent = 0) { // 0: not yet, 1: good, 2: mismatched accent, 3: clicked, no accent, 4: typed without accent, can't match
 	selected_card_index = id;
 	selected_card_accented = has_accent;
 	selected_answer_index = -1;
@@ -478,7 +482,7 @@ end_answer = function(succ) {
 			draw_cards = true;
 			set_anim(1, 'attack');
 		}
-		GameState.deck.updateCard(ch_id, succ, [2,3,1,1][selected_card_accented]);
+		GameState.deck.updateCard(ch_id, succ, [2,3,1,1,2][selected_card_accented]);
 		GameState.hand.splice(selected_card_index, 1);
 		select_card(-1);
 		remove_card_pos(ch_id);
@@ -490,7 +494,13 @@ end_answer = function(succ) {
 				GameState.maxLevel=GameState.level;
 				add_random_card_to_deck();
 			}
-			GameState.playerHP = 5;
+			if (hard_mode)
+			{
+				if (GameState.playerHP < 5) GameState.playerHP++;
+			} else
+			{
+				GameState.playerHP = 5;
+			}
 			update_enemy();
 			deal_cards(default_hand_size-GameState.hand.length);
 		} else
@@ -669,7 +679,13 @@ var key_pressed = function(k) {
 						select_card(i, 0);
 					} else
 					{
-						select_card(i, 2);
+						if (key_buffer_accented==key_buffer)
+						{
+							select_card(i, 4);
+						} else
+						{
+							select_card(i, 2);
+						}
 						reveal_pinyin();
 					}				
 					break;
@@ -700,10 +716,9 @@ function get_english_option(card_id) {
 
 function getCookie(cname) {
   var name = cname + "=";
-  var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
+  var ca = document.cookie.split(';');
   for(var i = 0; i <ca.length; i++) {
-    var c = ca[i];
+    var c = decodeURIComponent(ca[i]);
     while (c.charAt(0) == ' ') {
       c = c.substring(1);
     }
@@ -717,7 +732,7 @@ function getCookie(cname) {
 function start_game()
 {
 	'use strict';
-	var json = getCookie('game');
+	var json = getCookie(player_name+'_'+hsk_level);
 	if (json=="")
 	{
 		var count=0;
@@ -746,10 +761,33 @@ function start_game()
 	deal_cards(default_hand_size);
 }
 
+function get_all_saved_games()
+{
+  var res = [];
+  var ca = document.cookie.split(';');
+  var h = ['hsk1', 'hsk2'];
+  for(var i = 0; i <ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+	var idx=c.indexOf('=');
+	if (idx<5) continue;
+	var c2 = c.substr(idx-5, 5);
+	var h1 = h.find(e=>c2=='_'+e);
+	if (!(h1===undefined))
+	{
+		res.push([decodeURIComponent(c.substr(0, idx-5)), h1]);
+	}
+  }
+  return res;
+}
+
 function save_cookie()
 {
 	var e = 'Tue, 19 Jan 2038 03:14:07 UTC';
-	document.cookie = 'game='+ JSON.stringify(GameState) +';expires=' + e;
+	var key = encodeURIComponent(player_name)+'_'+hsk_level;
+	document.cookie = key + '='+ JSON.stringify(GameState) +';expires=' + e;
 }
 
 function add_random_card_to_deck()
@@ -837,15 +875,20 @@ main.start = function (div) {
 		  if (line.length>3)
 		  {
 			  const col = line.split(';');
-			  const unAccented = col[2].normalize('NFD').replace(/\u0304|\u0301|\u030c|\u0300| /g, '').
+			  if (col.length<6)
+			  {
+				  console.log('invalid line:', line);
+				  continue;
+			  }
+			  if (col[0]!=hsk_level) continue;
+			  const unAccented = col[3].normalize('NFD').replace(/\u0304|\u0301|\u030c|\u0300| /g, '').
 				normalize('NFC').replace(/(\w|ü)[1-5]/gi, '$1').toLowerCase();
-			  if (col[4] == undefined) throw 'missing column at '+line;
-
-			  word_db[parseInt(col[0])]={"chars": col[1],
-					"pinyinOrig": col[2],
-					"pinyin": col[2].replaceAll(' ', ''),
+			  
+			  word_db[parseInt(col[1])]={"chars": col[2],
+					"pinyinOrig": col[3],
+					"pinyin": col[3].replaceAll(' ', ''),
 					"unAccented": unAccented,
-					"english": col[4]
+					"english": col[4+lang_index]
 			  };
 		  }
 	  }
