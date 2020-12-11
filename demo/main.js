@@ -5,7 +5,7 @@ goog.require('atlas');
 goog.require('RenderCtx2D');
 goog.require('RenderWebGL');
 
-var hsk_level = 'hsk2';
+var hsk_level = 'hsk1';
 var player_name = 'player';
 var lang_index = 1;
 var hard_mode = false;
@@ -765,7 +765,7 @@ function get_all_saved_games()
 {
   var res = [];
   var ca = document.cookie.split(';');
-  var h = ['hsk1', 'hsk2'];
+  var h = ['hsk1', 'hsk2', 'hsk3'];
   for(var i = 0; i <ca.length; i++) {
     var c = ca[i];
     while (c.charAt(0) == ' ') {

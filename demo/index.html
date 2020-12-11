@@ -23,7 +23,7 @@
 		}
 		function prestart_new_player()
 		{
-			hsk_level = ['hsk1', 'hsk2'].find(id=>document.getElementById(id).checked);
+			hsk_level = ['hsk1', 'hsk2', 'hsk3'].find(id=>document.getElementById(id).checked);
 			player_name=document.getElementById('username').value;
 			prestart_ready();
 		}
@@ -74,6 +74,8 @@
 	  <input type="radio" name="hsk" id="hsk1" value="hsk1" checked /><br/>
 	  <label for="hsk2">HSK 2</label>
 	  <input type="radio" name="hsk" id="hsk2" value="hsk2" /><br/>
+	  <label for="hsk3">HSK 3</label>
+	  <input type="radio" name="hsk" id="hsk3" value="hsk3" /><br/>
 	  <p/>
 	  <label for="lang0">English</label>
 	  <input type="radio" name="lang" id="lang0" value="lang0" /><br/>
