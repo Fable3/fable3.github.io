@@ -148,9 +148,6 @@ var GameState = {
 var default_hand_size = 5;
 var word_db = {};
 
-var get_card_rarity = function(card_id) {
-	return 0;
-}
 var get_card_rank = function(card_id) {
 	if (card_id in GameState.deck.deck)
 	{
@@ -309,77 +306,6 @@ var get_accent_num = function(str) {
 	}
 	return [str, 4];
 }
-/*
-var test_arg = {
-  "question": {
-	"id":0,
-    "chars": "你们",
-    "pinyin": "nǐmen",
-    "english": "you (pl.)",
-    "sound": "/mp3/你们.mp3",
-    "unAccented": "nimen",
-	"desc":"1 dmg",
-	"rarity":1,
-	"rank":1
-  },
-  "options": [
-    {
-		"id":0,
-      "chars": "人",
-      "pinyin": "rén",
-      "english": "person",
-      "sound": "/mp3/人.mp3",
-      "unAccented": "ren",
-	"desc":"1 dmg",
-	"rarity":0,
-	"rank":9
-    },
-    {
-		"id":1,
-      "chars": "一",
-      "pinyin": "yī",
-      "english": "one",
-      "sound": "/mp3/一.mp3",
-      "unAccented": "yi",
-	"desc":"2 dmg\n+1 dmg buff",
-	"rarity":1,
-	"rank":7
-    },
-    {
-		"id":2,
-      "chars": "你",
-      "pinyin": "nǐ",
-      "english": "you",
-      "sound": "/mp3/你.mp3",
-      "unAccented": "ni",
-	"desc":"1 dmg\ndraw",
-	"rarity":2,
-	"rank":5
-    },
-    {
-		"id":3,
-      "chars": "五",
-      "pinyin": "wǔ",
-      "english": "five",
-      "sound": "/mp3/五.mp3",
-      "unAccented": "wu",
-	"desc":"double\nnext attack",
-	"rarity":3,
-	"rank":3
-    },
-    {
-		"id":4,
-      "chars": "你们",
-      "pinyin": "nǐmen",
-      "english": "you (pl.)",
-      "sound": "/mp3/你们.mp3",
-      "unAccented": "nimen",
-	"desc":"5 dmg\nrank based",
-	"rarity":4,
-	"rank":1
-    }
-  ]
-};*/
 
 var card_pos=[];
 
@@ -1293,11 +1219,6 @@ main.start = function (div) {
   
   var card_image = new Image();
   card_image.src = "card.png";
-  var card_rarity = [new Image(),new Image(),new Image(),new Image()];
-  card_rarity[0].src = "card2.png";
-  card_rarity[1].src = "card3.png";
-  card_rarity[2].src = "card4.png";
-  card_rarity[3].src = "card5.png";
   var card_burnt_image = new Image();
   card_burnt_image.src = "card_burnt.png";
   var scroll_image = new Image();
@@ -1761,9 +1682,7 @@ main.start = function (div) {
 		anim_card_pos(cp, dt, rot, card_x, card_y, 300);
 		ctx_cards.transform(card_size*Math.cos(cp.rot), -card_size*Math.sin(cp.rot), card_size*Math.sin(cp.rot), card_size*Math.cos(cp.rot), cp.x, cp.y);			
 		var img=card_image;
-		var rarity = get_card_rarity(GameState.hand[i].id);
 		if (i==selected_card_index && selected_card_accented==2) img=card_burnt_image;
-		else if (rarity>0) img=card_rarity[(rarity-1)%card_rarity.length];
 		ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
 		var rank = get_card_rank(GameState.hand[i].id);
 		var rank_d = 100;

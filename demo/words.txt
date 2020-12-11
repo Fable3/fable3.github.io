@@ -112,7 +112,7 @@
 
 102;前面;qiánmiàn;front;elöl
 103;后面;hòumiàn;behind;hátul
-104;里面;lǐmiàn;inside;-ban, -ben
+104;里面;lǐmiàn;inside;belül
 105;今天;jīntiān;today;ma
 106;明天;míngtiān;tomorrow;holnap
 107;昨天;zuótiān;yesterday;tegnap
@@ -122,7 +122,7 @@
 111;星期;xīngqī;week;hét
 112;分钟;fēnzhōng;minute;perc
 113;现在;xiànzài;now;most
-114;时候;shíhou;time;idő
+114;时候;shíhou;time, moment;időpillanat
 115;老师;lǎoshī;teacher;tanár
 116;学生;xuéshēng;student;tanuló
 117;同学;tóngxué;schoolmate;osztálytárs
@@ -163,3 +163,159 @@
 151;认识;rènshi;know, recognize;ismer
 152;高兴;gāoxìng;happy;boldog
 153;漂亮;piàoliàng;beautiful;szép
+
+
+201;哥哥;gēge;brother;báty
+202;姐姐;jiějie;sister;nővér
+203;弟弟;dìdi;younger brother;öcs
+204;妹妹;mèimei;sis;hug
+205;丈夫;zhàngfu;husband;férj
+206;妻子;qīzi;wife;feleség
+207;孩子;háizi;child;gyermek
+208;男人;nánrén;man;férfi
+209;女人;nǚrén;woman;nő
+
+210;高;gāo;tall;magas
+211;红;hóng;red;piros
+212;白;bái;white;fehér
+213;黑;hēi;black;fekete
+214;忙;máng;busy;elfoglalt
+215;快;kuài;fast;gyors
+216;慢;màn;slow;lassú
+217;远;yuǎn;far;messzi
+218;近;jìn;close;közeli
+219;好吃;hǎochī;delicioous;finom
+220;累;lèi;tired;fáradt
+221;长;cháng;long;hosszú
+222;新;xīn;new;új
+223;贵;guì;expensive;drága
+224;便宜;piányi;cheap;olcsó
+225;晴;qíng;clear, fine (weather);tiszta (idő)
+226;阴;yīn;cloudy;felhős
+227;错;cuò;wrong;rossz
+228;快乐;kuàilè;happy;boldog
+
+229;饭馆;fàn guǎn;restaurant;étterem
+230;机场;jīchǎng;airport;repülőtér
+231;教室;jiàoshì;classroom;osztályterem
+232;房间;fángjiān;room;szoba
+233;路;lù;road;út
+234;鱼;yú;fish;hal
+235;羊肉;yángròu;mutton;birkahús
+236;牛奶;niúnǎi;milk;tej
+237;鸡蛋;jīdàn;egg;tojás
+238;西瓜;xīguā;watermelon;dinnye
+239;咖啡;kāfēi;coffee;kávé
+240;自行车;zìxíngchē;bike;bicikli
+241;船;chuán;boat;hajó
+242;雪;xué;snow;hó
+243;药;yào;medicine;orvosság
+244;手机;shǒujī;phone;mobiltelefon
+245;手表;shǒubiǎo;watch;karóra
+246;眼睛;yǎnjīng;eye;szem
+247;身体;shēntǐ;body;test
+248;公共汽车;gōnggòngqìchē;bus;busz
+249;报纸;bàozhǐ;newspaper;újság
+250;门;mén;door;ajtó
+
+251;起床;qǐchuáng;get up;felkel
+252;唱歌;chànggē;sing;énekel
+253;跳舞;tiàowǔ;dance;táncol
+254;旅游;lǚyóu;travel;utazás
+255;上班;shàngbān;be on duty;műszakban van, tanul
+256;生病;shēngbìng;fall ill;lebetegszik
+257;休息;xiūxi;rest;pihen
+258;运动;yùndòng;exercise;edz
+259;游泳;yóuyǒng;swim;úszik
+260;踢足球;tīzúqiú;play footbal;focizik
+261;打篮球;dǎlánqiú;play basketball;kosarazik
+262;完;wán;finish;befejez
+263;觉得;juédé;feel;érez
+264;知道;zhīdào;know;tud (ismeret)
+265;希望;xīwàng;hope;remél
+
+266;您;nín;you;ön
+267;它;tā;it;az (személyes névmás)
+268;大家;dàjiā;everyone; mindenki
+269;每;měi;every;minden
+270;为什么;wèishénme;why;miért?
+271;两;liǎng;two;két
+272;百;bǎi;hundred;száz
+273;千;qiān;thousand;ezer
+274;第一;dìyī;first;első
+275;次;cì;number of times;alkalom
+276;公斤;gōngjīn;kilogram;kilogram
+277;元;yuán;yuan;jüan
+278;件;jiàn;piece;darab
+279;张;zhāng;sheet;lap
+280;别;bié;other, leave, don't;hagy, különbség, ne
+281;非常;fēicháng;very much;nagyon, különösen
+282;也;yě;likewise;is
+283;还;hái;repay;visszafizet
+284;最;zuì;most;leg-
+285;真;zhēn;real;igaz
+286;正在;zhèngzài;be being;folyamatban van
+287;已经;yǐjīng;already;már
+288;一起;yìqǐ;together;együtt
+289;再;zài;again;újra
+290;就;jiǜ;at once, then;akkor
+291;因为;yīnwèi;because;mert, mivel
+292;所以;suǒyǐ;and so;és aztán
+293;但是;dànshì;but;de
+294;从;cóng;from;-tól, -től
+295;对;duì;right, correct;helyes
+296;此;cǐ;this, here, now;ez, itt, most
+297;向;xiàng;towards;felé
+298;离;lí;leave;elhagy
+299;得;de;effect, degree particle;hatás, lehetőség partikula
+300;着;zhe;with, continued action particle;-vel, -vel, folyamat partikula
+301;过;guo;particle for past experience;múltbéli tapasztalat partikula
+302;吧;ba;softening particle;lágyító partikula
+303;左边;zuǒbiān;left;bal
+304;右边;yòubiān;right;jobb
+305;外;wài;outer;külső
+306;旁边;pángbiān;side, next to;oldalsó
+307;早上;zǎoshàng;morning;reggel
+308;晚上;wǎnshàng;night;este
+309;小时;xiǎoshí;hour;óra
+310;时间;shíjiān;time period;idő
+311;去年;qùnián;last year;múlt év
+312;号;hào;number, day of month;szám, hónap napja
+313;生日;shēngrì;birthday;születésnap
+314;服务员;fúwùyuán;waiter;pincér
+315;题;tí;topic, problem, question;téma, kérdés
+316;课;kè;lesson;kurzus, (tan)óra
+317;姓;xìng;surname;családnév
+318;问题;wèntí;question;kérdés
+319;事情;shìqing;matter;dolog, ügy
+320;考试;kǎoshì;exam;vizsga
+321;票;piào;ticket;jegy
+322;意思;yìsi;meaning;jelentés
+323;颜色;yánsè;color;szín
+324;欢迎;huānyíng;welcome;üdvözlet
+325;问;wèn;ask;kérdez
+326;走;zǒu;walk;megy
+327;进;jìn;enter;halad, bemegy
+328;出;chū;come out, happen;kimegy, történik
+329;跑步;pǎobù;run;fut
+330;到;dào;to, until;-ig
+331;穿;chuān;wear;visel
+332;洗;xǐ;wash;mos
+333;给;gěi;give, allow, for;ad, enged, -nak
+334;找;zhǎo;find, look for;keres
+335;懂;dǒng;understand;megért
+336;笑;xiào;smile;mosoly
+337;回答;huídá;answer;válasz
+338;告诉;gàosù;tell;megmond
+339;准备;zhǔnbèi;prepare;felkészül
+340;开始;kāishǐ;begin;kezd
+341;介绍;jièshào;introduce;bemutat
+342;帮助;bāngzhù;help;segít
+343;玩;wán;play, to have fun;játszik, szórakozik
+344;送;sòng;present, send;átad, küld
+345;等;děng;wait;vár
+346;让;ràng;let... (causation);hagy... (műveltető)
+
+347;可以;kěyǐ;can, may;tud (szabad)
+348;要;yào;ask for, want;akar
+349;可能;kěnéng;possible;lehetséges
