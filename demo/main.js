@@ -693,7 +693,7 @@ var key_pressed = function(k) {
 			}
 		}
 	}
-	console.log(key_buffer, key_buffer_accented);
+	//console.log(key_buffer, key_buffer_accented);
 }
 
 function get_english_option(card_id) {
