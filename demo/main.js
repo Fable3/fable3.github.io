@@ -617,6 +617,7 @@ var key_pressed = function(k) {
 		} else if (selected_card_accented==0)
 		{
 			select_card(selected_card_index, 4);
+			reveal_pinyin();
 		}
 		return;
 	}
