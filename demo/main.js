@@ -448,7 +448,7 @@ select_answer = function(id) {
 	}
 }
 update_enemy = function() {
-	GameState.monsterHP = 10+GameState.level*2;
+	GameState.monsterHP = 10+GameState.level*3;
 	if (GameState.level%10==9)
 	{
 		GameState.monsterHP *= 2;
@@ -501,6 +501,7 @@ end_answer = function(succ) {
 			if (GameState.level>GameState.maxLevel)
 			{
 				GameState.maxLevel=GameState.level;
+				add_random_card_to_deck();
 				add_random_card_to_deck();
 			}
 			if (hard_mode)
