@@ -258,7 +258,7 @@ hsk2;86;正在;zhèngzài;be being;folyamatban van
 hsk2;87;已经;yǐjīng;already;már
 hsk2;88;一起;yìqǐ;together;együtt
 hsk2;89;再;zài;again;újra
-hsk2;90;就;jiǜ;at once, then;akkor
+hsk2;90;就;jiù;at once, then;akkor
 hsk2;91;因为;yīnwèi;because;mert, mivel
 hsk2;92;所以;suǒyǐ;and so;és aztán
 hsk2;93;但是;dànshì;but;de
@@ -279,7 +279,7 @@ hsk2;107;早上;zǎoshàng;morning;reggel
 hsk2;108;晚上;wǎnshàng;night;este
 hsk2;109;小时;xiǎoshí;hour;óra
 hsk2;110;时间;shíjiān;time period;idő
-hsk2;111;去年;qùnián;last year;múlt év
+hsk2;111;去年;qùnián;last year;tavaly
 hsk2;112;号;hào;number, day of month;szám, hónap napja
 hsk2;113;生日;shēngrì;birthday;születésnap
 hsk2;114;服务员;fúwùyuán;waiter;pincér
@@ -315,311 +315,311 @@ hsk2;143;玩;wán;play, to have fun;játszik, szórakozik
 hsk2;144;送;sòng;present, send;átad, küld
 hsk2;145;等;děng;wait;vár
 hsk2;146;让;ràng;let... (causation);hagy... (műveltető)
-
 hsk2;147;可以;kěyǐ;can, may;tud (szabad)
 hsk2;148;要;yào;ask for, want;akar
 hsk2;149;可能;kěnéng;possible;lehetséges
 
-hsk3;1;阿姨;āyí;aunt;
-hsk3;2;啊;a;ah;
-hsk3;3;矮;ǎi;short;
-hsk3;4;爱好;àihào;hobby;
-hsk3;5;安静;ānjìng;Be quiet;
-hsk3;6;把;bǎ;hold;
-hsk3;7;班;bān;class;
-hsk3;8;搬;bān;turn, pull;
-hsk3;9;半;bàn;half;
-hsk3;10;办法;bànfǎ;Way;
-hsk3;11;办公室;bàngōngshì;Office;
-hsk3;12;帮忙;bāngmáng;Help;
-hsk3;13;包;bāo;package;
-hsk3;14;饱;bǎo;full;
-hsk3;15;北方;běifāng;north;
-hsk3;16;被;bèi;cover;
-hsk3;17;鼻子;bízi;nose;
-hsk3;18;比;bǐ;than;
-hsk3;19;比较;bǐjiào;compare;
-hsk3;20;比赛;bǐsài;Match;
-hsk3;21;必须;bìxū;Must;
-hsk3;22;变化;biànhuà;change;
-hsk3;23;表示;biǎoshì;Express;
-hsk3;24;表演;biǎoyǎn;perform;
-hsk3;25;别人;biéren;Others;
-hsk3;26;宾馆;bīnguǎn;hotel;
-hsk3;27;冰箱;bīngxiāng;Refrigerator;
-hsk3;28;才;cái;just;
-hsk3;29;菜单;càidān;menu;
-hsk3;30;参加;cānjiā;participate in;
-hsk3;31;草;cǎo;grass;
-hsk3;32;层;céng;layer;
-hsk3;33;差;chà;difference;
-hsk3;34;超市;chāoshì;Supermarket;
-hsk3;35;衬衫;chènshān;shirt;
-hsk3;36;成绩;chéngjì;achievement;
-hsk3;37;城市;chéngshì;City;
-hsk3;38;迟到;chídào;Late;
-hsk3;39;出现;chūxiàn;Appear;
-hsk3;40;厨房;chúfáng;Kitchen;
-hsk3;41;除了;chúle;except;
-hsk3;42;春;chūn;spring;
-hsk3;43;词语;cíyǔ;terms;
-hsk3;44;聪明;cōngming;clever;
-hsk3;45;打扫;dǎsǎo;Clean;
-hsk3;46;打算;dǎsuàn;Plan;
-hsk3;47;带;dài;belt;
-hsk3;48;担心;dānxīn;Worry;
-hsk3;49;蛋糕;dàngāo;Cake;
-hsk3;50;当然;dāngrán;Of course;
-hsk3;51;地;de;;
-hsk3;52;灯;dēng;lamp;
-hsk3;53;低;dī;low;
-hsk3;54;地方;dìfang;local;
-hsk3;55;地铁;dìtiě;metro;
-hsk3;56;地图;dìtú;Map;
-hsk3;57;电梯;diàntī;Elevator.;
-hsk3;58;电子邮件;diànzǐyóujiàn;E-mail;
-hsk3;59;东;dōng;east;
-hsk3;60;冬;dōng;winter;
-hsk3;61;动物;dòngwù;Animal;
-hsk3;62;短;duǎn;short;
-hsk3;63;段;duàn;paragraph;
-hsk3;64;锻炼;duànliàn;Physical exercise;
-hsk3;65;多么;duōme;what;
-hsk3;66;饿;è;hungry;
-hsk3;67;而且;érqiě;And;
-hsk3;68;耳朵;ěrduo;Ears;
-hsk3;69;发烧;fāshāo;Have a fever;
-hsk3;70;发现;fāxiàn;find;
-hsk3;71;方便;fāngbiàn;convenient;
-hsk3;72;放;fàng;discharge;
-hsk3;73;放心;fàngxīn;Don’t worry;
-hsk3;74;分;fēn;branch;
-hsk3;75;附近;fùjìn;nearby;
-hsk3;76;复习;fùxí;Review;
-hsk3;77;干净;gānjìng;clean;
-hsk3;78;敢;gǎn;dare;
-hsk3;79;感冒;gǎnmào;Cold;
-hsk3;80;刚才;gāngcái;just;
-hsk3;81;跟;gēn;with;
-hsk3;82;根据;gēnjù;according to;
-hsk3;83;更;gèng;more;
-hsk3;84;公司;gōngsī;company;
-hsk3;85;公园;gōngyuán;Park;
-hsk3;86;故事;gùshi;Story;
-hsk3;87;刮风;guāfēng;Windy;
-hsk3;88;关;guān;shut;
-hsk3;89;关系;guānxì;relationship;
-hsk3;90;关心;guānxīn;Care for;
-hsk3;91;关于;guānyú;about;
-hsk3;92;国家;guójiā;Country;
-hsk3;93;果汁;guǒzhī;fruit juice;
-hsk3;94;过去;guòqù;Past times;
-hsk3;95;还是;háishì;still;
-hsk3;96;害怕;hàipà;Fear;
-hsk3;97;河;hé;river;
-hsk3;98;黑板;hēibǎn;blackboard;
-hsk3;99;护照;hùzhào;passport;
-hsk3;100;花 （动）;huā;Flower (move);
-hsk3;101;花园;huāyuán;Garden;
-hsk3;102;画;huà;painting;
-hsk3;103;坏;huài;bad;
-hsk3;104;环境;huánjìng;Environmental Science;
-hsk3;105;换;huàn;change;
-hsk3;106;黄;huáng;yellow;
-hsk3;107;会议;huìyì;Meeting;
-hsk3;108;或者;huòzhě;perhaps;
-hsk3;109;几乎;jīhū;almost;
-hsk3;110;机会;jīhuì;Opportunity;
-hsk3;111;极;jí;extremely;
-hsk3;112;记得;jìde;remember;
-hsk3;113;季节;jìjié;Season;
-hsk3;114;检查;jiǎnchá;inspect;
-hsk3;115;简单;jiǎndān;simple;
-hsk3;116;健康;jiànkāng;Healthy;
-hsk3;117;见面;jiànmiàn;meet;
-hsk3;118;讲;jiǎng;speak;
-hsk3;119;教;jiāo;teach;
-hsk3;120;角;jiǎo;horn;
-hsk3;121;脚;jiǎo;foot;
-hsk3;122;接;jiē;meet;
-hsk3;123;街道;jiēdào;Street;
-hsk3;124;结婚;jiéhūn;marry;
-hsk3;125;结束;jiéshù;End;
-hsk3;126;节目;jiémù;program;
-hsk3;127;节日;jiérì;festival;
-hsk3;128;解决;jiějué;Solve;
-hsk3;129;借;jiè;borrow;
-hsk3;130;经常;jīngcháng;Often;
-hsk3;131;经过;jīngguò;after;
-hsk3;132;经理;jīnglǐ;manager;
-hsk3;133;久;jiǔ;long;
-hsk3;134;旧;jiù;used;
-hsk3;135;举行;jǔxíng;hold;
-hsk3;136;句子;jùzi;sentence;
-hsk3;137;决定;juédìng;Decision;
-hsk3;138;渴;kě;thirsty;
-hsk3;139;可爱;kě’ài;Lovely;
-hsk3;140;刻;kè;moment;
-hsk3;141;客人;kèrén;Guest;
-hsk3;142;空调;kōngtiáo;Air conditioner;
-hsk3;143;口;kǒu;mouth;
-hsk3;144;哭;kū;cry;
-hsk3;145;裤子;kùzi;trousers;
-hsk3;146;筷子;kuàizi;chopsticks;
-hsk3;147;蓝;lán;blue;
-hsk3;148;老;lǎo;old;
-hsk3;149;离开;líkāi;leave;
-hsk3;150;里;lǐ;in;
-hsk3;151;礼物;lǐwù;gift;
-hsk3;152;历史;lìshǐ;History;
-hsk3;153;脸;liǎn;face;
-hsk3;154;练习;liànxí;Practice;
-hsk3;155;辆;liàng;Car;
-hsk3;156;了解;liǎojiě;understand;
-hsk3;157;邻居;línjū;neighbor;
-hsk3;158;楼;lóu;floor;
-hsk3;159;绿;lǜ;green;
-hsk3;160;马;mǎ;Horse;
-hsk3;161;马上;mǎshàng;Right off;
-hsk3;162;卖;mài;sell;
-hsk3;163;满意;mǎnyì;Satisfied;
-hsk3;164;帽子;màozi;Hat;
-hsk3;165;没;méi;no;
-hsk3;166;米;mǐ;rice;
-hsk3;167;面包;miànbāo;Bread;
-hsk3;168;面条;miàntiáo;noodle;
-hsk3;169;明白;míngbai;clear;
-hsk3;170;拿;ná;take;
-hsk3;171;奶奶;nǎinai;grandma;
-hsk3;172;南;nán;south;
-hsk3;173;难;nán;disaster, blame;
-hsk3;174;难过;nánguò;Sorry;
-hsk3;175;年级;niánjí;grade;
-hsk3;176;年轻;niánqīng;Young;
-hsk3;177;鸟;niǎo;bird;
-hsk3;178;努力;nǔlì;Strive;
-hsk3;179;爬山;páshān;Mountain climbing;
-hsk3;180;盘子;pánzi;plate;
-hsk3;181;胖;pàng;fat;
-hsk3;182;啤酒;píjiǔ;Beer;
-hsk3;183;葡萄;pútao;Grape;
-hsk3;184;普通话;pǔtōnghuà;Mandarin;
-hsk3;185;其实;qíshí;actually;
-hsk3;186;其他;qítā;Other;
-hsk3;187;骑;qí;ride;
-hsk3;188;奇怪;qíguài;strange;
-hsk3;189;铅笔;qiānbǐ;pencil;
-hsk3;190;清楚;qīngchu;clear;
-hsk3;191;秋;qiū;autumn;
-hsk3;192;裙子;qúnzi;skirt;
-hsk3;193;然后;ránhòu;Then;
-hsk3;194;热情;rèqíng;Enthusiasm;
-hsk3;195;认为;rènwéi;think;
-hsk3;196;认真;rènzhēn;earnest;
-hsk3;197;容易;róngyì;easily;
-hsk3;198;如果;rúguǒ;If;
-hsk3;199;伞;sǎn;umbrella;
-hsk3;200;上网;shàngwǎng;Surf the Internet;
-hsk3;201;生气;shēngqì;get angry;
-hsk3;202;声音;shēngyīn;voice;
-hsk3;203;使;shǐ;send;
-hsk3;204;世界;shìjiè;world;
-hsk3;205;瘦;shòu;thin;
-hsk3;206;舒服;shūfu;comfortable;
-hsk3;207;叔叔;shūshu;uncle;
-hsk3;208;树;shù;tree;
-hsk3;209;数学;shùxué;Mathematics;
-hsk3;210;刷牙;shuāyá;Brush one’s teeth;
-hsk3;211;双;shuāng;double;
-hsk3;212;水平;shuǐpíng;level;
-hsk3;213;司机;sījī;Driver;
-hsk3;214;虽然;suīrán;although;
-hsk3;215;太阳;tàiyáng;sunlight;
-hsk3;216;糖;táng;sugar;
-hsk3;217;特别;tèbié;Especially;
-hsk3;218;疼;téng;They hurt;
-hsk3;219;提高;tígāo;increase;
-hsk3;220;体育;tǐyù;Sports;
-hsk3;221;甜;tián;sweet;
-hsk3;222;条;tiáo;strip;
-hsk3;223;同事;tóngshì;Colleague;
-hsk3;224;同意;tóngyì;Agree;
-hsk3;225;头发;tóufa;Hair;
-hsk3;226;突然;tūrán;suddenly;
-hsk3;227;图书馆;túshūguǎn;Library;
-hsk3;228;腿;tuǐ;leg;
-hsk3;229;完成;wánchéng;complete;
-hsk3;230;碗;wǎn;bowl;
-hsk3;231;万;wàn;ten thousand;
-hsk3;232;忘记;wàngjì;forget;
-hsk3;233;为;wèi;by;
-hsk3;234;为了;wèile;in order to;
-hsk3;235;位;wèi;position;
-hsk3;236;文化;wénhuà;Culture;
-hsk3;237;西;xī;west;
-hsk3;238;习惯;xíguàn;Habit;
-hsk3;239;洗手间;xǐshǒujiān;Restroom;
-hsk3;240;洗澡;xǐzǎo;Take a shower;
-hsk3;241;夏;xià;summer;
-hsk3;242;先;xiān;before;
-hsk3;243;香蕉;xiāngjiāo;Banana;
-hsk3;244;相同;xiāngtóng;identical;
-hsk3;245;相信;xiāngxìn;believe;
-hsk3;246;像;xiàng;image;
-hsk3;247;小心;xiǎoxīn;Look out;
-hsk3;248;校长;xiàozhǎng;Principal;
-hsk3;249;鞋;xié;shoes;
-hsk3;250;新闻;xīnwén;Journalism;
-hsk3;251;新鲜;xīnxiān;fresh;
-hsk3;252;信;xìn;letter;
-hsk3;253;行李箱;xínglixiāng;Trunk;
-hsk3;254;兴趣;xìngqù;Interest;
-hsk3;255;熊猫;xióngmāo;Panda;
-hsk3;256;需要;xūyào;Need;
-hsk3;257;选择;xuǎnzé;Choice;
-hsk3;258;眼镜;yǎnjìng;glasses;
-hsk3;259;要求;yāoqiú;Requirement;
-hsk3;260;爷爷;yéye;grandpa;
-hsk3;261;一定;yídìng;Certain;
-hsk3;262;一共;yígòng;Altogether;
-hsk3;263;一会儿;yíhuìr;A little while;
-hsk3;264;一样;yíyàng;equally;
-hsk3;265;以后;yǐhòu;In the future;
-hsk3;266;以前;yǐqián;before;
-hsk3;267;以为;yǐwéi;Think;
-hsk3;268;一般;yìbān;commonly;
-hsk3;269;一边;yìbiān;One side;
-hsk3;270;一直;yìzhí;always;
-hsk3;271;音乐;yīnyuè;Music;
-hsk3;272;银行;yínháng;Bank;
-hsk3;273;应该;yīnggāi;Should;
-hsk3;274;影响;yǐngxiǎng;Influence;
-hsk3;275;用;yòng;use;
-hsk3;276;游戏;yóuxì;Game;
-hsk3;277;有名;yǒumíng;Famous;
-hsk3;278;又;yòu;also;
-hsk3;279;遇到;yùdào;encounter;
-hsk3;280;愿意;yuànyì;Be willing;
-hsk3;281;月亮;yuèliang;Moon;
-hsk3;282;越;yuè;The more;
-hsk3;283;云;yún;cloud;
-hsk3;284;站;zhàn;station;
-hsk3;285;着急;zháojí;Worry;
-hsk3;286;照顾;zhàogù;look after;
-hsk3;287;照片;zhàopiàn;Photo;
-hsk3;288;照相机;zhàoxiàngjī;Camera;
-hsk3;289;只;zhǐ;only;
-hsk3;290;中间;zhōngjiān;Middle;
-hsk3;291;终于;zhōngyú;finally;
-hsk3;292;种;zhǒng;species;
-hsk3;293;重要;zhòngyào;important;
-hsk3;294;周末;zhōumò;Weekend;
-hsk3;295;主要;zhǔyào;main;
-hsk3;296;祝;zhù;wish;
-hsk3;297;注意;zhùyì;Be careful;
-hsk3;298;字典;zìdiǎn;Dictionaries;
-hsk3;299;自己;zìjǐ;Own;
-hsk3;300;总是;zǒngshì;always;
-hsk3;301;最近;zuìjìn;Lately;
-hsk3;302;作业;zuòyè;task;
-hsk3;303;作用;zuòyòng;Effect;
+
+hsk3;1;北;běi;north;észak
+hsk3;2;南;nán;south;dél
+hsk3;3;西;xī;west;nyugat
+hsk3;4;东;dōng;east;kelet
+hsk3;5;秋;qiū;autumn;ősz
+hsk3;6;夏;xià;summer;nyár
+hsk3;7;春;chūn;spring;tavasz
+hsk3;8;冬;dōng;winter;tél
+hsk3;9;黄;huáng;yellow;sárga
+hsk3;10;蓝;lán;blue;kék
+hsk3;11;绿;lǜ;green;zöld
+hsk3;12;阿姨;āyí;aunt;néni
+hsk3;13;奶奶;nǎinai;grandma (paternal);(apai) nagymama
+hsk3;14;叔叔;shūshu;uncle;bácsi
+hsk3;15;爷爷;yéye;grandpa (paternal);(apai)nagypapa
+hsk3;16;花;huā;flower;virág
+hsk3;17;画;huà;painting;festmény
+hsk3;18;季节;jìjié;season;évszak
+hsk3;19;教;jiāo;teach;tanít
+hsk3;20;借;jiè;borrow;kölcsönvesz
+hsk3;21;久;jiǔ;long time;régen
+hsk3;22;渴;kě;thirsty;szomjas
+hsk3;23;饱;bǎo;full (of food);tele (has)
+hsk3;24;口;kǒu;mouth, entrance;száj, bejárat
+hsk3;25;哭;kū;cry;sír
+hsk3;26;老;lǎo;old;öreg
+hsk3;27;里;lǐ;in;benn, -ban, -ben
+hsk3;28;马;mǎ;horse;ló
+hsk3;29;马上;mǎshàng;right off;azonnal
+hsk3;30;卖;mài;sell;elad
+hsk3;31;没;méi;not, have not;nem, nincs
+hsk3;32;米;mǐ;rice;rizs
+hsk3;33;鸟;niǎo;bird;madár
+hsk3;34;胖;pàng;fat;kövér
+hsk3;35;伞;sǎn;umbrella;esernyő
+hsk3;36;啊;a;ah;ah
+hsk3;37;使;shǐ;send;elküld
+hsk3;38;瘦;shòu;thin;sovány
+hsk3;39;树;shù;tree;fa
+hsk3;40;甜;tián;sweet;édes
+hsk3;41;条;tiáo;strip of sth;csík
+hsk3;42;腿;tuǐ;leg;láb
+hsk3;43;碗;wǎn;bowl;tál
+hsk3;44;万;wàn;ten thousand;tízezer
+hsk3;45;先;xiān;beforehand, previous;előbb
+hsk3;46;云;yún;cloud;felhő
+hsk3;47;站;zhàn;station;állomás
+hsk3;48;祝;zhù;wish;kíván
+hsk3;49;矮;ǎi;short;alacsony
+hsk3;50;草;cǎo;grass;fű
+hsk3;51;带;dài;belt;öv
+hsk3;52;低;dī;low;alacsony
+hsk3;53;短;duǎn;short;rövid
+hsk3;54;饿;è;hungry;éhes
+hsk3;55;班;bān;class, work shift;műszak, osztály
+hsk3;56;分;fēn;divide;oszt
+hsk3;57;关;guān;relation;kapcsolat
+hsk3;58;半;bàn;half;fél (1/2)
+hsk3;59;河;hé;river;folyó
+hsk3;60;坏;huài;bad;rossz
+hsk3;61;换;huàn;exchange;cserél
+hsk3;62;脸;liǎn;face;arc
+hsk3;63;辆;liàng;car;jármű
+hsk3;64;楼;lóu;floor;emelet
+hsk3;65;被;bèi;cover;takar
+hsk3;66;双;shuāng;double, pair;pár
+hsk3;67;糖;táng;sugar;cukor
+hsk3;68;鞋;xié;shoes;cipő
+hsk3;69;衬衫;chènshān;shirt;ing
+hsk3;70;花园;huāyuán;garden;kert
+hsk3;71;会议;huìyì;meeting;találkozó, megbeszélés
+hsk3;72;举行;jǔxíng;hold;
+hsk3;73;可爱;kě ài;Lovely;
+hsk3;74;客人;kèrén;Guest;
+hsk3;75;裤子;kùzi;trousers;
+hsk3;76;筷子;kuàizi;chopsticks;
+hsk3;77;离开;líkāi;leave;
+hsk3;78;礼物;lǐwù;gift;
+hsk3;79;爬山;páshān;Mountain climbing;
+hsk3;80;葡萄;pútao;Grape;
+hsk3;81;铅笔;qiānbǐ;pencil;
+hsk3;82;清楚;qīngchu;clear;
+hsk3;83;上网;shàngwǎng;Surf the Internet;
+hsk3;84;世界;shìjiè;world;
+hsk3;85;忘记;wàngjì;forget;
+hsk3;86;一会儿;yíhuìr;A little while;
+hsk3;87;音乐;yīnyuè;Music;
+hsk3;88;银行;yínháng;Bank;
+hsk3;89;有名;yǒumíng;Famous;
+hsk3;90;周末;zhōumò;Weekend;
+hsk3;91;注意;zhùyì;Be careful;
+hsk3;92;字典;zìdiǎn;Dictionaries;
+hsk3;93;自己;zìjǐ;Own;
+hsk3;94;担心;dānxīn;Worry;
+hsk3;95;蛋糕;dàngāo;Cake;
+hsk3;96;地方;dìfang;local;
+hsk3;97;地铁;dìtiě;metro;
+hsk3;98;地图;dìtú;Map;
+hsk3;99;动物;dòngwù;Animal;
+hsk3;100;复习;fùxí;Review;
+hsk3;101;干净;gānjìng;clean;
+hsk3;102;公司;gōngsī;company;
+hsk3;103;公园;gōngyuán;Park;
+hsk3;104;故事;gùshi;Story;
+hsk3;105;刮风;guāfēng;Windy;
+hsk3;106;黑板;hēibǎn;blackboard;
+hsk3;107;护照;hùzhào;passport;
+hsk3;108;讲;jiǎng;speak;
+hsk3;109;角;jiǎo;horn;
+hsk3;110;脚;jiǎo;foot;
+hsk3;111;接;jiē;meet;
+hsk3;112;包;bāo;package;
+hsk3;113;旧;jiù;used;
+hsk3;114;刻;kè;moment;
+hsk3;115;拿;ná;take;
+hsk3;116;骑;qí;ride;
+hsk3;117;疼;téng;They hurt;
+hsk3;118;位;wèi;position;
+hsk3;119;像;xiàng;image;
+hsk3;120;信;xìn;letter;
+hsk3;121;用;yòng;use;
+hsk3;122;放;fàng;discharge;
+hsk3;123;或者;huòzhě;perhaps;
+hsk3;124;几乎;jīhū;almost;
+hsk3;125;极;jí;extremely;
+hsk3;126;经常;jīngcháng;Often;
+hsk3;127;经过;jīngguò;after;
+hsk3;128;决定;juédìng;Decision;
+hsk3;129;难;nán;disaster, blame;
+hsk3;130;比;bǐ;than;
+hsk3;131;其实;qíshí;actually;
+hsk3;132;其他;qítā;Other;
+hsk3;133;比较;bǐjiào;compare;
+hsk3;134;然后;ránhòu;Then;
+hsk3;135;如果;rúguǒ;If;
+hsk3;136;比赛;bǐsài;Match;
+hsk3;137;必须;bìxū;Must;
+hsk3;138;虽然;suīrán;although;
+hsk3;139;特别;tèbié;Especially;
+hsk3;140;突然;tūrán;suddenly;
+hsk3;141;完成;wánchéng;complete;
+hsk3;142;为;wèi;by;
+hsk3;143;为了;wèile;in order to;
+hsk3;144;别人;biéren;Others;
+hsk3;145;需要;xūyào;Need;
+hsk3;146;应该;yīnggāi;Should;
+hsk3;147;又;yòu;also;
+hsk3;148;才;cái;just;
+hsk3;149;越;yuè;The more;
+hsk3;150;只;zhǐ;only;
+hsk3;151;总是;zǒngshì;always;
+hsk3;152;最近;zuìjìn;Lately;
+hsk3;153;差;chà;difference;
+hsk3;154;除了;chúle;except;
+hsk3;155;地;de;;
+hsk3;156;多么;duōme;what;
+hsk3;157;而且;érqiě;And;
+hsk3;158;刚才;gāngcái;just;
+hsk3;159;跟;gēn;with;
+hsk3;160;更;gèng;more;
+hsk3;161;还是;háishì;still;
+hsk3;162;办法;bànfǎ;Way;
+hsk3;163;办公室;bàngōngshì;Office;
+hsk3;164;机会;jīhuì;Opportunity;
+hsk3;165;帮忙;bāngmáng;Help;
+hsk3;166;街道;jiēdào;Street;
+hsk3;167;句子;jùzi;sentence;
+hsk3;168;明白;míngbai;clear;
+hsk3;169;鼻子;bízi;nose;
+hsk3;170;难过;nánguò;Sorry;
+hsk3;171;啤酒;píjiǔ;Beer;
+hsk3;172;裙子;qúnzi;skirt;
+hsk3;173;变化;biànhuà;change;
+hsk3;174;体育;tǐyù;Sports;
+hsk3;175;同事;tóngshì;Colleague;
+hsk3;176;文化;wénhuà;Culture;
+hsk3;177;习惯;xíguàn;Habit;
+hsk3;178;小心;xiǎoxīn;Look out;
+hsk3;179;熊猫;xióngmāo;Panda;
+hsk3;180;选择;xuǎnzé;Choice;
+hsk3;181;菜单;càidān;menu;
+hsk3;182;中间;zhōngjiān;Middle;
+hsk3;183;重要;zhòngyào;important;
+hsk3;184;超市;chāoshì;Supermarket;
+hsk3;185;城市;chéngshì;City;
+hsk3;186;出现;chūxiàn;Appear;
+hsk3;187;耳朵;ěrduo;Ears;
+hsk3;188;附近;fùjìn;nearby;
+hsk3;189;关系;guānxì;relationship;
+hsk3;190;国家;guójiā;Country;
+hsk3;191;果汁;guǒzhī;fruit juice;
+hsk3;192;过去;guòqù;Past times;
+hsk3;193;记得;jìde;remember;
+hsk3;194;检查;jiǎnchá;inspect;
+hsk3;195;简单;jiǎndān;simple;
+hsk3;196;见面;jiànmiàn;meet;
+hsk3;197;解决;jiějué;Solve;
+hsk3;198;帽子;màozi;Hat;
+hsk3;199;面包;miànbāo;Bread;
+hsk3;200;面条;miàntiáo;noodle;
+hsk3;201;盘子;pánzi;plate;
+hsk3;202;生气;shēngqì;get angry;
+hsk3;203;声音;shēngyīn;voice;
+hsk3;204;提高;tígāo;increase;
+hsk3;205;图书馆;túshūguǎn;Library;
+hsk3;206;游戏;yóuxì;Game;
+hsk3;207;月亮;yuèliang;Moon;
+hsk3;208;照片;zhàopiàn;Photo;
+hsk3;209;照相机;zhàoxiàngjī;Camera;
+hsk3;210;种;zhǒng;species;
+hsk3;211;主要;zhǔyào;main;
+hsk3;212;层;céng;layer;
+hsk3;213;打扫;dǎsǎo;Clean;
+hsk3;214;打算;dǎsuàn;Plan;
+hsk3;215;安静;ānjìng;quiet, peaceful;csendes, nyugodt
+hsk3;216;当然;dāngrán;Of course;
+hsk3;217;灯;dēng;lamp;
+hsk3;218;把;bǎ;hold;tart
+hsk3;219;敢;gǎn;dare;
+hsk3;220;搬;bān;turn, pull;
+hsk3;221;关心;guānxīn;Care for;
+hsk3;222;关于;guānyú;about;
+hsk3;223;害怕;hàipà;Fear;
+hsk3;224;健康;jiànkāng;Healthy;
+hsk3;225;结婚;jiéhūn;marry;
+hsk3;226;节目;jiémù;program;
+hsk3;227;节日;jiérì;festival;
+hsk3;228;经理;jīnglǐ;manager;
+hsk3;229;练习;liànxí;Practice;
+hsk3;230;了解;liǎojiě;understand;
+hsk3;231;邻居;línjū;neighbor;
+hsk3;232;年级;niánjí;grade;
+hsk3;233;年轻;niánqīng;Young;
+hsk3;234;奇怪;qíguài;strange;
+hsk3;235;认为;rènwéi;think;
+hsk3;236;认真;rènzhēn;earnest;
+hsk3;237;容易;róngyì;easily;
+hsk3;238;舒服;shūfu;comfortable;
+hsk3;239;司机;sījī;Driver;
+hsk3;240;洗手间;xǐshǒujiān;Restroom;
+hsk3;241;洗澡;xǐzǎo;Take a shower;
+hsk3;242;新鲜;xīnxiān;fresh;
+hsk3;243;兴趣;xìngqù;Interest;
+hsk3;244;眼镜;yǎnjìng;glasses;
+hsk3;245;宾馆;bīnguǎn;hotel;
+hsk3;246;愿意;yuànyì;Be willing;
+hsk3;247;着急;zháojí;Worry;
+hsk3;248;作业;zuòyè;task;
+hsk3;249;作用;zuòyòng;Effect;
+hsk3;250;成绩;chéngjì;achievement;
+hsk3;251;迟到;chídào;Late;
+hsk3;252;爱好;àihào;hobby;hobbi
+hsk3;253;聪明;cōngming;clever;
+hsk3;254;感冒;gǎnmào;Cold;
+hsk3;255;空调;kōngtiáo;Air conditioner;
+hsk3;256;普通话;pǔtōnghuà;Mandarin;
+hsk3;257;同意;tóngyì;Agree;
+hsk3;258;相同;xiāngtóng;identical;
+hsk3;259;相信;xiāngxìn;believe;
+hsk3;260;一定;yídìng;Certain;
+hsk3;261;一共;yígòng;Altogether;
+hsk3;262;一样;yíyàng;equally;
+hsk3;263;以后;yǐhòu;In the future;
+hsk3;264;以前;yǐqián;before;
+hsk3;265;以为;yǐwéi;Think;
+hsk3;266;一般;yìbān;commonly;
+hsk3;267;一边;yìbiān;One side;
+hsk3;268;一直;yìzhí;always;
+hsk3;269;段;duàn;paragraph;
+hsk3;270;满意;mǎnyì;Satisfied;
+hsk3;271;努力;nǔlì;Strive;
+hsk3;272;刷牙;shuāyá;Brush one’s teeth;
+hsk3;273;水平;shuǐpíng;level;
+hsk3;274;太阳;tàiyáng;sunlight;
+hsk3;275;头发;tóufa;Hair;
+hsk3;276;表示;biǎoshì;Express;
+hsk3;277;表演;biǎoyǎn;perform;
+hsk3;278;校长;xiàozhǎng;Principal;
+hsk3;279;行李箱;xínglixiāng;Trunk;
+hsk3;280;要求;yāoqiú;Requirement;
+hsk3;281;冰箱;bīngxiāng;Refrigerator;
+hsk3;282;影响;yǐngxiǎng;Influence;
+hsk3;283;参加;cānjiā;participate in;
+hsk3;284;厨房;chúfáng;Kitchen;
+hsk3;285;词语;cíyǔ;terms;
+hsk3;286;电梯;diàntī;elevator;
+hsk3;287;电子邮件;diànzǐyóujiàn;E-mail;
+hsk3;288;锻炼;duànliàn;Physical exercise;
+hsk3;289;发烧;fāshāo;Have a fever;
+hsk3;290;发现;fāxiàn;find;
+hsk3;291;环境;huánjìng;Environmental Science;
+hsk3;292;结束;jiéshù;End;
+hsk3;293;历史;lìshǐ;History;
+hsk3;294;热情;rèqíng;Enthusiasm;
+hsk3;295;数学;shùxué;Mathematics;
+hsk3;296;香蕉;xiāngjiāo;Banana;
+hsk3;297;新闻;xīnwén;Journalism;
+hsk3;298;遇到;yùdào;encounter;
+hsk3;299;照顾;zhàogù;look after;
+hsk3;300;终于;zhōngyú;finally;
+hsk3;301;方便;fāngbiàn;convenient;
+hsk3;302;放心;fàngxīn;Don’t worry;
+hsk3;303;根据;gēnjù;according to;
