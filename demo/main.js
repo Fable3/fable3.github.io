@@ -149,6 +149,7 @@ var good_answer_index = -1;
 var pinyin_revealed = false;
 var key_buffer="";
 var key_buffer_accented="";
+var star_card_count = 0;
 var GameState = {
 	"deck": new leitner(),
 	"hand": [],
@@ -185,6 +186,13 @@ var get_card_damage = function(card_id) {
 var get_card_desc = function(card_id) {
 	return {txt:get_card_damage(card_id).toString() + " dmg"};
 };
+
+var update_star_card_count = function() {
+	star_card_count = 0;
+	for (const [str_key, value] of Object.entries(GameState.deck.deck)) {
+		if (value[1]>=9) star_card_count++;
+	}
+}
 
 const audio_play_tone = new Audio();
 
@@ -493,6 +501,7 @@ end_answer = function(succ) {
 		}
 		GameState.deck.updateCard(ch_id, succ, [2,3,1,1,2][selected_card_accented]);
 		GameState.hand.splice(selected_card_index, 1);
+		update_star_card_count();
 		select_card(-1);
 		remove_card_pos(ch_id);
 		if (GameState.monsterHP==0)
@@ -771,6 +780,7 @@ function start_game()
 		GameState.playerHP = 5;
 		update_enemy();
 	}
+	update_star_card_count();
 	deal_cards(default_hand_size);
 }
 
@@ -1664,6 +1674,8 @@ main.start = function (div) {
   {
 	  ctx_cards.clearRect(0, 0, ctx_cards.canvas.width, ctx_cards.canvas.height);
 	  var font_size=ctx_cards.canvas.height/20;
+	  var rank_d = 100;
+	  
 	  ctx_cards.font = font_size.toString()+"px Arial Bold";
 	  ctx_cards.fillStyle = "black";
 	  ctx_cards.textAlign = "left";
@@ -1677,7 +1689,14 @@ main.start = function (div) {
 		  ctx_cards.fillStyle = 'black';
 		  ctx_cards.fillText(text, x, y);
 	  }
-	  drawStroked('Level: ' + (GameState.level).toString(), 20, (line_idx++)*font_size);
+	  var level_txt = 'Level: ' + (GameState.level).toString();
+	  star_card_count
+	  var star_pos_y = (line_idx++)*font_size;
+	  drawStroked(level_txt, 20, star_pos_y);
+	  var star_pos_x = ctx_cards.measureText(level_txt).width+20+20;
+	  var star_d = font_size;
+	  ctx_cards.drawImage(rank_image, 0, rank_image.height/10*9, rank_image.width, rank_image.height/10, star_pos_x, star_pos_y-font_size*0.8, star_d, star_d);
+	  drawStroked(star_card_count.toString()+"/"+(Object.keys(GameState.deck.deck).length).toString(), star_pos_x+font_size*1.2, star_pos_y);
 	  drawStroked('Player HP: ', 20, (line_idx++)*font_size);// + (GameState.playerHP).toString(), 20, (line_idx++)*font_size);
 	  if (heart_image.complete)
 	  {
@@ -1741,7 +1760,7 @@ main.start = function (div) {
 		if (i==selected_card_index && selected_card_accented==2) img=card_burnt_image;
 		ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
 		var rank = get_card_rank(GameState.hand[i].id);
-		var rank_d = 100;
+		
 		ctx_cards.drawImage(rank_image, 0, rank_image.height/10*rank, rank_image.width, rank_image.height/10, 
 			card_image.width/2-rank_d-20, -card_image.height/2+20, rank_d, rank_d);
 		if (flame_image.complete && i==selected_card_index && selected_card_accented==1)
