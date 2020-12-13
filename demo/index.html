@@ -45,8 +45,8 @@
 				a.appendChild(linkText);
 				a.title = saved_games[i][0] + ' - '+saved_games[i][1];
 				a.href = "javascript:prestart_select_saved_game("+i.toString()+");";
-				document.getElementById('prestart').appendChild(a);
-				document.getElementById('prestart').appendChild(document.createElement('br'));
+				document.getElementById('load_target').appendChild(a);
+				document.getElementById('load_target').appendChild(document.createElement('br'));
 			}
 		}
 		window.addEventListener('load', function (event) { prestart_list_cookies(); }, false);
@@ -62,21 +62,25 @@
 		.full-height {
 		  height: 100%;
 		}
+		h2 {
+		   width: 100%; 
+		   text-align: left; 
+		   border-bottom: 1px solid #000; 
+		   line-height: 0.1em;
+		   text-indent:5em;
+		   margin: 10px 0 20px; 
+		} 
+
+		h2 span { 
+			background:#fff; 
+			padding:0 10px; 
+		}
 		</style>
 	</head>
 	<body>
 	<div id="prestart" style="margin:10px;">
 	  <p/>
-	  <label for="username">Name:</label>
-	  <input type="text" id="username" value="Player"><p/>
-	  
-	  <label for="hsk1">HSK 1</label>
-	  <input type="radio" name="hsk" id="hsk1" value="hsk1" checked /><br/>
-	  <label for="hsk2">HSK 2</label>
-	  <input type="radio" name="hsk" id="hsk2" value="hsk2" /><br/>
-	  <label for="hsk3">HSK 3</label>
-	  <input type="radio" name="hsk" id="hsk3" value="hsk3" /><br/>
-	  <p/>
+	  <h2><span>settings</span></h2>
 	  <label for="lang0">English</label>
 	  <input type="radio" name="lang" id="lang0" value="lang0" /><br/>
 	  <label for="lang1">Magyar</label>
@@ -85,10 +89,36 @@
 	  <label for="hard_mode">Hard mode:</label>
 	  <input type="checkbox" id="hard_mode">
 	  <p/>
+	  <h2><span>new game</span></h2>
+	  <label for="username">Name:</label>
+	  <input type="text" id="username" value="Player"><p/>
+	  
+	  <label for="hsk1">HSK 1</label>
+	  <input type="radio" name="hsk" id="hsk1" value="hsk1" checked /><br/>
+	  <label for="hsk2">HSK 2</label>
+	  <input type="radio" name="hsk" id="hsk2" value="hsk2" /><br/>
+	  <label for="hsk3">HSK 3</label>
+	  <input type="radio" name="hsk" id="hsk3" value="hsk3" />
+	  <label>(english)</label><br/>
 	  
 	  <a href="javascript:prestart_new_player();">start</a>
 	  <p/>
-	  
+	  <h2><span>load game</span></h2>
+	  <div id="load_target"></div>
+	  <h2><span>tippek</span></h2>
+	  <li>Ha elfogy a kezedből a lap, sérülsz. Jó lapokkal tudsz nyerni, vagy ha pinyin-nel és hangsúllyal 2-3-szorozod a sebzést.
+	  <li>Lap szintje a sebzés szorzó szerint növekszik, hangsúlyos pinyinnel lehet leggyorsabban felfejleszteni.
+	  <li>A lap szintjétől függ a karakter stílusa.
+	  <li>Hangsúlyrontástól csak a sebzés szorzó törlődik, a kártya szintje megmarad.
+	  <li>Bizonytalan lapokat érdemes utoljára hagyni, mert rontás után is húzol.
+	  <li>Pinyin beírás: 1-4 a hangsúly, szótagok után kell megadni. Az utolsó szótagnál már ki lesz választva a kártya. Ilyenkor tippelés helyett "enter"-rel fel lehet fedni a helyes hangsúlyt.
+	  <li>Csillagos lapok ritkábban jönnek. Pinyin-nel (főleg hangsúllyal beírt) lapok még ritkábban. Béna lapoktól ezzel lehet megszabadulni.
+	  <li>Ha béna lapot rontasz, többet fogod húzni amíg visszafejleszted csillagosra.
+	  <li>A 10 legerősebb lapod csillagosként sem fog eltűnni. Nem érdemes taktikából rontani.
+	  <li>Pinyin nélkül a kézírásos kártyákat nehéz felismerni, és a boss-okat sem lehet legyőzni, érdemes megjegyezni már a könnyebb ellenfeleknél.
+	  <li>Egér nélkül is lehet játszani, számokkal kiválasztható a lap, utána nyilakkal a válasz.
+	  <li>Ha elbuksz, vagy kilépsz, 3 szintet vesztesz, de a paklid megmarad. Bossok után checkpoint van, pl. 22-es szintről csak 20-ra esel vissza. Ezért kilépni is boss után érdemes.
+	  <li>Legyőzött szörnyek után 2 új lapot kapsz, az újrajátszásra ez nem vonatkozik.
 	</div>
 	<div id="full" class="full-height" style="display:none">
 	<div id="tone" >

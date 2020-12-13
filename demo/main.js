@@ -1462,7 +1462,7 @@ main.start = function (div) {
 				{
 					next_anim_key = anim_key[spid].substr(anim_key[spid].indexOf('+')+1);
 				}
-				console.log('anim ' + anim_key[spid] +' -> '+next_anim_key);
+				//console.log('anim ' + anim_key[spid] +' -> '+next_anim_key);
 				var entity_key = spriter_data[spid].getEntityKeys()[0];
 				anim_key[spid] = next_anim_key;
 				
