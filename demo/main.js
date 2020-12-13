@@ -892,7 +892,7 @@ main.start = function (div) {
 	  {
 		  return;
 	  }
-	  const lines=text.split('\n');
+	  const lines=text.replace(/\r/gm, '').split('\n');
 	  for(const line of lines)
 	  {
 		  if (line.length>3)
@@ -904,6 +904,10 @@ main.start = function (div) {
 				  continue;
 			  }
 			  if (col[0]!=hsk_level) continue;
+			  if (col[4+lang_index]=="")
+			  {
+				  console.log('empty str:', line);
+			  }
 			  const unAccented = col[3].normalize('NFD').replace(/\u0304|\u0301|\u030c|\u0300| /g, '').
 				normalize('NFC').replace(/(\w|ü)[1-5]/gi, '$1').toLowerCase();
 			  

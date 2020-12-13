@@ -361,7 +361,7 @@ hsk3;38;瘦;shòu;thin;sovány
 hsk3;39;树;shù;tree;fa
 hsk3;40;甜;tián;sweet;édes
 hsk3;41;条;tiáo;strip of sth;csík
-hsk3;42;腿;tuǐ;leg;láb
+hsk3;42;腿;tuǐ;leg;láb(szár)
 hsk3;43;碗;wǎn;bowl;tál
 hsk3;44;万;wàn;ten thousand;tízezer
 hsk3;45;先;xiān;beforehand, previous;előbb
@@ -391,67 +391,67 @@ hsk3;68;鞋;xié;shoes;cipő
 hsk3;69;衬衫;chènshān;shirt;ing
 hsk3;70;花园;huāyuán;garden;kert
 hsk3;71;会议;huìyì;meeting;találkozó, megbeszélés
-hsk3;72;举行;jǔxíng;hold;
-hsk3;73;可爱;kě ài;Lovely;
-hsk3;74;客人;kèrén;Guest;
-hsk3;75;裤子;kùzi;trousers;
-hsk3;76;筷子;kuàizi;chopsticks;
-hsk3;77;离开;líkāi;leave;
-hsk3;78;礼物;lǐwù;gift;
-hsk3;79;爬山;páshān;Mountain climbing;
-hsk3;80;葡萄;pútao;Grape;
-hsk3;81;铅笔;qiānbǐ;pencil;
-hsk3;82;清楚;qīngchu;clear;
-hsk3;83;上网;shàngwǎng;Surf the Internet;
-hsk3;84;世界;shìjiè;world;
-hsk3;85;忘记;wàngjì;forget;
-hsk3;86;一会儿;yíhuìr;A little while;
-hsk3;87;音乐;yīnyuè;Music;
-hsk3;88;银行;yínháng;Bank;
-hsk3;89;有名;yǒumíng;Famous;
-hsk3;90;周末;zhōumò;Weekend;
-hsk3;91;注意;zhùyì;Be careful;
-hsk3;92;字典;zìdiǎn;Dictionaries;
-hsk3;93;自己;zìjǐ;Own;
-hsk3;94;担心;dānxīn;Worry;
-hsk3;95;蛋糕;dàngāo;Cake;
-hsk3;96;地方;dìfang;local;
-hsk3;97;地铁;dìtiě;metro;
-hsk3;98;地图;dìtú;Map;
-hsk3;99;动物;dòngwù;Animal;
-hsk3;100;复习;fùxí;Review;
-hsk3;101;干净;gānjìng;clean;
-hsk3;102;公司;gōngsī;company;
-hsk3;103;公园;gōngyuán;Park;
-hsk3;104;故事;gùshi;Story;
-hsk3;105;刮风;guāfēng;Windy;
-hsk3;106;黑板;hēibǎn;blackboard;
-hsk3;107;护照;hùzhào;passport;
-hsk3;108;讲;jiǎng;speak;
-hsk3;109;角;jiǎo;horn;
-hsk3;110;脚;jiǎo;foot;
-hsk3;111;接;jiē;meet;
-hsk3;112;包;bāo;package;
-hsk3;113;旧;jiù;used;
-hsk3;114;刻;kè;moment;
-hsk3;115;拿;ná;take;
-hsk3;116;骑;qí;ride;
-hsk3;117;疼;téng;They hurt;
-hsk3;118;位;wèi;position;
-hsk3;119;像;xiàng;image;
-hsk3;120;信;xìn;letter;
-hsk3;121;用;yòng;use;
-hsk3;122;放;fàng;discharge;
-hsk3;123;或者;huòzhě;perhaps;
-hsk3;124;几乎;jīhū;almost;
-hsk3;125;极;jí;extremely;
-hsk3;126;经常;jīngcháng;Often;
-hsk3;127;经过;jīngguò;after;
-hsk3;128;决定;juédìng;Decision;
-hsk3;129;难;nán;disaster, blame;
-hsk3;130;比;bǐ;than;
-hsk3;131;其实;qíshí;actually;
-hsk3;132;其他;qítā;Other;
+hsk3;72;举行;jǔxíng;hold;megtart, végbe megy
+hsk3;73;可爱;kě ài;lovely;aranyos
+hsk3;74;客人;kèrén;guest;vendég
+hsk3;75;裤子;kùzi;trousers;nadrág
+hsk3;76;筷子;kuàizi;chopsticks;evőpálcika
+hsk3;77;离开;líkāi;leave;távozik
+hsk3;78;礼物;lǐwù;gift;ajándék
+hsk3;79;爬山;páshān;mountain climbing;hegymászás
+hsk3;80;葡萄;pútao;grape;szőlő
+hsk3;81;铅笔;qiānbǐ;pencil;ceruza
+hsk3;82;清楚;qīngchu;clear;egyértelmű
+hsk3;83;上网;shàngwǎng;surf the internet;internetezni
+hsk3;84;世界;shìjiè;world;világ
+hsk3;85;忘记;wàngjì;forget;elfelejt
+hsk3;86;一会儿;yíhuìr;a little while;kicsit (idő)
+hsk3;87;音乐;yīnyuè;music;zene
+hsk3;88;银行;yínháng;bank;bank
+hsk3;89;有名;yǒumíng;famous;híres
+hsk3;90;周末;zhōumò;weekend;hétvége
+hsk3;91;注意;zhùyì;be careful;figyelem
+hsk3;92;字典;zìdiǎn;dictionaries;szótár
+hsk3;93;自己;zìjǐ;own;saját
+hsk3;94;担心;dānxīn;worry;aggodalom
+hsk3;95;蛋糕;dàngāo;cake;sütemény
+hsk3;96;地方;dìfang;local;hely
+hsk3;97;地铁;dìtiě;metro;metró
+hsk3;98;地图;dìtú;map;térkép
+hsk3;99;动物;dòngwù;animal;állat
+hsk3;100;复习;fùxí;review;átismétel
+hsk3;101;干净;gānjìng;clean;tiszta
+hsk3;102;公司;gōngsī;company;cég
+hsk3;103;公园;gōngyuán;park;park
+hsk3;104;故事;gùshi;story;történet
+hsk3;105;刮风;guāfēng;windy;szeles
+hsk3;106;黑板;hēibǎn;blackboard;tábla
+hsk3;107;护照;hùzhào;passport;útlevél
+hsk3;108;讲;jiǎng;speak;beszél
+hsk3;109;角;jiǎo;horn;szarv
+hsk3;110;脚;jiǎo;foot;láb(fej)
+hsk3;111;接;jiē;pick up;felvesz
+hsk3;112;包;bāo;package, wrap;csomag
+hsk3;113;旧;jiù;worn;régi
+hsk3;114;刻;kè;moment, to carve;pillanat, vés
+hsk3;115;拿;ná;seize, take;megfog, tart
+hsk3;116;骑;qí;ride;lovagol, felül
+hsk3;117;疼;téng;pain;fájdalom
+hsk3;118;位;wèi;classifier for|honorific people;tisztel személyek|számlálószava
+hsk3;119;像;xiàng;image, look like;kép, kinéz
+hsk3;120;信;xìn;letter;levél
+hsk3;121;用;yòng;use;használ
+hsk3;122;放;fàng;to place, to release;helyez
+hsk3;123;或者;huòzhě;or, perhaps;esetleg, vagy
+hsk3;124;几乎;jīhū;almost;majdnem
+hsk3;125;极;jí;extremely;legnagyobb
+hsk3;126;经常;jīngcháng;often;gyakran
+hsk3;127;经过;jīngguò;to go through, process;átmegy, folyamat
+hsk3;128;决定;juédìng;decision;döntés
+hsk3;129;难;nán;difficult;nehéz
+hsk3;130;比;bǐ;than;mint
+hsk3;131;其实;qíshí;actually;tulajdonképpen
+hsk3;132;其他;qítā;other;egyéb
 hsk3;133;比较;bǐjiào;compare;
 hsk3;134;然后;ránhòu;Then;
 hsk3;135;如果;rúguǒ;If;
@@ -461,20 +461,20 @@ hsk3;138;虽然;suīrán;although;
 hsk3;139;特别;tèbié;Especially;
 hsk3;140;突然;tūrán;suddenly;
 hsk3;141;完成;wánchéng;complete;
-hsk3;142;为;wèi;by;
-hsk3;143;为了;wèile;in order to;
-hsk3;144;别人;biéren;Others;
-hsk3;145;需要;xūyào;Need;
-hsk3;146;应该;yīnggāi;Should;
-hsk3;147;又;yòu;also;
-hsk3;148;才;cái;just;
-hsk3;149;越;yuè;The more;
-hsk3;150;只;zhǐ;only;
-hsk3;151;总是;zǒngshì;always;
-hsk3;152;最近;zuìjìn;Lately;
-hsk3;153;差;chà;difference;
+hsk3;142;为;wèi;for;-nak, -nek
+hsk3;143;为了;wèile;in order to;miatt
+hsk3;144;别人;biéren;others;mások
+hsk3;145;需要;xūyào;need;igényel
+hsk3;146;应该;yīnggāi;should;kell
+hsk3;147;又;yòu;again;ismét
+hsk3;148;才;cái;just, only|(less than expected);csak (túl kevés)
+hsk3;149;越;yuè;the more...;egyre...
+hsk3;150;只;zhǐ;only (objective);csak (objektív)
+hsk3;151;总是;zǒngshì;always;mindig
+hsk3;152;最近;zuìjìn;lately;mostanában
+hsk3;153;差;chà;difference;különbség
 hsk3;154;除了;chúle;except;
-hsk3;155;地;de;;
+hsk3;155;地;de;adverbial|particle;módhatározó|partikula
 hsk3;156;多么;duōme;what;
 hsk3;157;而且;érqiě;And;
 hsk3;158;刚才;gāngcái;just;
