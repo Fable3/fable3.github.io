@@ -1,0 +1,29 @@
+
+<!DOCTYPE html><html>
+<head><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<script>
+function myFunction()
+{
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(function(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+	document.getElementById("log").innerHTML=`Latitude: ${latitude}, Longitude: ${longitude}`;
+    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+  });
+} else {
+  console.log("Geolocation is not supported by this browser.");
+}
+}
+</script>
+<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}
+.button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px;
+text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}
+.button2 {background-color: #555555;}</style></head>
+<body><h1>loc test</h1>
+<p><button class="button" onclick="myFunction()">ON</button></p>
+<p id="log" style= "font-size: 25px; font-weight: bold;">idle</p>
+</body></html>
+
