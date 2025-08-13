@@ -140,8 +140,10 @@ leitner = function() {
 
 ////
 
-var enemy_id = [-1, -1];
-var enemy_anim_key = ['idle', 'idle'];
+var spritecount = 3;
+var enemy_id = [18, -1, -1];
+var enemy_anim_key = ['idle', 'idle', 'idle'];
+var enemy_spid = 1;
 var selected_card_index = -1;
 var selected_card_accented = 0;
 var selected_answer_index = -1;
@@ -198,12 +200,22 @@ const audio_play_tone = new Audio();
 
 const background_layers = [new Image(), new Image(), new Image(), new Image(), new Image()];
 const snow_layer = new Image();
+var bg_offset = 0;
+var inactive_enemy_bg_offset = 0;
+var enemy_walk_in_offset = 0;
+
+switch_enemy_spid = function () {
+	enemy_spid=3-enemy_spid;
+	inactive_enemy_bg_offset = bg_offset;
+}
 
 set_enemy = function(spid, id) {
+	if (spid==1) spid = enemy_spid;
 	enemy_id[spid] = id;
 }
 
 set_anim = function(spid, key) {
+	if (spid==1) spid = enemy_spid;
 	enemy_anim_key[spid] = key;
 }
 
@@ -473,25 +485,27 @@ end_answer = function(succ) {
 		var draw_cards = false;
 		if (succ)
 		{
-			set_anim(0, 'attack');
 			var dmg = get_card_damage(ch_id);
 			GameState.monsterHP -= dmg;
 			if (GameState.monsterHP<=0)
 			{
 				GameState.monsterHP = 0;
-				set_anim(1, 'die');
+				set_anim(1, 'hurt+die');
+				switch_enemy_spid();
+				set_enemy(1, -1);
+				set_anim(0, 'attack+jump+run');
 			} else
 			{
+				set_anim(0, 'attack');
 				set_anim(1, 'hurt');
 			}
 		} else
 		{
-			//var dmg = GameState.level;
 			GameState.playerHP -= 1;
 			if (GameState.playerHP<=0)
 			{
 				GameState.playerHP = 0;
-				set_anim(0, 'die');
+				set_anim(0, 'hurt+die');
 			} else
 			{
 				set_anim(0, 'hurt');
@@ -521,6 +535,8 @@ end_answer = function(succ) {
 				GameState.playerHP = 5;
 			}
 			update_enemy();
+			set_anim(1, 'walk');
+			enemy_walk_in_offset = 1000;
 			deal_cards(default_hand_size-GameState.hand.length);
 		} else
 		{
@@ -528,12 +544,19 @@ end_answer = function(succ) {
 			{
 				//var dmg = GameState.level;
 				GameState.playerHP -= 1;
-				if (GameState.playerHP<0) GameState.playerHP = 0;
+				if (GameState.playerHP<0)
+				{
+					GameState.playerHP = 0;
+					set_anim(0, 'attack+hurt+die');
+				} else
+				{
+					set_anim(0, 'attack+hurt');
+				}
 				draw_cards = true;
 				set_anim(1, 'hurt+attack');
 			}
 		}
-		if (draw_cards && GameState.playerHP!=0)
+		if (draw_cards && GameState.playerHP>0)
 		{
 			deal_cards(default_hand_size-GameState.hand.length);
 		}
@@ -936,9 +959,9 @@ main.start = function (div) {
   });
 
   var div_element = document.getElementById(div);
-  var canvas = [document.createElement('canvas'), document.createElement('canvas')];
-  var ctx = [null, null];
-  for(var spid=0;spid<2;spid++)
+  var canvas = [document.createElement('canvas'), document.createElement('canvas'), document.createElement('canvas')];
+  var ctx = [null, null, null];
+  for(var spid=0;spid<spritecount;spid++)
   {
 	  canvas[spid].width = div_element.offsetWidth;
 	  canvas[spid].height = div_element.offsetHeight;
@@ -952,7 +975,7 @@ main.start = function (div) {
   }
 
   window.addEventListener('resize', function() {
-	for(var spid=0;spid<2;spid++)
+	for(var spid=0;spid<spritecount;spid++)
 	{		
 		canvas[spid].width = div_element.offsetWidth;
 		canvas[spid].height = div_element.offsetHeight;
@@ -961,11 +984,11 @@ main.start = function (div) {
 	}
   });
 
-  var render_ctx2d = [new RenderCtx2D(ctx[0]), new RenderCtx2D(ctx[1])];
+  var render_ctx2d = [new RenderCtx2D(ctx[0]), new RenderCtx2D(ctx[1]), new RenderCtx2D(ctx[2])];
 
-  var canvas_gl = [document.createElement('canvas'), document.createElement('canvas')];
-  var gl = [null, null];
-  for(var spid=1;spid>=0;spid--)
+  var canvas_gl = [document.createElement('canvas'), document.createElement('canvas'), document.createElement('canvas')];
+  var gl = [null, null, null];
+  for(var spid=spritecount-1;spid>=0;spid--)
   {
 	  canvas_gl[spid].width = div_element.offsetWidth;
 	  canvas_gl[spid].height = div_element.offsetHeight;
@@ -980,7 +1003,7 @@ main.start = function (div) {
   }
 
   window.addEventListener('resize', function() {
-	  for(var spid=0;spid<2;spid++)
+	  for(var spid=0;spid<spritecount;spid++)
 	  {
 		canvas_gl[spid].width = div_element.offsetWidth;
 		canvas_gl[spid].height = div_element.offsetHeight;
@@ -989,7 +1012,7 @@ main.start = function (div) {
 	  }
   });
 
-  var render_webgl = [new RenderWebGL(gl[0]), new RenderWebGL(gl[1])];
+  var render_webgl = [new RenderWebGL(gl[0]), new RenderWebGL(gl[1]), new RenderWebGL(gl[2])];
   
   var canvas_bg = document.createElement('canvas');
   canvas_bg.width = div_element.offsetWidth;
@@ -1002,8 +1025,6 @@ main.start = function (div) {
   div_element.appendChild(canvas_bg);
 
   var ctx_bg = canvas_bg.getContext('2d');
-  
-  var bg_offset = 0;
   
   
   /*var redraw_ground = function() {
@@ -1095,8 +1116,8 @@ main.start = function (div) {
   var camera_zoom = 1;
   //var absolute_x = 490;
   //var absolute_y = 500;
-  var enemy_pos_x = [-200, -200];
-  var enemy_pos_y = [0.925, 0.925];
+  var enemy_pos_x = [-200, -200, -200];
+  var enemy_pos_y = [0.925, 0.925, 0.925];
 
   var enable_render_webgl = !!gl[0];
   var enable_render_ctx2d = !!ctx[0] && !enable_render_webgl;
@@ -1109,15 +1130,15 @@ main.start = function (div) {
   player_web.mute = true;
   player_web.sounds = {};
 
-  var spriter_data = [null, null];
-  var spriter_pose = [null, null];
-  var atlas_data = [null, null];
+  var spriter_data = [null, null, null];
+  var spriter_pose = [null, null, null];
+  var atlas_data = [null, null, null];
 
-  var anim_time = [0, 0];
-  var anim_length = [0,0];
+  var anim_time = [0, 0, 0];
+  var anim_length = [0,0,0];
   var anim_rate = 1;
   var anim_repeat = 1;
-  var next_blink_delay = [5,0];
+  var next_blink_delay = [5,0,0];
 
   var alpha = 1.0;
 
@@ -1281,11 +1302,17 @@ main.start = function (div) {
   add_file("SCML/Golem_3/", "SCML/golem.scml", 0.8);
   
   
+  add_file("SCML/1_orc/", "SCML/1_orc/1_ORK.scml", 0.45, 140);
+  add_file("SCML/2_orc/", "SCML/2_orc/2_ORK.scml", 0.45, 140);
+  add_file("SCML/3_orc/", "SCML/3_orc/3_ORK.scml", 0.45, 140);
+  
+  add_file("SCML/woman_warrior_1/", "SCML/woman_warrior_1/1.scml", 0.3);
+  
   add_file("SCML/1_troll/", "SCML/1_troll/1_troll.scml", 1, 280);
   add_file("SCML/2_troll/", "SCML/2_troll/2_troll.scml", 1, 280);
   add_file("SCML/3_troll/", "SCML/3_troll/3_troll.scml", 1, 280);
   
-  add_file("SCML/woman_warrior_1/", "SCML/woman_warrior_1/1.scml", 0.3);
+  
   
   var card_image = new Image();
   card_image.src = "card.png";
@@ -1307,15 +1334,27 @@ main.start = function (div) {
   flame_image.src="flame.png";
   var flame_anim_time=0;
   
-  var file_index = [18,0];
+  var file_index = [18,0,0];
   
-  var loading = [false, false];
+  var loading = [false, false, false];
 
-  var file = [files[file_index[0]], files[file_index[1]]];
-  var anim_key = ['idle', 'idle'];
-  var can_blink = [false, true];
+  var file = [files[file_index[0]], files[file_index[1]], files[file_index[2]]];
+  var anim_key = ['idle', 'idle', 'idle'];
+  var can_blink = [false, true, false];
   
-  var spid = 0;
+  for(var spid=0;spid<2;spid++)
+  {
+	  loading[spid] = true;
+	  loadFile(file[spid], spid, function(spid) {
+		loading[spid] = false;
+		var entity_key = spriter_data[spid].getEntityKeys()[0];
+		spriter_pose[spid].setEntity(entity_key);
+		spriter_pose[spid].setAnim(first_anim_key(anim_key[spid]));
+		spriter_pose[spid].setTime(anim_time[spid] = 0);
+		anim_length[spid] = spriter_pose[spid].curAnimLength() || 1000;
+	  });
+  }
+  /*spid = 1;
   loading[spid] = true;
   loadFile(file[spid], spid, function(spid) {
     loading[spid] = false;
@@ -1324,17 +1363,7 @@ main.start = function (div) {
     spriter_pose[spid].setAnim(first_anim_key(anim_key[spid]));
     spriter_pose[spid].setTime(anim_time[spid] = 0);
     anim_length[spid] = spriter_pose[spid].curAnimLength() || 1000;
-  });
-  spid = 1;
-  loading[spid] = true;
-  loadFile(file[spid], spid, function(spid) {
-    loading[spid] = false;
-    var entity_key = spriter_data[spid].getEntityKeys()[0];
-    spriter_pose[spid].setEntity(entity_key);
-    spriter_pose[spid].setAnim(first_anim_key(anim_key[spid]));
-    spriter_pose[spid].setTime(anim_time[spid] = 0);
-    anim_length[spid] = spriter_pose[spid].curAnimLength() || 1000;
-  });
+  });*/
 
   var prev_time = 0;
   var rot=0;
@@ -1410,7 +1439,41 @@ main.start = function (div) {
 
     var entity_key;
 	var spid;
-	for(spid=0;spid<2;spid++)
+	var enemy_walk_add = 0;
+	var bg_adjust = 0;
+	
+	if (anim_key[0]=='run')
+	{
+		//spriter_pose.x+=(dt * anim_rate)/1.0;
+		//enemy_pos_x+=(dt * anim_rate)/10000.0;
+		bg_adjust = (dt * anim_rate)/10.0;
+		bg_offset+= bg_adjust;
+		redraw_bg();
+	} else if (anim_key[0]=='walk')
+	{
+		//enemy_pos_x+=(dt * anim_rate)/30000.0;
+		bg_adjust = (dt * anim_rate)/30.0;
+		bg_offset+= bg_adjust;
+		redraw_bg();
+	} else if (snow_layer.complete && snow_layer.width>0)
+	{
+		redraw_bg();
+	}
+	if (enemy_walk_in_offset>0)
+	{
+		if (anim_key[enemy_spid]=='walk')
+		{
+			enemy_walk_in_offset -= (dt * anim_rate)/10.0;
+		}
+		enemy_walk_in_offset-=bg_adjust;
+		if (enemy_walk_in_offset<=0)
+		{
+			enemy_walk_in_offset = 0;
+			set_anim(1, 'idle');
+			if (anim_key[0]=='run') set_anim(0, 'idle');
+		}
+	}
+	for(spid=0;spid<spritecount;spid++)
 	{
 		if (ctx[spid]) {
 		  ctx[spid].setTransform(1, 0, 0, 1, 0, 0);
@@ -1441,26 +1504,9 @@ main.start = function (div) {
 		  continue;
 		}	
 	
-	
-		if (!loading[spid]) {
+		if (enemy_id[spid]!=-1 && !loading[spid]) {
 		  spriter_pose[spid].update(dt * anim_rate);
 		  anim_time[spid] += dt * anim_rate;
-		  if (anim_key[spid]=='run')
-		  {
-			  //spriter_pose.x+=(dt * anim_rate)/1.0;
-			  //enemy_pos_x+=(dt * anim_rate)/10000.0;
-			  bg_offset+=(dt * anim_rate)/10.0;
-			  redraw_bg();
-		  } else if (anim_key=='walk')
-		  {
-			  //enemy_pos_x+=(dt * anim_rate)/30000.0;
-			  bg_offset+=(dt * anim_rate)/30.0;
-			  redraw_bg();
-		  } else if (snow_layer.complete && snow_layer.width>0)
-		  {
-			  redraw_bg();
-		  }
-			  
 
 		  if (anim_time[spid] >= (anim_length[spid] * anim_repeat) && anim_key[spid]!='idle' && anim_key[spid]!='walk' && anim_key[spid]!='run') {
 			if (anim_key[spid]=='die')
@@ -1509,7 +1555,7 @@ main.start = function (div) {
 		}
 
 
-		if (loading[spid]) {
+		if (loading[spid] || enemy_id[spid]==-1) {
 		  continue;
 		}
 		
@@ -1613,12 +1659,21 @@ main.start = function (div) {
 			  throw new Error(object.type);
 		  }
 		});
+		var enemy_x_offset = 0;
+		if (spid==(3-enemy_spid))
+		{
+			enemy_x_offset = inactive_enemy_bg_offset - bg_offset;
+		} else if (spid==enemy_spid)
+		{
+			enemy_x_offset = enemy_walk_in_offset;
+		}
 
 		if (ctx[spid]) {
 		  ctx[spid].globalAlpha = alpha;
 
 		  // origin at center, x right, y up
 		  //ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
+	
 		  ctx[spid].translate(ctx[spid].canvas.width/2, ctx[spid].canvas.height*enemy_pos_y[spid]-file[spid].shift_y);
 		  if (spid==0)
 			ctx[spid].scale(1, -1);
@@ -1629,7 +1684,7 @@ main.start = function (div) {
 			ctx[spid].translate(-ctx[spid].canvas.width / 4, 0);
 		  }
 
-		  ctx[spid].translate(-camera_x+enemy_pos_x[spid], -camera_y);
+		  ctx[spid].translate(-camera_x+enemy_pos_x[spid]-enemy_x_offset, -camera_y);
 		  ctx[spid].scale(camera_zoom*file[spid].scale, camera_zoom*file[spid].scale);
 		  ctx[spid].lineWidth = 1 / (camera_zoom*file[spid].scale);
 
@@ -1656,7 +1711,7 @@ main.start = function (div) {
 		  mat4x4Ortho(gl_projection, mirror*gl[spid].canvas.width / 2, -mirror*gl[spid].canvas.width / 2, -gl[spid].canvas.height / 2, gl[spid].canvas.height / 2, -1, 1);
 		  //mat4x4Ortho(gl_projection, -absolute_x, -absolute_x+gl.canvas.width, -absolute_y, -absolute_y+gl.canvas.height, -1, 1);
 		  
-		  mat4x4Translate(gl_projection, enemy_pos_x[spid], (gl[spid].canvas.height / 2-gl[spid].canvas.height*enemy_pos_y[spid]+file[spid].shift_y), 0);
+		  mat4x4Translate(gl_projection, enemy_pos_x[spid]-enemy_x_offset, (gl[spid].canvas.height / 2-gl[spid].canvas.height*enemy_pos_y[spid]+file[spid].shift_y), 0);
 
 		  if (enable_render_ctx2d && enable_render_webgl) {
 			mat4x4Translate(gl_projection, gl[spid].canvas.width / 4, 0, 0);
@@ -1693,35 +1748,36 @@ main.start = function (div) {
 		  ctx_cards.fillStyle = 'black';
 		  ctx_cards.fillText(text, x, y);
 	  }
+	  if (selected_card_index!=-1 && pinyin_revealed)
+	  {
+	    if (selected_card_accented==2)
+		{
+			drawStroked('Pinyin input: ' + key_buffer_accented+ ' correct: '+word_db[GameState.hand[selected_card_index].id].pinyin, 20, (line_idx++)*font_size);
+		} else
+		{
+			drawStroked('Correct pinyin: ' + word_db[GameState.hand[selected_card_index].id].pinyin, 20, (line_idx++)*font_size);
+		}
+	  } else
+	  {
+		drawStroked('Pinyin input: ' + key_buffer_accented, 20, (line_idx++)*font_size);
+	  }
 	  var level_txt = 'Level: ' + (GameState.level).toString();
-	  star_card_count
 	  var star_pos_y = (line_idx++)*font_size;
 	  drawStroked(level_txt, 20, star_pos_y);
 	  var star_pos_x = ctx_cards.measureText(level_txt).width+20+20;
 	  var star_d = font_size;
 	  ctx_cards.drawImage(rank_image, 0, rank_image.height/10*9, rank_image.width, rank_image.height/10, star_pos_x, star_pos_y-font_size*0.8, star_d, star_d);
 	  drawStroked(star_card_count.toString()+"/"+(Object.keys(GameState.deck.deck).length).toString(), star_pos_x+font_size*1.2, star_pos_y);
-	  drawStroked('Player HP: ', 20, (line_idx++)*font_size);// + (GameState.playerHP).toString(), 20, (line_idx++)*font_size);
+	  let player_hp_txt = 'Player HP: ';
+	  drawStroked(player_hp_txt, 20, (line_idx++)*font_size);// + (GameState.playerHP).toString(), 20, (line_idx++)*font_size);
 	  if (heart_image.complete)
 	  {
-		  var heart_x = ctx_cards.measureText('Player HP: ').width+20;
+		  var heart_x = ctx_cards.measureText(player_hp_txt).width+20;
 		  var heart_y = (line_idx-2)*font_size+font_size*0.2;
 		  for(i=0;i<GameState.playerHP;i++) ctx_cards.drawImage(heart_image, 0, 0, heart_image.width, heart_image.height, heart_x+i*font_size*1.2, heart_y, font_size, heart_image.height*font_size/heart_image.width);
 	  }
 	  drawStroked('Monster HP: ' + (GameState.monsterHP).toString(), 20, (line_idx++)*font_size);
-	  if (selected_card_index!=-1 && pinyin_revealed)
-	  {
-		  if (selected_card_accented==2)
-		  {
-			  drawStroked('Pinyin input: ' + key_buffer_accented+ ' correct: '+word_db[GameState.hand[selected_card_index].id].pinyin, 20, (line_idx++)*font_size);
-		  } else
-		  {
-			  drawStroked('Correct pinyin: ' + word_db[GameState.hand[selected_card_index].id].pinyin, 20, (line_idx++)*font_size);
-		  }
-	  } else
-	  {
-		drawStroked('Pinyin input: ' + key_buffer_accented, 20, (line_idx++)*font_size);
-	  }
+	  
 	  
 	  var card_size=ctx_cards.canvas.width/10/card_image.width;
 	  var scroll_size=ctx_cards.canvas.width/6/scroll_image.width;
