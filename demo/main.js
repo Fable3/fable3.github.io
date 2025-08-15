@@ -823,6 +823,7 @@ function start_game()
 		GameState.deck.sessionCounter  = st.deck.sessionCounter;
 		GameState.deck.reDrawCounter = st.deck.reDrawCounter;
 		GameState.new_cards = st.new_cards;
+		if (GameState.new_cards==null) GameState.new_cards = [];
 		GameState.maxLevel = st.maxLevel;
 		//GameState.level = st.maxLevel-3;
 		//if (GameState.level<1) GameState.level = 1;
