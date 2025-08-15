@@ -571,7 +571,7 @@ end_answer = function(succ) {
 			{
 				//var dmg = GameState.level;
 				GameState.playerHP -= 1;
-				if (GameState.playerHP<0)
+				if (GameState.playerHP<=0)
 				{
 					set_anim(0, 'attack+hurt+die');
 					player_died();
