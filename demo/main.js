@@ -8,7 +8,7 @@ goog.require('RenderWebGL');
 var hsk_level = 'hsk1';
 var player_name = 'player';
 var lang_index = 1;
-var hard_mode = false;
+var hard_mode = true;
 
 // Leitner system
 
@@ -148,6 +148,7 @@ var selected_card_index = -1;
 var selected_card_accented = 0;
 var selected_answer_index = -1;
 var good_answer_index = -1;
+var game_ended = 0;
 var pinyin_revealed = false;
 var key_buffer="";
 var key_buffer_accented="";
@@ -155,6 +156,7 @@ var star_card_count = 0;
 var GameState = {
 	"deck": new leitner(),
 	"hand": [],
+	"new_cards":[],//1,32,3,4,5,93,7,8,9,10],
 	"level": 1,
 	"maxLevel":1,
 	"playerHP":5,
@@ -163,6 +165,13 @@ var GameState = {
 
 var default_hand_size = 5;
 var word_db = {};
+var display_new_cards_col = 2;
+var display_new_cards_row = 3;
+function displayed_new_cards() {
+	let d = display_new_cards_col*display_new_cards_row;
+	if (d>GameState.new_cards.length) d=GameState.new_cards.length;
+	return d;
+}
 
 var get_card_rank = function(card_id) {
 	if (card_id in GameState.deck.deck)
@@ -217,6 +226,12 @@ set_enemy = function(spid, id) {
 set_anim = function(spid, key) {
 	if (spid==1) spid = enemy_spid;
 	enemy_anim_key[spid] = key;
+}
+
+reset_enemy_approach = function()
+{
+	enemy_walk_in_offset=0;
+	enemy_id[3-enemy_spid] = -1;
 }
 
 var current_backgroud_index = 1;
@@ -469,6 +484,7 @@ select_answer = function(id) {
 }
 update_enemy = function() {
 	GameState.monsterHP = 10+GameState.level*3;
+	GameState.monsterHP =1;
 	if (GameState.level%10==9)
 	{
 		GameState.monsterHP *= 2;
@@ -477,10 +493,15 @@ update_enemy = function() {
 	set_anim(1, 'idle');
 	set_background(Math.floor(GameState.level/10));
 }
-
+player_died = function() {
+	GameState.playerHP = 0;
+	game_ended = 2;
+	GameState.hand=[];
+}
 end_answer = function(succ) {
 	if (selected_card_index!=-1)
 	{
+		reset_enemy_approach();
 		var ch_id = GameState.hand[selected_card_index].id;
 		var draw_cards = false;
 		if (succ)
@@ -504,8 +525,8 @@ end_answer = function(succ) {
 			GameState.playerHP -= 1;
 			if (GameState.playerHP<=0)
 			{
-				GameState.playerHP = 0;
 				set_anim(0, 'hurt+die');
+				player_died();
 			} else
 			{
 				set_anim(0, 'hurt');
@@ -527,17 +548,24 @@ end_answer = function(succ) {
 				add_random_card_to_deck();
 				add_random_card_to_deck();
 			}
-			if (hard_mode)
+			if (GameState.level%10==0)
 			{
-				if (GameState.playerHP < 5) GameState.playerHP++;
+				game_ended = 1;
+				set_anim(0, 'attack+jump');
 			} else
 			{
-				GameState.playerHP = 5;
+				if (hard_mode)
+				{
+					if (GameState.playerHP < 5) GameState.playerHP++;
+				} else
+				{
+					GameState.playerHP = 5;
+				}
+				update_enemy();
+				set_anim(1, 'walk');
+				enemy_walk_in_offset = 1000;
+				deal_cards(default_hand_size-GameState.hand.length);
 			}
-			update_enemy();
-			set_anim(1, 'walk');
-			enemy_walk_in_offset = 1000;
-			deal_cards(default_hand_size-GameState.hand.length);
 		} else
 		{
 			if (GameState.hand.length == 0 && !draw_cards)
@@ -546,13 +574,13 @@ end_answer = function(succ) {
 				GameState.playerHP -= 1;
 				if (GameState.playerHP<0)
 				{
-					GameState.playerHP = 0;
 					set_anim(0, 'attack+hurt+die');
+					player_died();
 				} else
 				{
 					set_anim(0, 'attack+hurt');
+					draw_cards = true;
 				}
-				draw_cards = true;
 				set_anim(1, 'hurt+attack');
 			}
 		}
@@ -784,6 +812,7 @@ function start_game()
 		for (const [str_key, value] of Object.entries(word_db)) {
 			var key=parseInt(str_key);
 			GameState.deck.addCard(key);
+			GameState.new_cards.push(key);
 			if (++count>=10) break;
 		}
 	} else
@@ -794,17 +823,13 @@ function start_game()
 		GameState.deck.session = st.deck.session;
 		GameState.deck.sessionCounter  = st.deck.sessionCounter;
 		GameState.deck.reDrawCounter = st.deck.reDrawCounter;
+		GameState.new_cards = st.new_cards;
 		GameState.maxLevel = st.maxLevel;
-		GameState.level = st.maxLevel-3;
-		if (GameState.level<1) GameState.level = 1;
-		if (Math.floor(GameState.maxLevel/10)!=Math.floor(GameState.level/10)) GameState.level = Math.floor(GameState.maxLevel/10)*10;
-		GameState.deck.clearHand(true);		
-		GameState.hand = [];
-		GameState.playerHP = 5;
-		update_enemy();
+		//GameState.level = st.maxLevel-3;
+		//if (GameState.level<1) GameState.level = 1;
+		//if (Math.floor(GameState.maxLevel/10)!=Math.floor(GameState.level/10))
 	}
-	update_star_card_count();
-	deal_cards(default_hand_size);
+	init_game();
 }
 
 function get_all_saved_games()
@@ -831,7 +856,8 @@ function get_all_saved_games()
 
 function save_cookie()
 {
-	var e = 'Tue, 19 Jan 2038 03:14:07 UTC';
+	let year = (new Date()).getFullYear()+15;
+	var e = 'Tue, 19 Jan '+year.toString()+' 03:14:07 UTC';
 	var key = encodeURIComponent(player_name)+'_'+hsk_level;
 	document.cookie = key + '='+ JSON.stringify(GameState) +';expires=' + e;
 }
@@ -858,6 +884,7 @@ function add_random_card_to_deck()
 	if (sel!=-1)
 	{
 		GameState.deck.addCard(sel);
+		GameState.new_cards.push(sel);
 	}
 }
 
@@ -898,6 +925,27 @@ function deal_cards(count)
 		options.splice(Math.floor(Math.random()*(options.length+1)), 0, card_id);
 		GameState.hand[i].options = options;
 	}
+}
+
+function game_end_resolve()
+{
+	game_ended = 0;
+	set_enemy(1, -1);
+	switch_enemy_spid();
+	init_game();
+}
+function init_game()
+{
+	GameState.level = Math.floor(GameState.maxLevel/10)*10;
+	GameState.deck.clearHand(true);
+	GameState.hand = [];
+	GameState.playerHP = 5;
+	update_enemy();
+	set_anim(1, 'walk');
+	set_anim(0, 'run');
+	enemy_walk_in_offset = 1000;
+	update_star_card_count();
+	deal_cards(default_hand_size);
 }
 
 first_anim_key = function(str) {
@@ -1376,54 +1424,85 @@ main.start = function (div) {
 	  var i;
 	  var card_size=canvas_cards.width/10/card_image.width;
 	  var scroll_size=canvas_cards.width/6/scroll_image.width;
-	  for(i=0;i<GameState.hand.length;i++)
+	  if (game_ended)
 	  {
-		  var cp=get_card_pos(GameState.hand[i].id);
-		  var dx = x-cp.x;
-		  var dy = y-cp.y;
-		  var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/card_size;
-		  var ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/card_size;
-		  if (tx>-card_image.width/2 && tx<card_image.width/2 &&
-		      ty>-card_image.height/2 && ty<card_image.height/2)
-		  {
-			  if (selected_card_index == i)
-			  {
-				  reveal_pinyin();
-			  } else if (selected_card_index==-1)
-			  {
-				  select_card(i, 3);
-				  reveal_pinyin();
-			  }
-			  return;
-		  }
-	  }
-	  if (selected_card_index!=-1)
+		let cp=get_card_pos(20000-2);
+		var dx = x-cp.x;
+		var dy = y-cp.y;
+		var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/scroll_size;
+		var ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/scroll_size;
+		if (tx>-cp.width/2 && tx<cp.width/2 &&
+			ty>-scroll_image.height/2 && ty<scroll_image.height/2)
+		{
+			game_end_resolve();
+		}
+	  } else if (GameState.new_cards.length>0 && !game_ended)
 	  {
-		  const options = GameState.hand[selected_card_index].options;
-		  for(i=0;i<options.length;i++)
-		  {
-			  var cp=get_card_pos(options[i]+10000);
-			  var dx = x-cp.x;
-			  var dy = y-cp.y;
-			  var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/scroll_size;
-			  var ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/scroll_size;
-			  if (tx>-cp.width/2 && tx<cp.width/2 &&
-				  ty>-scroll_image.height/2 && ty<scroll_image.height/2)
-			  {
-				  if (selected_answer_index!=-1)
-				  {
-					  if (i==good_answer_index)
-					  {
-						end_answer(false);
+		for(i=0;i<displayed_new_cards();i++)
+		{
+			//...
+		}
+		let cp=get_card_pos(20000-1);
+		var dx = x-cp.x;
+		var dy = y-cp.y;
+		var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/scroll_size;
+		var ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/scroll_size;
+		if (tx>-cp.width/2 && tx<cp.width/2 &&
+			ty>-scroll_image.height/2 && ty<scroll_image.height/2)
+		{
+			GameState.new_cards.splice(0, displayed_new_cards());
+		}
+	  } else if (!game_ended)
+	  {
+		for(i=0;i<GameState.hand.length;i++)
+		{
+			var cp=get_card_pos(GameState.hand[i].id);
+			var dx = x-cp.x;
+			var dy = y-cp.y;
+			var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/card_size;
+			var ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/card_size;
+			if (tx>-card_image.width/2 && tx<card_image.width/2 &&
+				ty>-card_image.height/2 && ty<card_image.height/2)
+			{
+				if (selected_card_index == i)
+				{
+					reveal_pinyin();
+				} else if (selected_card_index==-1)
+				{
+					select_card(i, 3);
+					reveal_pinyin();
+				}
+				return;
+			}
+		}
+		if (selected_card_index!=-1)
+		{
+			const options = GameState.hand[selected_card_index].options;
+			for(i=0;i<options.length;i++)
+			{
+				var cp=get_card_pos(options[i]+10000);
+				var dx = x-cp.x;
+				var dy = y-cp.y;
+				var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/scroll_size;
+				var ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/scroll_size;
+				if (tx>-cp.width/2 && tx<cp.width/2 &&
+					ty>-scroll_image.height/2 && ty<scroll_image.height/2)
+				{
+					if (selected_answer_index!=-1)
+					{
+						if (i==good_answer_index)
+						{
+							end_answer(false);
+							return;
+						}
+					} else
+					{
+						select_answer(i);
 						return;
-					  }
-				  } else
-				  {
-					select_answer(i);
-					return;
-				  }
-			  }
-		  }
+					}
+				}
+			}
+		}
 	  }
     }
   );
@@ -1439,8 +1518,8 @@ main.start = function (div) {
 
     var entity_key;
 	var spid;
-	var enemy_walk_add = 0;
 	var bg_adjust = 0;
+	let show_enemy = GameState.new_cards.length==0;
 	
 	if (anim_key[0]=='run')
 	{
@@ -1459,7 +1538,7 @@ main.start = function (div) {
 	{
 		redraw_bg();
 	}
-	if (enemy_walk_in_offset>0)
+	if (enemy_walk_in_offset>0 && show_enemy)
 	{
 		if (anim_key[enemy_spid]=='walk')
 		{
@@ -1468,7 +1547,7 @@ main.start = function (div) {
 		enemy_walk_in_offset-=bg_adjust;
 		if (enemy_walk_in_offset<=0)
 		{
-			enemy_walk_in_offset = 0;
+			reset_enemy_approach();
 			set_anim(1, 'idle');
 			if (anim_key[0]=='run') set_anim(0, 'idle');
 		}
@@ -1555,7 +1634,7 @@ main.start = function (div) {
 		}
 
 
-		if (loading[spid] || enemy_id[spid]==-1) {
+		if (loading[spid] || enemy_id[spid]==-1 || !(show_enemy || spid!=enemy_spid)) {
 		  continue;
 		}
 		
@@ -1761,7 +1840,7 @@ main.start = function (div) {
 	  {
 		drawStroked('Pinyin input: ' + key_buffer_accented, 20, (line_idx++)*font_size);
 	  }
-	  var level_txt = 'Level: ' + (GameState.level).toString();
+	  var level_txt = 'Level: ' + (GameState.level+1).toString();
 	  var star_pos_y = (line_idx++)*font_size;
 	  drawStroked(level_txt, 20, star_pos_y);
 	  var star_pos_x = ctx_cards.measureText(level_txt).width+20+20;
@@ -1777,16 +1856,239 @@ main.start = function (div) {
 		  for(i=0;i<GameState.playerHP;i++) ctx_cards.drawImage(heart_image, 0, 0, heart_image.width, heart_image.height, heart_x+i*font_size*1.2, heart_y, font_size, heart_image.height*font_size/heart_image.width);
 	  }
 	  drawStroked('Monster HP: ' + (GameState.monsterHP).toString(), 20, (line_idx++)*font_size);
-	  
+	  //if (game_ended) drawStroked('game over: ' + game_ended.toString(), 20, (line_idx++)*font_size);
 	  
 	  var card_size=ctx_cards.canvas.width/10/card_image.width;
 	  var scroll_size=ctx_cards.canvas.width/6/scroll_image.width;
 	  var max_rot = 0.3;
 	  var radi = 3200*card_size;
+	  function draw_card(cp, hotkey, txt, desc, rank, need_burnt, need_flame) {
+		ctx_cards.save();
+		ctx_cards.transform(card_size*Math.cos(cp.rot), -card_size*Math.sin(cp.rot), card_size*Math.sin(cp.rot), card_size*Math.cos(cp.rot), cp.x, cp.y);
+		var img=card_image;
+		if (need_burnt) img=card_burnt_image;
+		ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
+		
+		ctx_cards.drawImage(rank_image, 0, rank_image.height/10*rank, rank_image.width, rank_image.height/10, 
+			card_image.width/2-rank_d-20, -card_image.height/2+20, rank_d, rank_d);
+		if (flame_image.complete && need_flame)
+		{
+			var frame_count = 18;
+			var frame_idx = Math.floor(flame_anim_time/100)%frame_count;
+			var frame_height = flame_image.height/frame_count;
+			var marg_x = 80;
+			var marg_y= 105;
+			ctx_cards.drawImage(flame_image, 0, frame_idx*frame_height, flame_image.width, frame_height, -card_image.width/2-marg_x, -card_image.height/2-marg_y, card_image.width+marg_x*2, card_image.height+marg_y*2+30);
+		}
+		//font-family: 'Noto Sans SC', sans-serif;
+		//font-family: 'Noto Serif SC', serif;
+		//font-family: 'Ma Shan Zheng', cursive;
+		//font-family: 'Zhi Mang Xing', cursive;
+		font_size = 200;
+		if (txt.length>2) font_size = Math.floor(font_size*2/txt.length);
+		//var font_type = "Noto Sans SC";
+		var font_type = "Noto Serif SC";
+		if (rank>=6) font_type = "Zhi Mang Xing";
+		else if (rank>=3) font_type = "Ma Shan Zheng";
+		ctx_cards.font = font_size.toString() + "px " + font_type;
+		ctx_cards.fillStyle = "red";
+		ctx_cards.textAlign = "center";
+		ctx_cards.fillText(txt, 0, 0);
+		var font_size=60;
+		ctx_cards.font = font_size.toString()+"px Arial";
+		ctx_cards.fillStyle = "black";
+		ctx_cards.textAlign = "left";
+		ctx_cards.fillText(hotkey, -card_image.width/2+20, -card_image.height/2+10+font_size);
+		ctx_cards.textAlign = "center";
+		const lines=desc.split('\n');
+		var idx;
+		for(idx=0;idx<lines.length;idx++)
+			ctx_cards.fillText(lines[idx], 0, card_image.height/2-15+(idx-lines.length+0.8)*font_size);
+		ctx_cards.restore();
+	  }
+	  function get_scroll_width(lines) {
+		ctx_cards.save();
+		ctx_cards.font = "50px Arial";
+		//ctx_cards.font = "200px Noto Sans SC";
+		ctx_cards.textAlign = "center";
+		ctx_cards.fillStyle = "white";
+		let max_width=0;
+		//var line_width=[];
+		ctx_cards.transform(scroll_size, 0, 0, scroll_size, 0, 0);
+		for(let lineidx = 0; lineidx<lines.length;lineidx++)
+		{
+			let w = ctx_cards.measureText(lines[lineidx]).width;
+			if (w>max_width) max_width = w;
+			//line_width[lineidx]=w;
+		}
+		ctx_cards.restore();
+		return max_width;
+	  }
+	  function draw_scroll(cp, lines, max_width, need_repeat, is_selected, is_good_answer, is_bad_answer) {	  
+		const scroll_border = scroll_image.width/6;
+		ctx_cards.save();
+		ctx_cards.transform(scroll_size*Math.cos(cp.rot), -scroll_size*Math.sin(cp.rot), scroll_size*Math.sin(cp.rot), scroll_size*Math.cos(cp.rot), cp.x, cp.y);
+		var img=scroll_image;
+		var text_color = "blue";
+		if (is_selected)
+		{
+			img = scroll_selected_image;
+			text_color = "white";
+		} else if (is_good_answer)
+		{
+			img = scroll_selected_image;
+			text_color = "white";
 
+		} else if (is_bad_answer)
+		{
+			img = scroll_wrong_image;
+			text_color = "white";
+		}
+		
+		ctx_cards.font = "50px Arial";
+		ctx_cards.textAlign = "center";
+		ctx_cards.fillStyle = text_color;
+		if (need_repeat)
+		{
+			ctx_cards.drawImage(img, 0, 0,  scroll_border, scroll_image.height, -max_width/2-scroll_border, -scroll_image.height/2, scroll_border, scroll_image.height);
+			ctx_cards.drawImage(img, scroll_border, 0, scroll_image.width-2*scroll_border,  scroll_image.height, -max_width/2, -scroll_image.height/2, max_width, scroll_image.height);
+			ctx_cards.drawImage(img, scroll_image.width-scroll_border, 0, scroll_border, scroll_image.height, max_width/2, -scroll_image.height/2, scroll_border, scroll_image.height);
+		} else
+		{
+			ctx_cards.drawImage(img, -scroll_image.width/2, -scroll_image.height/2);
+		}
+		
+		for(var lineidx = 0; lineidx<lines.length;lineidx++)
+		{
+			ctx_cards.fillText(lines[lineidx], 0, (lineidx-(lines.length-1)/2)*60+15);
+		}
+		
+		ctx_cards.restore();
+		
+	  }
+	  if (game_ended)
+	  {
+		let lines = [];
+		if (game_ended==1)
+		{
+			lines.push(">>>");
+		} else
+		{
+			lines.push("<<<");
+		}
+		let cp = get_card_pos(20000-2, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
+		let card_x = ctx_cards.canvas.width/2;
+		let card_y = ctx_cards.canvas.height/2+card_size*card_image.height*1+scroll_size*scroll_image.height;
+		anim_card_pos(cp, dt, 0, card_x, card_y, 300);
+		let is_selected = false;
+		let is_good_answer = false;
+		let is_bad_answer = false;
+		let need_repeat = false;
+		let max_width = get_scroll_width(lines);
+		cp.width = scroll_image.width;
+		draw_scroll(cp, lines, max_width, need_repeat, is_selected, is_good_answer, is_bad_answer);
+	  } else
+	  if (GameState.new_cards.length>0 && !game_ended)
+	  {
+		let card_count = GameState.new_cards.length;
+		let col = display_new_cards_col;
+		let row = display_new_cards_row;
+		if (card_count>col*row)
+		{
+			card_count = col*row;
+		}
+		col=Math.ceil(card_count/row);
+		if (card_count==4) {
+			row=col=2;
+		} else if (card_count==2) {
+			row=1;
+			col=2;
+		} else if (col==1) row = card_count;
+		
+		let col_width=[];
+		for(i=0;i<col;i++) col_width.push(0);
+		for(i=0;i<card_count;i++)
+		{
+			let eng_id = GameState.new_cards[i];
+			let px = Math.floor(i/row);
+			let lines = word_db[eng_id].english.split('\\n');
+			let max_width = get_scroll_width(lines);
+			if (max_width>col_width[px]) col_width[px]=max_width;
+		}
+		
+		for(i=0;i<card_count;i++)
+		{	
+			let card_id = GameState.new_cards[i];
+			var cp = get_card_pos(card_id+20000, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
+			let px = Math.floor(i/row);
+			let py = i%row;
+			let w = ctx_cards.canvas.width/2;
+			let card_x = ctx_cards.canvas.width/2+w*(px-(col-1)/2)-(col_width[px]/2);
+			let card_y = ctx_cards.canvas.height/2+card_size*card_image.height*(py-(row-1)/2)-scroll_size*scroll_image.height/2;
+			anim_card_pos(cp, dt, 0, card_x, card_y, 300);
+			let need_burnt = false;
+			let need_flame = false;
+			let rank = 0;
+			let txt = word_db[card_id].chars;
+			let desc = get_card_desc(card_id).txt;
+			draw_card(cp, (i+1).toString(), txt, desc, rank, need_burnt, need_flame);
+			let eng_id = card_id;
+			let lines = word_db[eng_id].english.split('\\n');
+			let max_width = get_scroll_width(lines);
+			//max_width_save[i]=max_width;
+			const scroll_border = scroll_image.width/6;
+			var x_offset = 0;
+			let adj_width = col_width[px];
+			/*if (py==-1 && px!=0)
+			{
+				adj_width = max_width_save[2];
+			} else if (py==1 && px!=0)
+			{
+				adj_width = max_width_save[3];
+			}*/
+			px=1;
+			py=0;
+			let adj_diff = adj_width+2*scroll_border-scroll_image.width;
+			if (adj_diff>0)
+			{
+				//x_offset += adj_diff/2*px;
+			}
+			let diff = max_width+2*scroll_border-scroll_image.width;
+			let render_scroll_width = scroll_image.width;
+			if (diff>0)
+			{
+				render_scroll_width = max_width+2*scroll_border;
+				x_offset += diff/2*px;
+			}
+			cp = get_card_pos(eng_id+30000, card_x, card_y, 0);
+			//card_x+=px*(card_size*card_image.width+scroll_size*scroll_image.width/4)+x_offset*scroll_size;
+			card_x+=card_size*card_image.width/2+scroll_size*scroll_image.width/2+x_offset*scroll_size+scroll_border*scroll_size;
+			//card_y+=py*(card_size*card_image.height*0.5+scroll_size*scroll_image.height/2);
+			cp.width = render_scroll_width;
+			anim_card_pos(cp, dt, 0, card_x, card_y, 300);
+			let is_selected = false;
+			let is_good_answer = false;
+			let is_bad_answer = false;
+			let need_repeat = diff > 0;
+			draw_scroll(cp, lines, max_width, need_repeat, is_selected, is_good_answer, is_bad_answer);
+		}
+		{
+			let cp = get_card_pos(20000-1, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
+			let lines = [">>>"];
+			let card_x = ctx_cards.canvas.width/2;
+			let card_y = ctx_cards.canvas.height/2+card_size*card_image.height*1+scroll_size*scroll_image.height;
+			anim_card_pos(cp, dt, 0, card_x, card_y, 300);
+			let is_selected = false;
+			let is_good_answer = false;
+			let is_bad_answer = false;
+			let need_repeat = false;
+			let max_width = get_scroll_width(lines);
+			cp.width = scroll_image.width;
+			draw_scroll(cp, lines, max_width, need_repeat, is_selected, is_good_answer, is_bad_answer);
+		}
+	  } else if (!game_ended) {
 	  for(i=0;i<GameState.hand.length;i++)
 	  {
-		ctx_cards.save();
 		var rot;
 		var card_x;
 		var card_y;
@@ -1815,84 +2117,32 @@ main.start = function (div) {
 		}
 		var cp = get_card_pos(GameState.hand[i].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
 		anim_card_pos(cp, dt, rot, card_x, card_y, 300);
-		ctx_cards.transform(card_size*Math.cos(cp.rot), -card_size*Math.sin(cp.rot), card_size*Math.sin(cp.rot), card_size*Math.cos(cp.rot), cp.x, cp.y);			
-		var img=card_image;
-		if (i==selected_card_index && selected_card_accented==2) img=card_burnt_image;
-		ctx_cards.drawImage(img, -card_image.width/2, -card_image.height/2);
-		var rank = get_card_rank(GameState.hand[i].id);
-		
-		ctx_cards.drawImage(rank_image, 0, rank_image.height/10*rank, rank_image.width, rank_image.height/10, 
-			card_image.width/2-rank_d-20, -card_image.height/2+20, rank_d, rank_d);
-		if (flame_image.complete && i==selected_card_index && selected_card_accented==1)
-		{
-			var frame_count = 18;
-			var frame_idx = Math.floor(flame_anim_time/100)%frame_count;
-			var frame_height = flame_image.height/frame_count;
-			var marg_x = 80;
-			var marg_y= 105;
-			ctx_cards.drawImage(flame_image, 0, frame_idx*frame_height, flame_image.width, frame_height, -card_image.width/2-marg_x, -card_image.height/2-marg_y, card_image.width+marg_x*2, card_image.height+marg_y*2+30);
-		}
-		//font-family: 'Noto Sans SC', sans-serif;
-		//font-family: 'Noto Serif SC', serif;
-		//font-family: 'Ma Shan Zheng', cursive;
-		//font-family: 'Zhi Mang Xing', cursive;
-		font_size = 200;
-		var txt = word_db[GameState.hand[i].id].chars;
-		if (txt.length>2) font_size = Math.floor(font_size*2/txt.length);
-		//var font_type = "Noto Sans SC";
-		var font_type = "Noto Serif SC";
-		if (rank>=6) font_type = "Zhi Mang Xing";
-		else if (rank>=3) font_type = "Ma Shan Zheng";
-		ctx_cards.font = font_size.toString() + "px " + font_type;
-		ctx_cards.fillStyle = "red";
-		ctx_cards.textAlign = "center";
-		ctx_cards.fillText(txt, 0, 0);
-		var font_size=60;
-		ctx_cards.font = font_size.toString()+"px Arial";
-		ctx_cards.fillStyle = "black";
-		ctx_cards.textAlign = "left";
-		ctx_cards.fillText((i+1).toString(), -card_image.width/2+20, -card_image.height/2+10+font_size);
-		ctx_cards.textAlign = "center";
-		const lines=get_card_desc(GameState.hand[i].id).txt.split('\n');
-		var idx;
-		for(idx=0;idx<lines.length;idx++)
-			ctx_cards.fillText(lines[idx], 0, card_image.height/2-15+(idx-lines.length+0.8)*font_size);
-		ctx_cards.restore();
+		let need_burnt = i==selected_card_index && selected_card_accented==2;
+		let need_flame = i==selected_card_index && selected_card_accented==1;
+		let rank = get_card_rank(GameState.hand[i].id);
+		let txt = word_db[GameState.hand[i].id].chars;
+		let desc = get_card_desc(GameState.hand[i].id).txt;
+		draw_card(cp, (i+1).toString(), txt, desc, rank, need_burnt, need_flame);
 	  }
-	  if (selected_card_index!=-1)
+	  if (selected_card_index!=-1 && !game_ended)
 	  {
 		var cp_sel = get_card_pos(GameState.hand[selected_card_index].id, ctx_cards.canvas.width/2, ctx_cards.canvas.height/2, 0);
 		var max_width_save=[];
 		for(i=0;i<GameState.hand[selected_card_index].options.length;i++)
 		{
 			var eng_id = GameState.hand[selected_card_index].options[i];
-			ctx_cards.save();
+			
 			var rot = 0;
 			var card_x = ctx_cards.canvas.width/2;
 			var card_y = card_size*card_image.height*1.5;
 			var pos_translate = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]];
 			const px = pos_translate[i][0];
 			const py = pos_translate[i][1];
-			
-			ctx_cards.font = "50px Arial";
-			//ctx_cards.font = "200px Noto Sans SC";
-			ctx_cards.textAlign = "center";
-			ctx_cards.fillStyle = "white";
-			var lines = word_db[eng_id].english.split('\\n');
-			var max_width=0;
-			var line_width=[];
-			ctx_cards.transform(scroll_size, 0, 0, scroll_size, 0, 0);
-			for(var lineidx = 0; lineidx<lines.length;lineidx++)
-			{
-				var w = ctx_cards.measureText(lines[lineidx]).width;
-				if (w>max_width) max_width = w;
-				line_width[lineidx]=w;
-			}
-			ctx_cards.restore();
-			ctx_cards.save();
+
+			let lines = word_db[eng_id].english.split('\\n');
+			let max_width = get_scroll_width(lines);
 			max_width_save[i]=max_width;
 			const scroll_border = scroll_image.width/6;
-			
 			var x_offset = 0;
 			let adj_width = 0;
 			if (py==-1 && px!=0)
@@ -1920,51 +2170,34 @@ main.start = function (div) {
 			var cp = get_card_pos(eng_id+10000, cp_sel.x, cp_sel.y, 0);
 			cp.width = render_scroll_width;
 			anim_card_pos(cp, dt, rot, card_x, card_y, 300);
-			ctx_cards.transform(scroll_size*Math.cos(cp.rot), -scroll_size*Math.sin(cp.rot), scroll_size*Math.sin(cp.rot), scroll_size*Math.cos(cp.rot), cp.x, cp.y);			
-			var img=scroll_image;
-			var text_color = "blue";
+			let is_selected = false;
+			let is_good_answer = false;
+			let is_bad_answer = false;
 			if (selected_answer_index==-1)
 			{
 				if (selected_direction==i)
 				{
-					img = scroll_selected_image;
-					text_color = "white";
+					is_selected = true;
 				}
 			} else
 			{
 				if (good_answer_index == i)
 				{
-					img = scroll_selected_image;
-					text_color = "white";
+					is_good_answer = true;
 				} else
 				if (selected_answer_index==i)
 				{
-					img = scroll_wrong_image;
-					text_color = "white";
+					is_bad_answer = true;
 				}
 			}
-			ctx_cards.font = "50px Arial";
-			ctx_cards.textAlign = "center";
-			ctx_cards.fillStyle = text_color;
-			if (diff>0)
-			{
-				ctx_cards.drawImage(img, 0, 0,  scroll_border, scroll_image.height, -max_width/2-scroll_border, -scroll_image.height/2, scroll_border, scroll_image.height);
-				ctx_cards.drawImage(img, scroll_border, 0, scroll_image.width-2*scroll_border,  scroll_image.height, -max_width/2, -scroll_image.height/2, max_width, scroll_image.height);
-				ctx_cards.drawImage(img, scroll_image.width-scroll_border, 0, scroll_border, scroll_image.height, max_width/2, -scroll_image.height/2, scroll_border, scroll_image.height);
-			} else
-			{
-				ctx_cards.drawImage(img, -scroll_image.width/2, -scroll_image.height/2);
-			}
 			
-			for(var lineidx = 0; lineidx<lines.length;lineidx++)
-			{
-				ctx_cards.fillText(lines[lineidx], 0, (lineidx-(lines.length-1)/2)*60+15);
-			}
+			let need_repeat = diff > 0;
+			draw_scroll(cp, lines, max_width, need_repeat, is_selected, is_good_answer, is_bad_answer);
 			
-			ctx_cards.restore();
 		}
 	  }
     }
+	}
   }
 
   requestAnimationFrame(loop);

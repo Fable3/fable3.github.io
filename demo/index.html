@@ -16,7 +16,6 @@
 		function prestart_ready()
 		{
 			lang_index=[0,1].find(id=>document.getElementById('lang'+id.toString()).checked);
-			hard_mode=document.getElementById('hard_mode').checked;
 			document.getElementById('prestart').style='display:none';
 			document.getElementById('full').style='display:block';
 			main.start('full');
@@ -85,9 +84,6 @@
 	  <input type="radio" name="lang" id="lang0" value="lang0" /><br/>
 	  <label for="lang1">Magyar</label>
 	  <input type="radio" name="lang" id="lang1" value="lang1" checked /><br/>
-	  <p/>
-	  <label for="hard_mode">Hard mode:</label>
-	  <input type="checkbox" id="hard_mode">
 	  <p/>
 	  <h2><span>new game</span></h2>
 	  <label for="username">Name:</label>

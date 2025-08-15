@@ -192,7 +192,7 @@ hsk2;23;贵;guì;expensive;drága
 hsk2;24;便宜;piányi;cheap;olcsó
 hsk2;25;晴;qíng;clear, fine (weather);tiszta (idő)
 hsk2;26;阴;yīn;cloudy;felhős
-hsk2;27;错;cuò;wrong;rossz
+hsk2;27;错;cuò;wrong;rossz, téves
 hsk2;28;快乐;kuàilè;happy;boldog
 
 hsk2;29;饭馆;fàn guǎn;restaurant;étterem
@@ -379,7 +379,7 @@ hsk3;56;分;fēn;divide;oszt
 hsk3;57;关;guān;relation;kapcsolat
 hsk3;58;半;bàn;half;fél (1/2)
 hsk3;59;河;hé;river;folyó
-hsk3;60;坏;huài;bad;rossz
+hsk3;60;坏;huài;bad;rossz, gonosz
 hsk3;61;换;huàn;exchange;cserél
 hsk3;62;脸;liǎn;face;arc
 hsk3;63;辆;liàng;car;jármű
