@@ -484,7 +484,6 @@ select_answer = function(id) {
 }
 update_enemy = function() {
 	GameState.monsterHP = 10+GameState.level*3;
-	GameState.monsterHP =1;
 	if (GameState.level%10==9)
 	{
 		GameState.monsterHP *= 2;
