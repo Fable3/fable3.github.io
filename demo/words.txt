@@ -368,11 +368,11 @@ hsk3;45;先;xiān;beforehand, previous;előbb
 hsk3;46;云;yún;cloud;felhő
 hsk3;47;站;zhàn;station;állomás
 hsk3;48;祝;zhù;wish;kíván
-hsk3;49;矮;ǎi;short;alacsony
+hsk3;49;矮;ǎi;short (height);alacsony (testmagasság)
 hsk3;50;草;cǎo;grass;fű
 hsk3;51;带;dài;belt;öv
-hsk3;52;低;dī;low;alacsony
-hsk3;53;短;duǎn;short;rövid
+hsk3;52;低;dī;low;alacsony (szint)
+hsk3;53;短;duǎn;short (length);rövid
 hsk3;54;饿;è;hungry;éhes
 hsk3;55;班;bān;class, work shift;műszak, osztály
 hsk3;56;分;fēn;divide;oszt
