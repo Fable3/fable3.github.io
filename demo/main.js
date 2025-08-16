@@ -157,8 +157,8 @@ var GameState = {
 	"deck": new leitner(),
 	"hand": [],
 	"new_cards":[],//1,32,3,4,5,93,7,8,9,10],
-	"level": 1,
-	"maxLevel":1,
+	"level": 0,
+	"maxLevel":0,
 	"playerHP":5,
 	"monsterHP":10
 	};
@@ -167,6 +167,7 @@ var default_hand_size = 5;
 var word_db = {};
 var display_new_cards_col = 2;
 var display_new_cards_row = 3;
+var selected_new_card_index = -1;
 function displayed_new_cards() {
 	let d = display_new_cards_col*display_new_cards_row;
 	if (d>GameState.new_cards.length) d=GameState.new_cards.length;
@@ -448,7 +449,7 @@ audio_play_pinyin = function(str) {
 		if (acc[1]==4) acc[1]=3;
 		var str = acc[0];
 		str = str.replace('v', 'u%CC%88');
-		audio_queue.push("http://resources.allsetlearning.com/pronwiki/resources/pinyin-audio/" + str + (acc[1]+1).toString() + ".mp3");
+		audio_queue.push("https://resources.allsetlearning.com/pronwiki/resources/pinyin-audio/" + str + (acc[1]+1).toString() + ".mp3");
 	}
 	play_next_audio();
 }
@@ -459,6 +460,16 @@ reveal_pinyin = function()
 	pinyin_revealed = true;
 	var ch_id = GameState.hand[selected_card_index].id;
 	audio_play_pinyin(word_db[ch_id].pinyin);
+}
+
+show_new_card_details = function(idx) {
+	selected_new_card_index = idx;
+	var ch_id = GameState.new_cards[idx];
+	audio_play_pinyin(word_db[ch_id].pinyin);
+}
+new_cards_resolve = function() {
+	selected_new_card_index = -1;
+	GameState.new_cards.splice(0, displayed_new_cards());
 }
 
 select_answer = function(id) {
@@ -669,21 +680,42 @@ var key_pressed = function(k) {
 			key_buffer_accented = key_buffer_accented.substring(0, key_buffer_accented.length-1);
 		}
 	}
-	if (selected_card_index!=-1 && (k==="Enter" || k===" "))
+	if (k==="Enter" || k===" ")
 	{
-		if (selected_answer_index!=-1)
+		if (game_ended)
 		{
-			end_answer(false);
-		} else if (selected_card_accented==0)
+			game_end_resolve();
+		} else if (GameState.new_cards.length>0)
 		{
-			select_card(selected_card_index, 4);
-			reveal_pinyin();
+			new_cards_resolve();
+		} else if (selected_card_index!=-1)
+		{
+			if (selected_answer_index!=-1)
+			{
+				end_answer(false);
+			} else if (selected_card_accented==0)
+			{
+				select_card(selected_card_index, 4);
+				reveal_pinyin();
+			}
+			return;
 		}
-		return;
 	}
 	if (k.length==1)
 	{
 		var c=k[0];
+		if (GameState.new_cards.length>0)
+		{
+			if (c>='1' && c<='9')
+			{
+				var idx = parseInt(c)-1;
+				if (idx < displayed_new_cards())
+				{
+					show_new_card_details(idx);
+				}
+			}
+			return;
+		}
 		if (selected_card_index!=-1)
 		{
 			if (selected_card_accented==0 && c>='1' && c<='4')
@@ -1427,10 +1459,10 @@ main.start = function (div) {
 	  if (game_ended)
 	  {
 		let cp=get_card_pos(20000-2);
-		var dx = x-cp.x;
-		var dy = y-cp.y;
-		var tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/scroll_size;
-		var ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/scroll_size;
+		let dx = x-cp.x;
+		let dy = y-cp.y;
+		let tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/scroll_size;
+		let ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/scroll_size;
 		if (tx>-cp.width/2 && tx<cp.width/2 &&
 			ty>-scroll_image.height/2 && ty<scroll_image.height/2)
 		{
@@ -1438,9 +1470,19 @@ main.start = function (div) {
 		}
 	  } else if (GameState.new_cards.length>0 && !game_ended)
 	  {
-		for(i=0;i<displayed_new_cards();i++)
+		for(let i=0;i<displayed_new_cards();i++)
 		{
-			//...
+			let cp=get_card_pos(GameState.new_cards[i]+20000);
+			let dx = x-cp.x;
+			let dy = y-cp.y;
+			let tx = (Math.cos(cp.rot)*dx - Math.sin(cp.rot)*dy)/card_size;
+			let ty = (Math.sin(cp.rot)*dx + Math.cos(cp.rot)*dy)/card_size;
+			if (tx>-card_image.width/2 && tx<card_image.width/2 &&
+				ty>-card_image.height/2 && ty<card_image.height/2)
+			{
+				show_new_card_details(i);
+				return;
+			}
 		}
 		let cp=get_card_pos(20000-1);
 		var dx = x-cp.x;
@@ -1450,7 +1492,7 @@ main.start = function (div) {
 		if (tx>-cp.width/2 && tx<cp.width/2 &&
 			ty>-scroll_image.height/2 && ty<scroll_image.height/2)
 		{
-			GameState.new_cards.splice(0, displayed_new_cards());
+			new_cards_resolve();
 		}
 	  } else if (!game_ended)
 	  {
@@ -1827,7 +1869,10 @@ main.start = function (div) {
 		  ctx_cards.fillStyle = 'black';
 		  ctx_cards.fillText(text, x, y);
 	  }
-	  if (selected_card_index!=-1 && pinyin_revealed)
+	  if (GameState.new_cards.length>0 && selected_new_card_index!=-1)
+	  {
+		drawStroked('Pinyin: ' + word_db[GameState.new_cards[selected_new_card_index]].pinyin, 20, (line_idx++)*font_size);
+	  } else if (selected_card_index!=-1 && pinyin_revealed)
 	  {
 	    if (selected_card_accented==2)
 		{
@@ -2066,7 +2111,7 @@ main.start = function (div) {
 			//card_y+=py*(card_size*card_image.height*0.5+scroll_size*scroll_image.height/2);
 			cp.width = render_scroll_width;
 			anim_card_pos(cp, dt, 0, card_x, card_y, 300);
-			let is_selected = false;
+			let is_selected = selected_new_card_index==i;
 			let is_good_answer = false;
 			let is_bad_answer = false;
 			let need_repeat = diff > 0;
